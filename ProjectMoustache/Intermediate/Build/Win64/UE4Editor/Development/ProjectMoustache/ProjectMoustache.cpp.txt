@@ -1,0 +1,2 @@
+F:\Game Development\Unreal Projects\ProjectMoustache_TFSCapstone2021-2022\ProjectMoustache\Intermediate\Build\Win64\UE4Editor\Development\ProjectMoustache\Definitions.ProjectMoustache.h
+F:\Game Development\Unreal Projects\ProjectMoustache_TFSCapstone2021-2022\ProjectMoustache\Source\ProjectMoustache\ProjectMoustache.h

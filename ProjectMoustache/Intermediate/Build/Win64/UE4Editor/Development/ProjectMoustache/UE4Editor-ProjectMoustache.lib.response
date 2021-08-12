@@ -1,0 +1,18 @@
+/NOLOGO
+/errorReport:prompt
+/MACHINE:x64
+/SUBSYSTEM:WINDOWS
+/DEF
+/NAME:"UE4Editor-ProjectMoustache.dll"
+/IGNORE:4221
+/NODEFAULTLIB
+"F:\Game Development\Unreal Projects\ProjectMoustache_TFSCapstone2021-2022\ProjectMoustache\Intermediate\Build\Win64\ProjectMoustacheEditor\Development\Engine\SharedPCH.Engine.ShadowErrors.h.obj"
+"F:\Game Development\Unreal Projects\ProjectMoustache_TFSCapstone2021-2022\ProjectMoustache\Intermediate\Build\Win64\UE4Editor\Development\ProjectMoustache\ProjectMoustache.cpp.obj"
+"F:\Game Development\Unreal Projects\ProjectMoustache_TFSCapstone2021-2022\ProjectMoustache\Intermediate\Build\Win64\UE4Editor\Development\ProjectMoustache\ProjectMoustacheCharacter.cpp.obj"
+"F:\Game Development\Unreal Projects\ProjectMoustache_TFSCapstone2021-2022\ProjectMoustache\Intermediate\Build\Win64\UE4Editor\Development\ProjectMoustache\ProjectMoustacheGameMode.cpp.obj"
+"F:\Game Development\Unreal Projects\ProjectMoustache_TFSCapstone2021-2022\ProjectMoustache\Intermediate\Build\Win64\UE4Editor\Development\ProjectMoustache\ProjectMoustache.init.gen.cpp.obj"
+"F:\Game Development\Unreal Projects\ProjectMoustache_TFSCapstone2021-2022\ProjectMoustache\Intermediate\Build\Win64\UE4Editor\Development\ProjectMoustache\ProjectMoustacheCharacter.gen.cpp.obj"
+"F:\Game Development\Unreal Projects\ProjectMoustache_TFSCapstone2021-2022\ProjectMoustache\Intermediate\Build\Win64\UE4Editor\Development\ProjectMoustache\ProjectMoustacheGameMode.gen.cpp.obj"
+"F:\Game Development\Unreal Projects\ProjectMoustache_TFSCapstone2021-2022\ProjectMoustache\Intermediate\Build\Win64\UE4Editor\Development\ProjectMoustache\Default.rc2.res"
+/OUT:"F:\Game Development\Unreal Projects\ProjectMoustache_TFSCapstone2021-2022\ProjectMoustache\Intermediate\Build\Win64\UE4Editor\Development\ProjectMoustache\UE4Editor-ProjectMoustache.lib"
+/INCLUDE:IMPLEMENT_MODULE_ProjectMoustache
