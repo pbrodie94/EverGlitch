@@ -1,8 +1,0 @@
-{
-	"SourceFiles": [
-		"F:\\Game Development\\Unreal Projects\\ProjectMoustache_TFSCapstone2021-2022\\ProjectMoustache\\Source\\ProjectMoustache\\ProjectMoustache.Build.cs",
-		"F:\\Game Development\\Unreal Projects\\ProjectMoustache_TFSCapstone2021-2022\\ProjectMoustache\\Source\\ProjectMoustache.Target.cs",
-		"F:\\Game Development\\Unreal Projects\\ProjectMoustache_TFSCapstone2021-2022\\ProjectMoustache\\Source\\ProjectMoustacheEditor.Target.cs"
-	],
-	"EngineVersion": "4.26.2"
-}

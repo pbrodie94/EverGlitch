@@ -1,9 +1,0 @@
-F:\Game Development\Unreal Projects\ProjectMoustache_TFSCapstone2021-2022\ProjectMoustache\Intermediate\Build\Win64\UE4Editor\Development\ProjectMoustache\Definitions.ProjectMoustache.h
-F:\Games\Epic Games\UE_4.26\Engine\Source\Runtime\CoreUObject\Public\UObject/GeneratedCppIncludes.h
-F:\Games\Epic Games\UE_4.26\Engine\Source\Runtime\CoreUObject\Public\UObject/MetaData.h
-F:\Game Development\Unreal Projects\ProjectMoustache_TFSCapstone2021-2022\ProjectMoustache\Source\ProjectMoustache/ProjectMoustacheGameMode.h
-F:\Games\Epic Games\UE_4.26\Engine\Source\Runtime\Engine\Classes\GameFramework/GameModeBase.h
-F:\Games\Epic Games\UE_4.26\Engine\Source\Runtime\Engine\Classes\Engine/ServerStatReplicator.h
-F:\Games\Epic Games\UE_4.26\Engine\Intermediate\Build\Win64\UE4Editor\Inc\Engine\ServerStatReplicator.generated.h
-F:\Games\Epic Games\UE_4.26\Engine\Intermediate\Build\Win64\UE4Editor\Inc\Engine\GameModeBase.generated.h
-F:\Game Development\Unreal Projects\ProjectMoustache_TFSCapstone2021-2022\ProjectMoustache\Intermediate\Build\Win64\UE4Editor\Inc\ProjectMoustache\ProjectMoustacheGameMode.generated.h
