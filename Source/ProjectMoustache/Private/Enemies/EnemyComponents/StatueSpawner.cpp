@@ -1,21 +1,26 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
+#include "Enemies/BaseBossPowerStatue.h"
 #include "Enemies/EnemyComponents/StatueSpawner.h"
+
+#include <string>
+
+#include "EngineUtils.h"
+#include "Components/BoxComponent.h"
+#include "Kismet/KismetMathLibrary.h"
 
 // Sets default values for this component's properties
 UStatueSpawner::UStatueSpawner()
 {
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
-	PrimaryComponentTick.bCanEverTick = true;
+	PrimaryComponentTick.bCanEverTick = false;
 
 	// ...
 
 	baseMinNumberOfStatues = 3;
-	baseMinNumberOfStatues = 5;
+	baseMaxNumberOfStatues = 5;
 }
-
 
 // Called when the game starts
 void UStatueSpawner::BeginPlay()
@@ -33,6 +38,24 @@ void UStatueSpawner::BeginPlay()
 	{
 		baseMaxNumberOfStatues = 5;
 	}
+
+	//Find the bounding area for the boss arena
+	for (TActorIterator<AActor> actorIterator(GetWorld()); actorIterator; ++actorIterator)
+	{
+		AActor* actor = *actorIterator;
+		if (actor && actor != GetOwner())
+		{
+			for (FName tag : actor->Tags)
+			{
+				if (tag == boundsTag)
+				{
+					levelBounds = actor->FindComponentByClass<UBoxComponent>();
+
+					break;
+				}
+			}
+		}
+	}
 }
 
 
@@ -47,13 +70,27 @@ void UStatueSpawner::TickComponent(float DeltaTime, ELevelTick TickType, FActorC
 void UStatueSpawner::SpawnStatues(uint8 bossPhase)
 {
 	uint8 statuesToSpawn = CalculateNumberOfStatuesToSpawn(bossPhase);
-
+	
 	for (int i = 0; i < statuesToSpawn; ++i)
 	{
 		//Get position and rotation for each pillar
 		FVector position = GetRandomSpawnLocation();
 		FRotator rotation = FRotator(0, FMath::RandRange(0, 360), 0);
 
+		//int statuesLeft = statuesToSpawn - i;
+		//GEngine->AddOnScreenDebugMessage(-1, 3, FColor::White, TEXT("Statues left " + FString::FromInt(statuesLeft) + " Spawn position: " + position.ToString()));
+
+		//Spawn the statue
+		FActorSpawnParameters SpawnParameters;
+		ABaseBossPowerStatue* statue = GetWorld()->SpawnActor<ABaseBossPowerStatue>(
+			powerStatue,
+			position,
+			rotation,
+			SpawnParameters);
+
+		//Bind the on destroyed function to the statue's delegate function
+		statue->OnStatueDestroyed.BindUObject(this, &UStatueSpawner::OnStatueDestroyed);
+		
 		++numberOfStatues;
 	}
 }
@@ -61,14 +98,14 @@ void UStatueSpawner::SpawnStatues(uint8 bossPhase)
 /**
  * Takes in the current boss phase and then gets a random number of statues to spawn
  */
-uint8 UStatueSpawner::CalculateNumberOfStatuesToSpawn(uint8 bossPhase) const
+uint32 UStatueSpawner::CalculateNumberOfStatuesToSpawn(uint32 bossPhase) const
 {
 	short min = (--bossPhase) + baseMinNumberOfStatues;
 	short max = (--bossPhase) + baseMaxNumberOfStatues;
 
-	uint8 numberOfStatues = FMath::RandRange(min, max);
+	uint32 statuesToSpawn = FMath::RandRange(min, max);
 	
-	return numberOfStatues;
+	return statuesToSpawn;
 }
 
 
@@ -78,10 +115,22 @@ uint8 UStatueSpawner::CalculateNumberOfStatuesToSpawn(uint8 bossPhase) const
 FVector UStatueSpawner::GetRandomSpawnLocation()
 {
 	//Get random position within the spawn volume
+	FVector position = UKismetMathLibrary::RandomPointInBoundingBox(
+		levelBounds->GetOwner()->GetActorLocation(), levelBounds->GetScaledBoxExtent());
 
 	//Calculate the ground position
+	float height = levelBounds->GetScaledBoxExtent().Z;
+	FVector start = position;
+	FVector end = start + FVector(0, 0, -height);
+	FHitResult hitResult;
+	FCollisionQueryParams collisionParams(FName("GroundCheck"), false, GetOwner());
+	if (GetWorld()->LineTraceSingleByChannel(
+		hitResult, start, end, ECC_Visibility, collisionParams))
+	{
+		position.Z = hitResult.ImpactPoint.Z;
+	}
 
-	return FVector::ZeroVector;
+	return position;
 }
 
 
@@ -89,8 +138,10 @@ FVector UStatueSpawner::GetRandomSpawnLocation()
  * Called when a statue has been destroyed.
  * Once the number of statues has reached 0, boss will shrink to natural size
  */
-void UStatueSpawner::OnPillarDestroyed()
+void UStatueSpawner::OnStatueDestroyed(ABaseBossPowerStatue* statue)
 {
+	statue->OnStatueDestroyed.Unbind();
+	
 	if (numberOfStatues <= 0)
 		return;
 
@@ -102,6 +153,8 @@ void UStatueSpawner::OnPillarDestroyed()
 	{
 		//Trigger boss to shrink to normal size
 	}
+
+	GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Blue, TEXT("Statue destroyed, " + FString::FromInt(numberOfStatues) + " statues left"));
 }
 
 
@@ -112,7 +165,7 @@ void UStatueSpawner::OnPillarDestroyed()
  */
 bool UStatueSpawner::HasVolumeReference()
 {
-	return false;
+	return levelBounds != nullptr;
 }
 
 

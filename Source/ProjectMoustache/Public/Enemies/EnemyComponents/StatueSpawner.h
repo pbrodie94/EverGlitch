@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "Components/BoxComponent.h"
+
 #include "StatueSpawner.generated.h"
 
 
@@ -16,10 +18,12 @@ class PROJECTMOUSTACHE_API UStatueSpawner : public UActorComponent
 	int numberOfStatues;
 
 	//Calculates the number of statues to spawn
-	uint8 CalculateNumberOfStatuesToSpawn(uint8 bossPhase) const;
+	uint32 CalculateNumberOfStatuesToSpawn(uint32 bossPhase) const;
 
 	//Gets a random spawn location in the volume area
 	FVector GetRandomSpawnLocation();
+
+	UBoxComponent* levelBounds;
 
 public:	
 	// Sets default values for this component's properties
@@ -31,23 +35,29 @@ protected:
 
 	//Base minimum number of statues, used to calculate the number of statuses that will be spawned
 	UPROPERTY(EditAnywhere)
-	uint8 baseMinNumberOfStatues;
+	uint32 baseMinNumberOfStatues;
 
 	//Base max number of statues, used to calculate how many statues will be spawned
 	UPROPERTY(EditAnywhere)
-	uint8 baseMaxNumberOfStatues;
+	uint32 baseMaxNumberOfStatues;
+
+	UPROPERTY(EditAnywhere)
+	FName boundsTag;
 
 public:	
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<ABaseBossPowerStatue> powerStatue;
+	
 	//Spawns pillars when boss gets big, takes in the current phase to calculate the number of statues to spawn
 	UFUNCTION(BlueprintCallable)
 	void SpawnStatues(uint8 bossPhase);
 
 	//Called when a statue is destroyed
 	UFUNCTION(BlueprintCallable)
-	void OnPillarDestroyed();
+	void OnStatueDestroyed(class ABaseBossPowerStatue* statue);
 
 	//Used to check whether or not the boss can grow big (mostly for early development testing purposes)
 	UFUNCTION(BlueprintCallable)
