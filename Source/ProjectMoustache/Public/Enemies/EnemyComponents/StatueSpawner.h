@@ -18,7 +18,7 @@ class PROJECTMOUSTACHE_API UStatueSpawner : public UActorComponent
 	int numberOfStatues;
 
 	//Calculates the number of statues to spawn
-	uint32 CalculateNumberOfStatuesToSpawn(uint32 bossPhase) const;
+	int CalculateNumberOfStatuesToSpawn(int bossPhase) const;
 
 	//Gets a random spawn location in the volume area
 	FVector GetRandomSpawnLocation();
@@ -35,11 +35,11 @@ protected:
 
 	//Base minimum number of statues, used to calculate the number of statuses that will be spawned
 	UPROPERTY(EditAnywhere)
-	uint32 baseMinNumberOfStatues;
+	int baseMinNumberOfStatues;
 
 	//Base max number of statues, used to calculate how many statues will be spawned
 	UPROPERTY(EditAnywhere)
-	uint32 baseMaxNumberOfStatues;
+	int baseMaxNumberOfStatues;
 
 	UPROPERTY(EditAnywhere)
 	FName boundsTag;
@@ -53,7 +53,7 @@ public:
 	
 	//Spawns pillars when boss gets big, takes in the current phase to calculate the number of statues to spawn
 	UFUNCTION(BlueprintCallable)
-	void SpawnStatues(uint8 bossPhase);
+	void SpawnStatues(int bossPhase);
 
 	//Called when a statue is destroyed
 	UFUNCTION(BlueprintCallable)

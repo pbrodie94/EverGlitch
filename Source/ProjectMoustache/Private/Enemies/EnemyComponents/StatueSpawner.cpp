@@ -1,12 +1,10 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "Enemies/BaseBossPowerStatue.h"
 #include "Enemies/EnemyComponents/StatueSpawner.h"
-
-#include <string>
-
+#include "Enemies/BaseBossPowerStatue.h"
 #include "EngineUtils.h"
 #include "Components/BoxComponent.h"
+#include "Enemies/BaseBoss.h"
 #include "Kismet/KismetMathLibrary.h"
 
 // Sets default values for this component's properties
@@ -17,6 +15,8 @@ UStatueSpawner::UStatueSpawner()
 	PrimaryComponentTick.bCanEverTick = false;
 
 	// ...
+
+	levelBounds = nullptr;
 
 	baseMinNumberOfStatues = 3;
 	baseMaxNumberOfStatues = 5;
@@ -67,9 +67,9 @@ void UStatueSpawner::TickComponent(float DeltaTime, ELevelTick TickType, FActorC
 	// ...
 }
 
-void UStatueSpawner::SpawnStatues(uint8 bossPhase)
+void UStatueSpawner::SpawnStatues(int bossPhase)
 {
-	uint8 statuesToSpawn = CalculateNumberOfStatuesToSpawn(bossPhase);
+	int statuesToSpawn = CalculateNumberOfStatuesToSpawn(bossPhase);
 	
 	for (int i = 0; i < statuesToSpawn; ++i)
 	{
@@ -98,12 +98,12 @@ void UStatueSpawner::SpawnStatues(uint8 bossPhase)
 /**
  * Takes in the current boss phase and then gets a random number of statues to spawn
  */
-uint32 UStatueSpawner::CalculateNumberOfStatuesToSpawn(uint32 bossPhase) const
+int UStatueSpawner::CalculateNumberOfStatuesToSpawn(int bossPhase) const
 {
 	short min = (--bossPhase) + baseMinNumberOfStatues;
 	short max = (--bossPhase) + baseMaxNumberOfStatues;
 
-	uint32 statuesToSpawn = FMath::RandRange(min, max);
+	int statuesToSpawn = FMath::RandRange(min, max);
 	
 	return statuesToSpawn;
 }
@@ -119,15 +119,17 @@ FVector UStatueSpawner::GetRandomSpawnLocation()
 		levelBounds->GetOwner()->GetActorLocation(), levelBounds->GetScaledBoxExtent());
 
 	//Calculate the ground position
-	float height = levelBounds->GetScaledBoxExtent().Z;
+	float height = levelBounds->GetScaledBoxExtent().Z + 1000;
 	FVector start = position;
-	FVector end = start + FVector(0, 0, -height);
+	FVector end = start + (FVector::DownVector * height);
 	FHitResult hitResult;
 	FCollisionQueryParams collisionParams(FName("GroundCheck"), false, GetOwner());
+	collisionParams.AddIgnoredActor(levelBounds->GetOwner());
 	if (GetWorld()->LineTraceSingleByChannel(
 		hitResult, start, end, ECC_Visibility, collisionParams))
 	{
-		position.Z = hitResult.ImpactPoint.Z;
+		position = hitResult.ImpactPoint;
+		GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Blue, TEXT("Line trace hit: " + hitResult.Actor->GetName()));
 	}
 
 	return position;
@@ -152,6 +154,11 @@ void UStatueSpawner::OnStatueDestroyed(ABaseBossPowerStatue* statue)
 	if (numberOfStatues <= 0)
 	{
 		//Trigger boss to shrink to normal size
+		ABaseBoss* boss = Cast<ABaseBoss>(GetOwner());
+		if (boss != nullptr)
+		{
+			boss->BeginShrinkSize();
+		}
 	}
 
 	GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Blue, TEXT("Statue destroyed, " + FString::FromInt(numberOfStatues) + " statues left"));
@@ -165,7 +172,5 @@ void UStatueSpawner::OnStatueDestroyed(ABaseBossPowerStatue* statue)
  */
 bool UStatueSpawner::HasVolumeReference()
 {
-	return levelBounds != nullptr;
+	return false;
 }
-
-
