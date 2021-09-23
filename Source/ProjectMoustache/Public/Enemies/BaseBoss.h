@@ -31,9 +31,6 @@ UCLASS()
 class PROJECTMOUSTACHE_API ABaseBoss : public ACharacter
 {
 	GENERATED_BODY()
-
-	UPROPERTY(EditDefaultsOnly)
-	TSubclassOf<AProjectileBase> enemyProjectile;
 	
 	UPROPERTY(EditDefaultsOnly)
 	FName throwningSocketName;
@@ -115,7 +112,7 @@ protected:
 	UFUNCTION(BlueprintCallable)
 	void BeamAttack();
 
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 	void SpawnEffects(const TEnumAsByte<EAttackType>& attackType, const FTransform& spawnTransform);
 
 	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;

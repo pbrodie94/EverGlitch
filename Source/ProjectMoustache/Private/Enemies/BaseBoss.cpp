@@ -47,6 +47,7 @@ void ABaseBoss::BeginPlay()
 	Super::BeginPlay();
 
 	battleBegun = false;
+	
 	if (maxHealth <= 0)
 	{
 		maxHealth = 5000;
@@ -157,17 +158,20 @@ void ABaseBoss::ThrowProjectiles()
 	FVector throwingPosition = GetMesh()->GetSocketLocation(throwningSocketName);
 	FVector baseDirection = playerPosition - throwingPosition;
 
+	//If only throwing a single projectile, fire the single projectile straight at target
 	if (numberOfProjectiles == 1)
 	{
-		//Fire the single projectile straight
+		//Create a Transform to spawn from
 		FRotator rotation = UKismetMathLibrary::MakeRotFromX(baseDirection);
 		FTransform spawnTrasform(rotation, throwingPosition, FVector(1, 1, 1));
+
+		//Call spawn effects on Blueprint
 		SpawnEffects(Projectile, spawnTrasform);
 
 		return;
 	}
 
-	//Determine the angle increment
+	//Determine the angle increment between each projectile
 	float baseFireAngle = 10;
 	float angleIncrement = numberOfProjectiles - 2;
 	angleIncrement = (angleIncrement * 12.5f) + baseFireAngle;
@@ -177,10 +181,14 @@ void ABaseBoss::ThrowProjectiles()
 	{
 		//Get the angle for the current projectile
 		float angle = (((numberOfProjectiles - 1) / 2.0f) - i) * angleIncrement;
+
+		//Create a transform to spawn from
 		FVector throwingDirection = GetThrowingDirection(baseDirection, angle);
 		FRotator rotation = UKismetMathLibrary::MakeRotFromX(throwingDirection);
-		FTransform spawnTrasform(rotation, throwingPosition, FVector(1, 1, 1));
-		SpawnEffects(Projectile, spawnTrasform);
+		FTransform spawnTransform(rotation, throwingPosition, FVector(1, 1, 1));
+
+		//Call spawn effects on Blueprint
+		SpawnEffects(Projectile, spawnTransform);
 	}
 }
 
@@ -191,8 +199,9 @@ void ABaseBoss::GroundSlamAttack()
 	FVector position = GetActorLocation();
 	
 	//set to a specific height off the ground
+	//Get trace to find ground position, then add desired height to get position
 	float heightOffGround = 150;
-	FVector end = position - FVector(0, 0,GetActorScale3D().Z);
+	FVector end = position - FVector(0, 0, GetActorScale3D().Z);
 	FCollisionQueryParams collisionParams(FName("GetGroundPosition"), false,GetOwner());
 	FHitResult hitResult;
 	if (GetWorld()->LineTraceSingleByChannel(hitResult, position, end, ECC_Visibility, collisionParams))
@@ -200,12 +209,13 @@ void ABaseBoss::GroundSlamAttack()
 		position = position + FVector(0, 0, hitResult.ImpactPoint.Z + heightOffGround);
 	} else
 	{
+		//If trace does not hit anything, take actor's location and lower by an amount
 		position = position - FVector(0, 0, 150);
 	}
 
+	//Create a Transform to spawn from
 	FVector scale = FVector(5, 5, 1);
 	FRotator rotation = FRotator::ZeroRotator;
-
 	FTransform spawnTransform(rotation, position, scale);
 
 	//Spawn ground slam effect
@@ -263,25 +273,6 @@ float ABaseBoss::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent,
 	}
 	
 	return DamageAmount;
-}
-
-void ABaseBoss::SpawnEffects_Implementation(const TEnumAsByte<EAttackType>& attackType, const FTransform& spawnTransform)
-{
-	/*FActorSpawnParameters spawnParams;
-	
-	switch (attackType)
-	{
-		case Projectile:
-			AProjectileBase* projectile = GetWorld()->SpawnActor<AProjectileBase>(
-			enemyProjectile,
-			spawnTransform.GetLocation(),
-			spawnTransform.GetRotation().Rotator(),
-			spawnParams);
-
-			//Initialize projectile
-			projectile->Initialize(projectileDamage, this);
-			break;
-	}*/
 }
 
 void ABaseBoss::SetMoveSpeed(bool running)
