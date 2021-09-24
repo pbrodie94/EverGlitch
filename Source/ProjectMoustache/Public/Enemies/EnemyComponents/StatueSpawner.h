@@ -20,6 +20,8 @@ class PROJECTMOUSTACHE_API UStatueSpawner : public UActorComponent
 	//Calculates the number of statues to spawn
 	int CalculateNumberOfStatuesToSpawn(int bossPhase) const;
 
+	bool hasLevelReference;
+
 	//Gets a random spawn location in the volume area
 	FVector GetRandomSpawnLocation();
 
