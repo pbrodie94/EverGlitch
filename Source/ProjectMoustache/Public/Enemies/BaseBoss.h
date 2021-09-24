@@ -35,6 +35,10 @@ class PROJECTMOUSTACHE_API ABaseBoss : public ACharacter
 	UPROPERTY(EditDefaultsOnly)
 	FName throwningSocketName;
 
+	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = true))
+	float growSizeCoolDown;
+	
+	float timeLastGrowSize;
 	float timeBeganChangeSize;
 
 	bool battleBegun;
@@ -100,7 +104,7 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	float beamDamage;
 
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	class UStatueSpawner* statueSpawner;
 
 	UFUNCTION(BlueprintCallable)

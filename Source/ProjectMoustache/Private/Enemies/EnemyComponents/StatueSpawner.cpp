@@ -17,6 +17,7 @@ UStatueSpawner::UStatueSpawner()
 	// ...
 
 	levelBounds = nullptr;
+	hasLevelReference = false;
 
 	baseMinNumberOfStatues = 3;
 	baseMaxNumberOfStatues = 5;
@@ -50,7 +51,10 @@ void UStatueSpawner::BeginPlay()
 				if (tag == boundsTag)
 				{
 					levelBounds = actor->FindComponentByClass<UBoxComponent>();
-
+					if (levelBounds != nullptr)
+					{
+						hasLevelReference = true;
+					}
 					break;
 				}
 			}
@@ -76,9 +80,6 @@ void UStatueSpawner::SpawnStatues(int bossPhase)
 		//Get position and rotation for each pillar
 		FVector position = GetRandomSpawnLocation();
 		FRotator rotation = FRotator(0, FMath::RandRange(0, 360), 0);
-
-		//int statuesLeft = statuesToSpawn - i;
-		//GEngine->AddOnScreenDebugMessage(-1, 3, FColor::White, TEXT("Statues left " + FString::FromInt(statuesLeft) + " Spawn position: " + position.ToString()));
 
 		//Spawn the statue
 		FActorSpawnParameters SpawnParameters;
@@ -129,7 +130,6 @@ FVector UStatueSpawner::GetRandomSpawnLocation()
 		hitResult, start, end, ECC_Visibility, collisionParams))
 	{
 		position = hitResult.ImpactPoint;
-		GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Blue, TEXT("Line trace hit: " + hitResult.Actor->GetName()));
 	}
 
 	return position;
@@ -160,8 +160,6 @@ void UStatueSpawner::OnStatueDestroyed(ABaseBossPowerStatue* statue)
 			boss->BeginShrinkSize();
 		}
 	}
-
-	GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Blue, TEXT("Statue destroyed, " + FString::FromInt(numberOfStatues) + " statues left"));
 }
 
 
@@ -172,5 +170,5 @@ void UStatueSpawner::OnStatueDestroyed(ABaseBossPowerStatue* statue)
  */
 bool UStatueSpawner::HasVolumeReference()
 {
-	return false;
+	return hasLevelReference;
 }
