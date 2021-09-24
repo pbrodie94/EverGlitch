@@ -31,8 +31,9 @@ ABaseBoss::ABaseBoss()
     growingTime = 5;
     isLarge = false;
 
-	normalSize = GetActorScale();
-	largeSize = normalSize * 3;
+	normalSize = GetActorScale3D();
+	largeSize = normalSize * 5;
+	growSizeCoolDown = 30;
 
 	meleeDistance = 350;
     meleeDamage = 20;
@@ -45,6 +46,9 @@ ABaseBoss::ABaseBoss()
 void ABaseBoss::BeginPlay()
 {
 	Super::BeginPlay();
+
+	normalSize = GetActorScale3D();
+	largeSize = normalSize * 3;
 
 	battleBegun = false;
 	
@@ -100,21 +104,21 @@ void ABaseBoss::Tick(float DeltaTime)
 	//If state is neutral, or the volume reference to spawn statues isn't found, do nothing
 	if (changeSizeState == Neutral)
 		return;
-
-	if (!statueSpawner->HasVolumeReference())
-		return;
-
+	
 	//Get the wanted size based on the change size state
 	FVector wantedSize = largeSize;
+	FVector currentSize = normalSize;
 	switch (changeSizeState)
 	{
 		case Growing:
 			wantedSize = largeSize;
+			currentSize = normalSize;
 			isLarge = true;
 			break;
 
 		case Shrinking:
 			wantedSize = normalSize;
+			currentSize = largeSize;
 			break;
 
 		default:
@@ -124,8 +128,7 @@ void ABaseBoss::Tick(float DeltaTime)
 	//Apply lerp to linearly change the size, then apply it to the scale
 	float alpha = timeBeganChangeSize - GetWorld()->GetTimeSeconds();
 	alpha = (growingTime - alpha) / growingTime;
-	//alpha = alpha / 25.0f;
-	FVector changeScale = FMath::Lerp(GetActorScale3D(), wantedSize, alpha);
+	FVector changeScale = FMath::Lerp(currentSize, wantedSize, alpha);
 	SetActorScale3D(changeScale);
 
 	//Once the growing time has elapsed, revert to neutral state
@@ -134,6 +137,7 @@ void ABaseBoss::Tick(float DeltaTime)
 		if (changeSizeState == Shrinking)
 		{
 			isLarge = false;
+			timeLastGrowSize = GetWorld()->GetTimeSeconds() + growSizeCoolDown;
 		}
 		
 		changeSizeState = Neutral;
@@ -200,13 +204,13 @@ void ABaseBoss::GroundSlamAttack()
 	
 	//set to a specific height off the ground
 	//Get trace to find ground position, then add desired height to get position
-	float heightOffGround = 150;
-	FVector end = position - FVector(0, 0, GetActorScale3D().Z);
+	float heightOffGround = 25;
+	FVector end = position - FVector(0, 0, GetActorScale3D().Z + 1000);
 	FCollisionQueryParams collisionParams(FName("GetGroundPosition"), false,GetOwner());
 	FHitResult hitResult;
 	if (GetWorld()->LineTraceSingleByChannel(hitResult, position, end, ECC_Visibility, collisionParams))
 	{
-		position = position + FVector(0, 0, hitResult.ImpactPoint.Z + heightOffGround);
+		position.Z = hitResult.ImpactPoint.Z + heightOffGround;
 	} else
 	{
 		//If trace does not hit anything, take actor's location and lower by an amount
@@ -229,8 +233,19 @@ void ABaseBoss::BeamAttack()
 
 float ABaseBoss::BeginGrowingSize()
 {
+	if (!statueSpawner->HasVolumeReference() || isLarge)
+	{
+		return 0;
+	}
+
+	if (GetWorld()->GetTimeSeconds() < timeLastGrowSize)
+	{
+		return 0;
+	}
+	
 	changeSizeState = Growing;
 	timeBeganChangeSize = GetWorld()->GetTimeSeconds() + growingTime;
+	statueSpawner->SpawnStatues(bossPhase);
 	return growingTime;
 }
 
@@ -253,6 +268,11 @@ FVector ABaseBoss::GetThrowingDirection(FVector baseDirection, float angle)
 
 float ABaseBoss::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
+	if (isLarge)
+	{
+		return 0;
+	}
+	
 	//Decrement damage
 	health -= DamageAmount;
 
