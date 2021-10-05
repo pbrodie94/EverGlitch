@@ -290,6 +290,10 @@ float ABaseBoss::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent,
 	{
 		health = 0;
 		Die();
+	} else
+	{
+		//Handle damage reactions
+		PlayAnimationMontage();
 	}
 	
 	return DamageAmount;

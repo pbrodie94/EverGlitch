@@ -116,10 +116,13 @@ protected:
 	UFUNCTION(BlueprintCallable)
 	void BeamAttack();
 
+	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void PlayAnimationMontage();
+	
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 	void SpawnEffects(const TEnumAsByte<EAttackType>& attackType, const FTransform& spawnTransform);
-
-	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 
 	UFUNCTION(BlueprintCallable)
 	void SetMoveSpeed(bool running);
