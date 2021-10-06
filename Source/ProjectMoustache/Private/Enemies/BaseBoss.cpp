@@ -101,6 +101,17 @@ void ABaseBoss::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	//Changing size
+	HandleBossSizeChange();
+
+	//Handle beam attack
+	if (isBeamAttacking)
+	{
+		BeamAttackEffects(DeltaTime);	
+	}
+}
+
+void ABaseBoss::HandleBossSizeChange()
+{
 	//If state is neutral, or the volume reference to spawn statues isn't found, do nothing
 	if (changeSizeState == Neutral)
 		return;
@@ -110,19 +121,19 @@ void ABaseBoss::Tick(float DeltaTime)
 	FVector currentSize = normalSize;
 	switch (changeSizeState)
 	{
-		case Growing:
-			wantedSize = largeSize;
-			currentSize = normalSize;
-			isLarge = true;
-			break;
+	case Growing:
+		wantedSize = largeSize;
+		currentSize = normalSize;
+		isLarge = true;
+		break;
 
-		case Shrinking:
-			wantedSize = normalSize;
-			currentSize = largeSize;
-			break;
+	case Shrinking:
+		wantedSize = normalSize;
+		currentSize = largeSize;
+		break;
 
-		default:
-			return;
+	default:
+		return;
 	}
 
 	//Apply lerp to linearly change the size, then apply it to the scale
@@ -130,6 +141,10 @@ void ABaseBoss::Tick(float DeltaTime)
 	alpha = (growingTime - alpha) / growingTime;
 	FVector changeScale = FMath::Lerp(currentSize, wantedSize, alpha);
 	SetActorScale3D(changeScale);
+
+	//Get size difference and apply difference to speed
+	float sizeDifference = GetActorScale3D().X / normalSize.X;
+	GetCharacterMovement()->MaxWalkSpeed = walkSpeed * sizeDifference;
 
 	//Once the growing time has elapsed, revert to neutral state
 	if (GetWorld()->GetTimeSeconds() >= timeBeganChangeSize)
@@ -143,6 +158,7 @@ void ABaseBoss::Tick(float DeltaTime)
 		changeSizeState = Neutral;
 	}
 }
+
 
 // Called to bind functionality to input
 void ABaseBoss::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -228,7 +244,8 @@ void ABaseBoss::GroundSlamAttack()
 
 void ABaseBoss::BeamAttack()
 {
-	
+	isBeamAttacking = true;
+	timeBeganBeamAttack = GetWorld()->GetTimeSeconds();
 }
 
 float ABaseBoss::BeginGrowingSize()
@@ -299,9 +316,26 @@ float ABaseBoss::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent,
 	return DamageAmount;
 }
 
+float ABaseBoss::GetModifiedMoveSpeed()
+{
+	if (!isLarge)
+	{
+		return GetCharacterMovement()->Velocity.Size();
+	}
+
+	float currentVelocity = GetCharacterMovement()->Velocity.Size();
+	float sizeDifference = GetActorScale3D().X / normalSize.X;
+
+	return currentVelocity / sizeDifference;
+}
+
+
 void ABaseBoss::SetMoveSpeed(bool running)
 {
-	GetCharacterMovement()->MaxWalkSpeed = running ? runSpeed : walkSpeed;
+	if (!isLarge)
+	{
+		GetCharacterMovement()->MaxWalkSpeed = running ? runSpeed : walkSpeed;
+	} 
 }
 
 void ABaseBoss::BeginBattle()

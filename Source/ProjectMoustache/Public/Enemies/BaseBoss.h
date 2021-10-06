@@ -45,6 +45,8 @@ class PROJECTMOUSTACHE_API ABaseBoss : public ACharacter
 	bool isLarge;
 
 	FVector GetThrowingDirection(FVector baseDirection, float angle);
+
+	void HandleBossSizeChange();
 	
 public:
 	// Sets default values for this character's properties
@@ -104,6 +106,12 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	float beamDamage;
 
+	UPROPERTY(BlueprintReadOnly)
+	float timeBeganBeamAttack;
+	
+	UPROPERTY(BlueprintReadWrite)
+	bool isBeamAttacking;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	class UStatueSpawner* statueSpawner;
 
@@ -124,8 +132,14 @@ protected:
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 	void SpawnEffects(const TEnumAsByte<EAttackType>& attackType, const FTransform& spawnTransform);
 
+	UFUNCTION(BlueprintImplementableEvent)
+	void BeamAttackEffects(float deltaSeconds);
+
 	UFUNCTION(BlueprintCallable)
 	void SetMoveSpeed(bool running);
+
+	UFUNCTION(BlueprintCallable)
+	float GetModifiedMoveSpeed();
 	
 	UFUNCTION(BlueprintImplementableEvent)
 	void Die();
