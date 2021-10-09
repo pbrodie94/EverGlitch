@@ -6,7 +6,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
-#include "Weapons/ProjectileBase.h"
+#include "Particles/ParticleSystemComponent.h"
 
 // Sets default values
 ABaseBoss::ABaseBoss()
@@ -35,17 +35,27 @@ ABaseBoss::ABaseBoss()
 	largeSize = normalSize * 5;
 	growSizeCoolDown = 30;
 
+	damageReductionPercentage = 15;
+
+	meleeHitRadius = 150.0f;
 	meleeDistance = 350;
     meleeDamage = 20;
 	projectileDamage = 15;
 	groundSlamDamage = 20;
+	beamHitRadius = 30;
 	beamDamage = 25;
+
+	spawnedShockwaves = 0;
+	groundSlamInterval = 0.5f;
+	isGroundSlamSequence = false;
 }
 
 // Called when the game starts or when spawned
 void ABaseBoss::BeginPlay()
 {
 	Super::BeginPlay();
+
+	playerReference = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
 
 	normalSize = GetActorScale3D();
 	largeSize = normalSize * 3;
@@ -69,6 +79,11 @@ void ABaseBoss::BeginPlay()
 		growingTime = 5;
 	}
 
+	if (meleeHitRadius <= 50)
+	{
+		meleeHitRadius = 150;
+	}
+
 	if (meleeDistance <= 0)
 	{
 		meleeDistance = 350;
@@ -89,10 +104,27 @@ void ABaseBoss::BeginPlay()
 		groundSlamDamage = 20;
 	}
 
+	if (beamHitRadius <= 0)
+	{
+		beamHitRadius = 30;
+	}
+
 	if (beamDamage <= 0)
 	{
 		beamDamage = 25;
 	}
+
+	if (groundSlamInterval <= 0)
+	{
+		groundSlamInterval = 0.5f;
+	}
+
+	if (damageReductionPercentage >= 50)
+	{
+		damageReductionPercentage = 15;
+	}
+
+	damageReductionMultiple = damageReductionPercentage / 100;
 }
 
 // Called every frame
@@ -103,13 +135,38 @@ void ABaseBoss::Tick(float DeltaTime)
 	//Changing size
 	HandleBossSizeChange();
 
+	//Check hit detection on Melee
+	if (isMeleeAttacking)
+	{
+		DetectMeleeHits();
+	}
+
 	//Handle beam attack
 	if (isBeamAttacking)
 	{
-		BeamAttackEffects(DeltaTime);	
+		//BeamAttackEffects(DeltaTime);
+		BeamAttack(DeltaTime);
+	}
+
+	//Handle multi ground slam attack
+	if (isGroundSlamSequence)
+	{
+		if (spawnedShockwaves >= bossPhase)
+		{
+			spawnedShockwaves = 0;
+			isGroundSlamSequence = false;
+		}
+		
+		if (GetWorld()->GetTimeSeconds() >= timeLastShockwave)
+		{
+			GroundSlamAttack();
+			++spawnedShockwaves;
+			timeLastShockwave = GetWorld()->GetTimeSeconds() + groundSlamInterval;
+		}
 	}
 }
 
+//Function called tick function to handle the size changing sequence
 void ABaseBoss::HandleBossSizeChange()
 {
 	//If state is neutral, or the volume reference to spawn statues isn't found, do nothing
@@ -159,14 +216,121 @@ void ABaseBoss::HandleBossSizeChange()
 	}
 }
 
-
-// Called to bind functionality to input
-void ABaseBoss::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+//Begins the beam attack sequence
+void ABaseBoss::BeginBeamAttack()
 {
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
+	beamTarget = GetActorForwardVector();
+	isBeamAttacking = true;
 
+	beamParticles = SpawnBeamParticles();
+	
+	timeBeganBeamAttack = GetWorld()->GetTimeSeconds() + beamChargingTime;
 }
 
+/**
+* Performs the beam attack calculations updating the beam's target point, and slowly
+* aiming towards the player.
+* Handles hit detection, and damages on a tick
+*/
+void ABaseBoss::BeamAttack(float deltaTime)
+{
+	//Lerp the beam target towards the player
+	if (playerReference == nullptr)
+	{
+		playerReference = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
+	}
+	
+	if (ensure(playerReference))
+	{
+		beamTarget = FMath::Lerp(beamTarget, playerReference->GetActorLocation(), deltaTime * beamSpeed);
+	}
+
+	beamEnd = (beamTarget - GetMesh()->GetSocketLocation(throwningSocketName)) * beamRange;
+	beamEnd = beamEnd + GetMesh()->GetSocketLocation(throwningSocketName);
+
+	if (GetWorld()->GetTimeSeconds() < timeBeganBeamAttack)
+	{
+		return;
+	}
+
+	//Update the end of the beam particles
+	beamParticles->SetBeamTargetPoint(0, beamEnd, 0);
+
+	//Trace to detect player hit
+	TArray<FHitResult> hitResults;
+	bool sphereTraceHit = UKismetSystemLibrary::SphereTraceMulti(GetWorld(), GetMesh()->GetSocketLocation(throwningSocketName), beamEnd,
+		beamHitRadius, UEngineTypes::ConvertToTraceType(ECC_Camera), false, hitActors, EDrawDebugTrace::None, hitResults, true);
+
+	if (sphereTraceHit)
+	{
+		for (FHitResult hitResult : hitResults)
+		{
+			if (hitResult.Actor == playerReference)
+			{
+				FDamageEvent damageEvent;
+				hitResult.Actor->TakeDamage(beamDamage, damageEvent, GetController(), this);
+				hitActors.AddUnique(hitResult.Actor.Get());
+				timeLastDamaged = GetWorld()->GetTimeSeconds() + beamDamageInterval;
+				break;
+			}
+		}
+	}
+
+	//Clear all hit actors 
+	if (GetWorld()->GetTimeSeconds() >= timeLastDamaged)
+	{
+		hitActors.Empty();
+	}
+}
+
+//Initiates the melee attack detection
+void ABaseBoss::BeginMeleeDamage()
+{
+	hitActors.Empty();
+	isMeleeAttacking = true;
+}
+
+/**
+* Detects hits with a sphere cast at a point in the boss' attacking arm at a set radius
+* and stores hit actors in a TArray once they've been damaged
+*/
+void ABaseBoss::DetectMeleeHits()
+{
+	//Trace to detect player hit
+	TArray<FHitResult> hitResults;
+	bool sphereTraceHit = UKismetSystemLibrary::SphereTraceMulti(GetWorld(),
+		GetMesh()->GetSocketLocation(TEXT("LeftForeArmSocket")),
+		GetMesh()->GetSocketLocation(TEXT("LeftForeArmSocket")), meleeHitRadius,
+		UEngineTypes::ConvertToTraceType(ECC_Camera), false,
+		hitActors, EDrawDebugTrace::None, hitResults, true);
+
+	//Verify player reference
+	if (playerReference == nullptr)
+	{
+		playerReference = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
+	}
+
+	if (sphereTraceHit)
+	{
+		for (FHitResult hitResult : hitResults)
+		{
+			if (hitResult.Actor == playerReference)
+			{
+				FDamageEvent damageEvent;
+				hitResult.Actor->TakeDamage(beamDamage, damageEvent, GetController(), this);
+				hitActors.AddUnique(hitResult.Actor.Get());
+				timeLastDamaged = GetWorld()->GetTimeSeconds() + beamDamageInterval;
+				break;
+			}
+		}
+	}
+}
+
+/**
+* Gets a random number of projectiles to throw between 1 and a high end range of 3 - 8 depending on the boss phase
+* Calculates the angles needed to throw multiple projectiles in a fan pattern,
+* with the origin in the direction of the player
+*/
 void ABaseBoss::ThrowProjectiles()
 {
 	//Get number of projectiles
@@ -174,7 +338,17 @@ void ABaseBoss::ThrowProjectiles()
 	int numberOfProjectiles = FMath::RandRange(1, maxProjectiles);
 	
 	//Get the base direction to fire in
-	FVector playerPosition = UGameplayStatics::GetPlayerPawn(GetWorld(), 0)->GetActorLocation();
+	if (playerReference == nullptr)
+	{
+		playerReference = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
+	}
+
+	FVector playerPosition = GetActorForwardVector();
+	
+	if (ensure(playerReference))
+	{
+		playerPosition = playerReference->GetActorLocation();
+	}
 	FVector throwingPosition = GetMesh()->GetSocketLocation(throwningSocketName);
 	FVector baseDirection = playerPosition - throwingPosition;
 
@@ -183,20 +357,21 @@ void ABaseBoss::ThrowProjectiles()
 	{
 		//Create a Transform to spawn from
 		FRotator rotation = UKismetMathLibrary::MakeRotFromX(baseDirection);
-		FTransform spawnTrasform(rotation, throwingPosition, FVector(1, 1, 1));
+		float size = (GetActorScale3D().X / largeSize.X) + 1;
+		FTransform spawnTrasform(rotation, throwingPosition, FVector(size, size, size));
 
 		//Call spawn effects on Blueprint
 		SpawnEffects(Projectile, spawnTrasform);
-
+		isAttacking = false;
 		return;
 	}
 
 	//Determine the angle increment between each projectile
-	float baseFireAngle = 10;
+	float baseFireAngle = 15 * (GetActorScale3D().X / normalSize.X);
 	float angleIncrement = numberOfProjectiles - 2;
 	angleIncrement = (angleIncrement * 12.5f) + baseFireAngle;
 	angleIncrement = angleIncrement / numberOfProjectiles;
-	
+	float size = (GetActorScale3D().X / largeSize.X) + 1;
 	for (int i = 0; i < numberOfProjectiles; ++i)
 	{
 		//Get the angle for the current projectile
@@ -205,15 +380,28 @@ void ABaseBoss::ThrowProjectiles()
 		//Create a transform to spawn from
 		FVector throwingDirection = GetThrowingDirection(baseDirection, angle);
 		FRotator rotation = UKismetMathLibrary::MakeRotFromX(throwingDirection);
-		FTransform spawnTransform(rotation, throwingPosition, FVector(1, 1, 1));
+		FTransform spawnTransform(rotation, throwingPosition, FVector(size, size, size));
 
 		//Call spawn effects on Blueprint
 		SpawnEffects(Projectile, spawnTransform);
 	}
+
+	isAttacking = false;
 }
 
+/**
+* Finds the ground position below the boss, and gets a position close to the ground to spawn shockwaves
+* If the boss phase is greater than 1, a sequence is started where shockwaves are spawned for each phase
+*/
 void ABaseBoss::GroundSlamAttack()
 {
+	//Allow for multi groundslam attack
+	if (bossPhase > 1 && !isGroundSlamSequence)
+	{
+		isGroundSlamSequence = true;
+		return;
+	}
+	
 	//Find position to spawn ground slam effect
 	//Get position
 	FVector position = GetActorLocation();
@@ -240,22 +428,44 @@ void ABaseBoss::GroundSlamAttack()
 
 	//Spawn ground slam effect
 	SpawnEffects(GroundSlam, spawnTransform);
+
+	isAttacking = false;
 }
 
-void ABaseBoss::BeamAttack()
+//Called to clean up attack sequences
+void ABaseBoss::OnEndingDamage()
 {
-	isBeamAttacking = true;
-	timeBeganBeamAttack = GetWorld()->GetTimeSeconds();
+	isAttacking = false;
+	isBeamAttacking = false;
+	isMeleeAttacking = false;
+
+	//If beam attacking, destroy the particles
+	if (beamParticles != nullptr)
+	{
+		beamParticles->DestroyComponent();
+	}
+
+	hitActors.Empty();
 }
 
+//Sets boss to growing state, and returns growing time
 float ABaseBoss::BeginGrowingSize()
 {
+	//If the statue spawner doesn't have a reference to the volume to get random statue locations,
+	//Cannot enter large state
 	if (!statueSpawner->HasVolumeReference() || isLarge)
 	{
 		return 0;
 	}
 
+	//Growing cooldown
 	if (GetWorld()->GetTimeSeconds() < timeLastGrowSize)
+	{
+		return 0;
+	}
+
+	//Boss cannot grow on 1st phase
+	if (bossPhase == 1)
 	{
 		return 0;
 	}
@@ -266,6 +476,7 @@ float ABaseBoss::BeginGrowingSize()
 	return growingTime;
 }
 
+//Sets boss to shrinking state, and returns shrinking time
 float ABaseBoss::BeginShrinkSize()
 {
 	changeSizeState = Shrinking;
@@ -273,6 +484,9 @@ float ABaseBoss::BeginShrinkSize()
 	return growingTime;
 }
 
+/**
+* Takes in a vector direction and angle and returns the rotated vector
+*/
 FVector ABaseBoss::GetThrowingDirection(FVector baseDirection, float angle)
 {
 	//Unreal trig math expects rads, so convert first
@@ -289,9 +503,12 @@ float ABaseBoss::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent,
 	{
 		return 0;
 	}
+
+	//Boss phase damage reduction
+	float finalDamage = DamageAmount - (DamageAmount * (damageReductionMultiple * (bossPhase - 1)));
 	
 	//Decrement damage
-	health -= DamageAmount;
+	health -= finalDamage;
 
 	//Update boss phase
 	float bossPhaseThreshold = maxHealth / finalBossPhase;
@@ -300,6 +517,7 @@ float ABaseBoss::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent,
 	{
 		++bossPhase;
 		bossPhase = bossPhase > finalBossPhase ? finalBossPhase : bossPhase;
+		BeginGrowingSize();
 	}
 
 	//If health depleted, die
@@ -313,9 +531,14 @@ float ABaseBoss::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent,
 		PlayAnimationMontage();
 	}
 	
-	return DamageAmount;
+	return finalDamage;
 }
 
+/**
+* Used to get a relative move speed for the animation blueprint
+* Move speed is adjusted when boss enters large state, this returns the relative move speed without
+* adjustments for the size state to ensure accurate locomotion animation
+*/
 float ABaseBoss::GetModifiedMoveSpeed()
 {
 	if (!isLarge)
@@ -329,7 +552,10 @@ float ABaseBoss::GetModifiedMoveSpeed()
 	return currentVelocity / sizeDifference;
 }
 
-
+/**
+* Called to change move speeds between walking and running
+* Boss cannot run while in the large state
+*/
 void ABaseBoss::SetMoveSpeed(bool running)
 {
 	if (!isLarge)
@@ -338,6 +564,7 @@ void ABaseBoss::SetMoveSpeed(bool running)
 	} 
 }
 
+//Begins the battle when the player enters the arena
 void ABaseBoss::BeginBattle()
 {
 	battleBegun = true;
