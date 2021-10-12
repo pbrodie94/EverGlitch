@@ -7,6 +7,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Particles/ParticleSystemComponent.h"
+#include "Weapons/ProjectileBase.h"
 
 // Sets default values
 ABaseBoss::ABaseBoss()
@@ -155,6 +156,7 @@ void ABaseBoss::Tick(float DeltaTime)
 		{
 			spawnedShockwaves = 0;
 			isGroundSlamSequence = false;
+			isAttacking = false;
 		}
 		
 		if (GetWorld()->GetTimeSeconds() >= timeLastShockwave)
@@ -351,27 +353,49 @@ void ABaseBoss::ThrowProjectiles()
 	}
 	FVector throwingPosition = GetMesh()->GetSocketLocation(throwningSocketName);
 	FVector baseDirection = playerPosition - throwingPosition;
+	
+	//Get size of projectiles based on size state
+	float size = (GetActorScale3D().X / largeSize.X) + 1;
 
 	//If only throwing a single projectile, fire the single projectile straight at target
 	if (numberOfProjectiles == 1)
 	{
 		//Create a Transform to spawn from
 		FRotator rotation = UKismetMathLibrary::MakeRotFromX(baseDirection);
-		float size = (GetActorScale3D().X / largeSize.X) + 1;
-		FTransform spawnTrasform(rotation, throwingPosition, FVector(size, size, size));
+		FTransform spawnTransform(rotation, throwingPosition, FVector(size, size, size));
 
 		//Call spawn effects on Blueprint
-		SpawnEffects(Projectile, spawnTrasform);
+		AProjectileBase* projectile = Cast<AProjectileBase>(SpawnEffects(Projectile, spawnTransform));
+		if (ensure(projectile))
+		{
+			projectile->SetDamage(projectileDamage);
+			
+			//Adjust projectile based on phase
+			switch(bossPhase)
+			{
+				case 1:
+					projectile->SetProjectileSpeed(2500);
+					projectile->SetShouldBounce(false);
+					break;
+				case 2:
+					projectile->SetProjectileSpeed(3500);
+					projectile->SetShouldBounce(!isLarge);
+					break;
+				case 3:
+					projectile->SetProjectileSpeed(5000);
+					projectile->SetShouldBounce(!isLarge);
+					break;
+			}
+		}
 		isAttacking = false;
 		return;
 	}
 
 	//Determine the angle increment between each projectile
-	float baseFireAngle = 15 * (GetActorScale3D().X / normalSize.X);
+	float baseFireAngle = 15 * size;
 	float angleIncrement = numberOfProjectiles - 2;
 	angleIncrement = (angleIncrement * 12.5f) + baseFireAngle;
 	angleIncrement = angleIncrement / numberOfProjectiles;
-	float size = (GetActorScale3D().X / largeSize.X) + 1;
 	for (int i = 0; i < numberOfProjectiles; ++i)
 	{
 		//Get the angle for the current projectile
@@ -383,7 +407,28 @@ void ABaseBoss::ThrowProjectiles()
 		FTransform spawnTransform(rotation, throwingPosition, FVector(size, size, size));
 
 		//Call spawn effects on Blueprint
-		SpawnEffects(Projectile, spawnTransform);
+		AProjectileBase* projectile = Cast<AProjectileBase>(SpawnEffects(Projectile, spawnTransform));
+		if (ensure(projectile))
+		{
+			projectile->SetDamage(projectileDamage);
+			
+			//Adjust projectile based on phase
+			switch(bossPhase)
+			{
+			case 1:
+				projectile->SetProjectileSpeed(2500);
+				projectile->SetShouldBounce(false);
+				break;
+			case 2:
+				projectile->SetProjectileSpeed(3500);
+				projectile->SetShouldBounce(!isLarge);
+				break;
+			case 3:
+				projectile->SetProjectileSpeed(5000);
+				projectile->SetShouldBounce(!isLarge);
+				break;
+			}
+		}
 	}
 
 	isAttacking = false;
@@ -429,7 +474,10 @@ void ABaseBoss::GroundSlamAttack()
 	//Spawn ground slam effect
 	SpawnEffects(GroundSlam, spawnTransform);
 
-	isAttacking = false;
+    if (!isGroundSlamSequence)
+    {
+	    isAttacking = false;
+	}
 }
 
 //Called to clean up attack sequences
@@ -507,7 +555,7 @@ float ABaseBoss::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent,
 	//Boss phase damage reduction
 	float finalDamage = DamageAmount - (DamageAmount * (damageReductionMultiple * (bossPhase - 1)));
 	
-	//Decrement damage
+	//Decrement damage from health
 	health -= finalDamage;
 
 	//Update boss phase

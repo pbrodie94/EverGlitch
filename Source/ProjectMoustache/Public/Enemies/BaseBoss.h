@@ -245,7 +245,7 @@ protected:
 	 * Calls to the blueprint class to spawn actors
 	 */
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
-	void SpawnEffects(const TEnumAsByte<EAttackType>& attackType, const FTransform& spawnTransform);
+	AActor* SpawnEffects(const TEnumAsByte<EAttackType>& attackType, const FTransform& spawnTransform);
 
 	/**
 	 * Calls to the blueprint class to spawn the beam particle system for the beam attack, then returns a pointer reference
