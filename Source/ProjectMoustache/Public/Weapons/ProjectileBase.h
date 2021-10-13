@@ -39,11 +39,6 @@ protected:
 	UPROPERTY(BlueprintReadOnly)
 	APawn* myOwner;
 
-	UFUNCTION()
-	virtual void OnBeginOverlapEvent(UPrimitiveComponent* overlappedComp, class AActor* otherActor,
-		class UPrimitiveComponent* otherComp, int32 otherBodyIndex, bool bFromSweep,
-		const FHitResult& sweepResult);
-
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;

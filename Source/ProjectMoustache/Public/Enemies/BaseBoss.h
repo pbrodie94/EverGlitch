@@ -64,6 +64,20 @@ class PROJECTMOUSTACHE_API ABaseBoss : public ACharacter
 	UPROPERTY(EditDefaultsOnly, Category = Combat)
 	float meleeHitRadius;
 
+	//Number of missed melee attacks, used to decide on AOE for melee dodge cheese
+	int numMissedMelee;
+
+	//The time to reset the melee misses
+	UPROPERTY(EditDefaultsOnly, Category = Combat, meta = (AllowPrivateAccess = true))
+	float timeResetMeleeMiss;
+
+	float timeLastMissedMelee;
+	
+	//Number of barrages of projectiles thrown in a barrage
+	int numberOfProjectileBarrage;
+
+	int numberOfBarragesThrown;
+
 	//Interval between ground slam shockwaves
 	UPROPERTY(EditDefaultsOnly, Category = Combat, meta = (AllowPrivateAccess = true))
 	float groundSlamInterval;
@@ -110,6 +124,13 @@ class PROJECTMOUSTACHE_API ABaseBoss : public ACharacter
 
 	//Function called tick function to handle the size changing sequence
 	void HandleBossSizeChange();
+
+	/**
+	 * Takes the number of missed melee attacks and decides whether to do AOE attack
+	 * If one missed attack, returns 50% chance, 100% chance for more than one missed
+	 */
+	UFUNCTION(BlueprintCallable)
+	bool GetShouldAOE();
 	
 public:
 	// Sets default values for this character's properties
@@ -166,6 +187,16 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = Combat, BlueprintReadOnly)
 	float meleeDamage;
 
+	//Percentage of chance of a projectile barrage
+	UPROPERTY(EditDefaultsOnly, Category = Combat)
+	float barrageChancePercentage;
+
+	UPROPERTY(EditDefaultsOnly, Category = Combat)
+	FVector2D projectileBarrageBaseRange;
+	
+	UPROPERTY(BlueprintReadOnly)
+	bool isProjectileBarage;
+	
 	UPROPERTY(EditDefaultsOnly, Category = Combat, BlueprintReadOnly)
 	float projectileDamage;
 

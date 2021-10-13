@@ -49,6 +49,11 @@ ABaseBoss::ABaseBoss()
 	spawnedShockwaves = 0;
 	groundSlamInterval = 0.5f;
 	isGroundSlamSequence = false;
+
+	barrageChancePercentage = 10;
+	projectileBarrageBaseRange = FVector2D(2, 4);
+
+	timeResetMeleeMiss = 10;
 }
 
 // Called when the game starts or when spawned
@@ -125,6 +130,21 @@ void ABaseBoss::BeginPlay()
 		damageReductionPercentage = 15;
 	}
 
+	if (projectileBarrageBaseRange.X <= 1 || projectileBarrageBaseRange.X > 3)
+	{
+		projectileBarrageBaseRange.X = 2;
+	}
+
+	if (projectileBarrageBaseRange.Y <= 3 || projectileBarrageBaseRange.Y > 10)
+	{
+		projectileBarrageBaseRange.Y = 4;
+	}
+
+	if (projectileBarrageBaseRange.Y < projectileBarrageBaseRange.X)
+	{
+		projectileBarrageBaseRange.Y = projectileBarrageBaseRange.X;
+	}
+
 	damageReductionMultiple = damageReductionPercentage / 100;
 }
 
@@ -164,6 +184,14 @@ void ABaseBoss::Tick(float DeltaTime)
 			GroundSlamAttack();
 			++spawnedShockwaves;
 			timeLastShockwave = GetWorld()->GetTimeSeconds() + groundSlamInterval;
+		}
+	}
+
+	if (numMissedMelee > 0)
+	{
+		if (GetWorld()->GetTimeSeconds() >= timeLastMissedMelee)
+		{
+			numMissedMelee = 0;
 		}
 	}
 }
@@ -335,6 +363,19 @@ void ABaseBoss::DetectMeleeHits()
 */
 void ABaseBoss::ThrowProjectiles()
 {
+	//Check if should barrage
+	if (!isProjectileBarage)
+	{
+		float rand = FMath::RandRange(0.0f, 100.0f);
+		float chance = barrageChancePercentage * (bossPhase - 1);
+		if (rand <= chance)
+		{
+			numberOfProjectileBarrage = FMath::RandRange(projectileBarrageBaseRange.X, projectileBarrageBaseRange.Y);
+			numberOfBarragesThrown = 0;
+			isProjectileBarage = true;
+		}
+	}
+	
 	//Get number of projectiles
 	int maxProjectiles = 3 + ((bossPhase - 1) * bossPhase);
 	int numberOfProjectiles = FMath::RandRange(1, maxProjectiles);
@@ -382,12 +423,26 @@ void ABaseBoss::ThrowProjectiles()
 					projectile->SetShouldBounce(!isLarge);
 					break;
 				case 3:
+					default:
 					projectile->SetProjectileSpeed(5000);
 					projectile->SetShouldBounce(!isLarge);
 					break;
 			}
 		}
-		isAttacking = false;
+		//If barraging projectiles, check if barrage is completed
+		if (isProjectileBarage)
+		{
+			++numberOfBarragesThrown;
+			if (numberOfBarragesThrown >= numberOfProjectileBarrage)
+			{
+				numberOfBarragesThrown = 0;
+				isProjectileBarage = false;
+				isAttacking = false;
+			}
+		} else
+		{
+			//isAttacking = false;
+		}
 		return;
 	}
 
@@ -424,6 +479,7 @@ void ABaseBoss::ThrowProjectiles()
 				projectile->SetShouldBounce(!isLarge);
 				break;
 			case 3:
+				default:
 				projectile->SetProjectileSpeed(5000);
 				projectile->SetShouldBounce(!isLarge);
 				break;
@@ -431,7 +487,20 @@ void ABaseBoss::ThrowProjectiles()
 		}
 	}
 
-	isAttacking = false;
+	//If barraging projectiles, check if barrage is completed
+	if (isProjectileBarage)
+	{
+		++numberOfBarragesThrown;
+		if (numberOfBarragesThrown >= numberOfProjectileBarrage)
+		{
+			numberOfBarragesThrown = 0;
+			isProjectileBarage = false;
+			isAttacking = false;
+		}
+	} else
+	{
+		//isAttacking = false;
+	}
 }
 
 /**
@@ -476,14 +545,24 @@ void ABaseBoss::GroundSlamAttack()
 
     if (!isGroundSlamSequence)
     {
-	    isAttacking = false;
+	    //isAttacking = false;
 	}
 }
 
 //Called to clean up attack sequences
 void ABaseBoss::OnEndingDamage()
 {
-	isAttacking = false;
+	//Check if melee missed
+	if (isMeleeAttacking)
+	{
+		if (hitActors.Num() <= 0)
+		{
+			++numMissedMelee;
+			timeLastMissedMelee = GetWorld()->GetTimeSeconds() + timeResetMeleeMiss;
+		}
+	}
+	
+	//isAttacking = false;
 	isBeamAttacking = false;
 	isMeleeAttacking = false;
 
@@ -617,4 +696,35 @@ void ABaseBoss::BeginBattle()
 {
 	battleBegun = true;
 }
+
+/**
+* Takes the number of missed melee attacks and decides whether to do AOE attack
+* If one missed attack, returns 50% chance, 100% chance for more than one missed
+*/
+bool ABaseBoss::GetShouldAOE()
+{
+	float rand = FMath::RandRange(0, 100);
+	
+	switch (numMissedMelee)
+	{
+		case 0:
+			
+			return false;
+		
+		case 1:
+			
+			
+			if (rand < 50)
+			{
+				return true;
+			}
+		
+				return false;
+		
+		default:
+			
+			return true;
+	}
+}
+
 
