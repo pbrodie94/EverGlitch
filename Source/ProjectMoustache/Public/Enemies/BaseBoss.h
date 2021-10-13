@@ -13,7 +13,9 @@ enum EAttackType
 	Melee UMETA(DisplayName = "Melee"),
 	Projectile UMETA(DisplayName = "Projectile"),
 	Beam UMETA(DisplayName = "Beam"),
-	GroundSlam UMETA(DisplayName = "GroundSlam")
+	GroundSlam UMETA(DisplayName = "GroundSlam"),
+	PointMagic UMETA(DisplayName = "PointMagic"),
+	AOE UMETA(DisplayName = "AOE")
 };
 
 UENUM(BlueprintType)
@@ -52,6 +54,18 @@ class PROJECTMOUSTACHE_API ABaseBoss : public ACharacter
 	bool isGroundSlamSequence;
 	int spawnedShockwaves;
 	float timeLastShockwave;
+
+	bool isPointMagicAttack;
+	int numberMagicPointsToSpawn;
+	int numberSpawnedMagicPoints;
+
+	float timeLastPointMagicAttack;
+
+	UPROPERTY(EditDefaultsOnly, Category = Combat, meta = (AllowPrivateAccess = true))
+	float timeBetweenMagicPointAttacks;
+	
+	UPROPERTY(EditDefaultsOnly, Category = Combat, meta = (AllowPrivateAccess = true))
+	FVector2D magicPointsBaseRange;
 
 	//Percentage (%) of damage reduction per phase
 	UPROPERTY(EditDefaultsOnly, Category = Status, meta = (AllowPrivateAccess = true))
@@ -125,12 +139,7 @@ class PROJECTMOUSTACHE_API ABaseBoss : public ACharacter
 	//Function called tick function to handle the size changing sequence
 	void HandleBossSizeChange();
 
-	/**
-	 * Takes the number of missed melee attacks and decides whether to do AOE attack
-	 * If one missed attack, returns 50% chance, 100% chance for more than one missed
-	 */
-	UFUNCTION(BlueprintCallable)
-	bool GetShouldAOE();
+	FVector GetGroundPosition(FVector originPosition);
 	
 public:
 	// Sets default values for this character's properties
@@ -241,6 +250,14 @@ protected:
 	UFUNCTION(BlueprintCallable)
 	void GroundSlamAttack();
 
+	UFUNCTION(BlueprintCallable)
+	void AOEAttack();
+
+	UFUNCTION(BlueprintCallable)
+	void BeginPointMagicAttack();
+	
+	void PointMagicAttack();
+
 	//Begins the beam attack sequence
 	UFUNCTION(BlueprintCallable)
 	void BeginBeamAttack();
@@ -309,6 +326,13 @@ protected:
 	 */
 	UFUNCTION(BlueprintCallable)
 	float GetModifiedMoveSpeed();
+
+	/**
+	* Takes the number of missed melee attacks and decides whether to do AOE attack
+	* If one missed attack, returns 50% chance, 100% chance for more than one missed
+	*/
+	UFUNCTION(BlueprintCallable)
+	bool GetShouldAOE();
 	
 	UFUNCTION(BlueprintImplementableEvent)
 	void Die();
