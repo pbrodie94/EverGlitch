@@ -13,7 +13,9 @@ enum EAttackType
 	Melee UMETA(DisplayName = "Melee"),
 	Projectile UMETA(DisplayName = "Projectile"),
 	Beam UMETA(DisplayName = "Beam"),
-	GroundSlam UMETA(DisplayName = "GroundSlam")
+	GroundSlam UMETA(DisplayName = "GroundSlam"),
+	PointMagic UMETA(DisplayName = "PointMagic"),
+	AOE UMETA(DisplayName = "AOE")
 };
 
 UENUM(BlueprintType)
@@ -53,6 +55,18 @@ class PROJECTMOUSTACHE_API ABaseBoss : public ACharacter
 	int spawnedShockwaves;
 	float timeLastShockwave;
 
+	bool isPointMagicAttack;
+	int numberMagicPointsToSpawn;
+	int numberSpawnedMagicPoints;
+
+	float timeLastPointMagicAttack;
+
+	UPROPERTY(EditDefaultsOnly, Category = Combat, meta = (AllowPrivateAccess = true))
+	float timeBetweenMagicPointAttacks;
+	
+	UPROPERTY(EditDefaultsOnly, Category = Combat, meta = (AllowPrivateAccess = true))
+	FVector2D magicPointsBaseRange;
+
 	//Percentage (%) of damage reduction per phase
 	UPROPERTY(EditDefaultsOnly, Category = Status, meta = (AllowPrivateAccess = true))
 	int damageReductionPercentage;
@@ -63,6 +77,20 @@ class PROJECTMOUSTACHE_API ABaseBoss : public ACharacter
 	//The radius used by the sphere check for detecting hits on melee attacks
 	UPROPERTY(EditDefaultsOnly, Category = Combat)
 	float meleeHitRadius;
+
+	//Number of missed melee attacks, used to decide on AOE for melee dodge cheese
+	int numMissedMelee;
+
+	//The time to reset the melee misses
+	UPROPERTY(EditDefaultsOnly, Category = Combat, meta = (AllowPrivateAccess = true))
+	float timeResetMeleeMiss;
+
+	float timeLastMissedMelee;
+	
+	//Number of barrages of projectiles thrown in a barrage
+	int numberOfProjectileBarrage;
+
+	int numberOfBarragesThrown;
 
 	//Interval between ground slam shockwaves
 	UPROPERTY(EditDefaultsOnly, Category = Combat, meta = (AllowPrivateAccess = true))
@@ -110,6 +138,8 @@ class PROJECTMOUSTACHE_API ABaseBoss : public ACharacter
 
 	//Function called tick function to handle the size changing sequence
 	void HandleBossSizeChange();
+
+	FVector GetGroundPosition(FVector originPosition);
 	
 public:
 	// Sets default values for this character's properties
@@ -166,6 +196,16 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = Combat, BlueprintReadOnly)
 	float meleeDamage;
 
+	//Percentage of chance of a projectile barrage
+	UPROPERTY(EditDefaultsOnly, Category = Combat)
+	float barrageChancePercentage;
+
+	UPROPERTY(EditDefaultsOnly, Category = Combat)
+	FVector2D projectileBarrageBaseRange;
+	
+	UPROPERTY(BlueprintReadOnly)
+	bool isProjectileBarage;
+	
 	UPROPERTY(EditDefaultsOnly, Category = Combat, BlueprintReadOnly)
 	float projectileDamage;
 
@@ -209,6 +249,14 @@ protected:
 	 */
 	UFUNCTION(BlueprintCallable)
 	void GroundSlamAttack();
+
+	UFUNCTION(BlueprintCallable)
+	void AOEAttack();
+
+	UFUNCTION(BlueprintCallable)
+	void BeginPointMagicAttack();
+	
+	void PointMagicAttack();
 
 	//Begins the beam attack sequence
 	UFUNCTION(BlueprintCallable)
@@ -278,6 +326,13 @@ protected:
 	 */
 	UFUNCTION(BlueprintCallable)
 	float GetModifiedMoveSpeed();
+
+	/**
+	* Takes the number of missed melee attacks and decides whether to do AOE attack
+	* If one missed attack, returns 50% chance, 100% chance for more than one missed
+	*/
+	UFUNCTION(BlueprintCallable)
+	bool GetShouldAOE();
 	
 	UFUNCTION(BlueprintImplementableEvent)
 	void Die();

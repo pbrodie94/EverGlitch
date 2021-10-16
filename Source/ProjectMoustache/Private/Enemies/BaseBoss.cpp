@@ -49,6 +49,13 @@ ABaseBoss::ABaseBoss()
 	spawnedShockwaves = 0;
 	groundSlamInterval = 0.5f;
 	isGroundSlamSequence = false;
+
+	barrageChancePercentage = 10;
+	projectileBarrageBaseRange = FVector2D(2, 4);
+	magicPointsBaseRange = FVector2D(2, 3);
+	timeBetweenMagicPointAttacks = 1.0f;
+
+	timeResetMeleeMiss = 10;
 }
 
 // Called when the game starts or when spawned
@@ -125,6 +132,41 @@ void ABaseBoss::BeginPlay()
 		damageReductionPercentage = 15;
 	}
 
+	if (projectileBarrageBaseRange.X <= 1 || projectileBarrageBaseRange.X > 3)
+	{
+		projectileBarrageBaseRange.X = 2;
+	}
+
+	if (projectileBarrageBaseRange.Y <= 3 || projectileBarrageBaseRange.Y > 10)
+	{
+		projectileBarrageBaseRange.Y = 4;
+	}
+
+	if (projectileBarrageBaseRange.Y < projectileBarrageBaseRange.X)
+	{
+		projectileBarrageBaseRange.Y = projectileBarrageBaseRange.X;
+	}
+
+	if (magicPointsBaseRange.X <= 0)
+	{
+		magicPointsBaseRange.X = 2;
+	}
+
+	if (magicPointsBaseRange.Y < 3)
+	{
+		magicPointsBaseRange.Y = 3;
+	}
+
+	if (magicPointsBaseRange.Y < magicPointsBaseRange.X)
+	{
+		magicPointsBaseRange.Y = magicPointsBaseRange.X;
+	}
+
+	if (timeBetweenMagicPointAttacks < 0.1f)
+	{
+		timeBetweenMagicPointAttacks = 0.5f;
+	}
+
 	damageReductionMultiple = damageReductionPercentage / 100;
 }
 
@@ -149,6 +191,15 @@ void ABaseBoss::Tick(float DeltaTime)
 		BeamAttack(DeltaTime);
 	}
 
+	//Handle point magic attack
+	if (isPointMagicAttack)
+	{
+		if (GetWorld()->GetTimeSeconds() >= timeLastPointMagicAttack)
+		{
+			PointMagicAttack();
+		}
+	}
+
 	//Handle multi ground slam attack
 	if (isGroundSlamSequence)
 	{
@@ -164,6 +215,14 @@ void ABaseBoss::Tick(float DeltaTime)
 			GroundSlamAttack();
 			++spawnedShockwaves;
 			timeLastShockwave = GetWorld()->GetTimeSeconds() + groundSlamInterval;
+		}
+	}
+
+	if (numMissedMelee > 0)
+	{
+		if (GetWorld()->GetTimeSeconds() >= timeLastMissedMelee)
+		{
+			numMissedMelee = 0;
 		}
 	}
 }
@@ -328,6 +387,49 @@ void ABaseBoss::DetectMeleeHits()
 	}
 }
 
+void ABaseBoss::BeginPointMagicAttack()
+{
+	isAttacking = true;
+	numberMagicPointsToSpawn = FMath::RandRange(magicPointsBaseRange.X, magicPointsBaseRange.Y);
+	numberSpawnedMagicPoints = 0;
+	isPointMagicAttack = true;
+
+	//GEngine->AddOnScreenDebugMessage(-1, 10, FColor::Red, TEXT("Range " + FString::SanitizeFloat(magicPointsBaseRange.X) +
+	//	", " + FString::SanitizeFloat(magicPointsBaseRange.Y) + " Num to spawn: " + FString::FromInt(numberMagicPointsToSpawn)));
+}
+
+/**
+ * Spawns magic areas of effect at the player's feet, that delay for a period then shoot up causing damage
+ */
+void ABaseBoss::PointMagicAttack()
+{
+	if (playerReference == nullptr)
+	{
+		playerReference = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
+	}
+
+	FVector position = GetActorForwardVector();
+	if (ensure(playerReference))
+	{
+		position = GetGroundPosition(playerReference->GetActorLocation());
+	}
+
+	position.Z += 5;
+
+	FTransform spawnTransform(FRotator::ZeroRotator, position, FVector(1, 1, 1));
+	SpawnEffects(PointMagic, spawnTransform);
+
+	++numberSpawnedMagicPoints;
+	timeLastPointMagicAttack = GetWorld()->GetTimeSeconds() + timeBetweenMagicPointAttacks;
+	//GEngine->AddOnScreenDebugMessage(-1, 10, FColor::Red, TEXT("Number spawned: " + FString::FromInt(numberSpawnedMagicPoints)));
+
+	if (numberSpawnedMagicPoints >= numberMagicPointsToSpawn)
+	{
+		isPointMagicAttack = false;
+		numberSpawnedMagicPoints = 0;
+	}
+}
+
 /**
 * Gets a random number of projectiles to throw between 1 and a high end range of 3 - 8 depending on the boss phase
 * Calculates the angles needed to throw multiple projectiles in a fan pattern,
@@ -335,6 +437,19 @@ void ABaseBoss::DetectMeleeHits()
 */
 void ABaseBoss::ThrowProjectiles()
 {
+	//Check if should barrage
+	if (!isProjectileBarage)
+	{
+		float rand = FMath::RandRange(0.0f, 100.0f);
+		float chance = barrageChancePercentage * (bossPhase - 1);
+		if (rand <= chance)
+		{
+			numberOfProjectileBarrage = FMath::RandRange(projectileBarrageBaseRange.X, projectileBarrageBaseRange.Y);
+			numberOfBarragesThrown = 0;
+			isProjectileBarage = true;
+		}
+	}
+	
 	//Get number of projectiles
 	int maxProjectiles = 3 + ((bossPhase - 1) * bossPhase);
 	int numberOfProjectiles = FMath::RandRange(1, maxProjectiles);
@@ -382,12 +497,26 @@ void ABaseBoss::ThrowProjectiles()
 					projectile->SetShouldBounce(!isLarge);
 					break;
 				case 3:
+					default:
 					projectile->SetProjectileSpeed(5000);
 					projectile->SetShouldBounce(!isLarge);
 					break;
 			}
 		}
-		isAttacking = false;
+		//If barraging projectiles, check if barrage is completed
+		if (isProjectileBarage)
+		{
+			++numberOfBarragesThrown;
+			if (numberOfBarragesThrown >= numberOfProjectileBarrage)
+			{
+				numberOfBarragesThrown = 0;
+				isProjectileBarage = false;
+				//isAttacking = false;
+			}
+		} else
+		{
+			//isAttacking = false;
+		}
 		return;
 	}
 
@@ -424,6 +553,7 @@ void ABaseBoss::ThrowProjectiles()
 				projectile->SetShouldBounce(!isLarge);
 				break;
 			case 3:
+				default:
 				projectile->SetProjectileSpeed(5000);
 				projectile->SetShouldBounce(!isLarge);
 				break;
@@ -431,7 +561,20 @@ void ABaseBoss::ThrowProjectiles()
 		}
 	}
 
-	isAttacking = false;
+	//If barraging projectiles, check if barrage is completed
+	if (isProjectileBarage)
+	{
+		++numberOfBarragesThrown;
+		if (numberOfBarragesThrown >= numberOfProjectileBarrage)
+		{
+			numberOfBarragesThrown = 0;
+			isProjectileBarage = false;
+			//isAttacking = false;
+		}
+	} else
+	{
+		//isAttacking = false;
+	}
 }
 
 /**
@@ -449,22 +592,8 @@ void ABaseBoss::GroundSlamAttack()
 	
 	//Find position to spawn ground slam effect
 	//Get position
-	FVector position = GetActorLocation();
-	
-	//set to a specific height off the ground
-	//Get trace to find ground position, then add desired height to get position
-	float heightOffGround = 25;
-	FVector end = position - FVector(0, 0, GetActorScale3D().Z + 1000);
-	FCollisionQueryParams collisionParams(FName("GetGroundPosition"), false,GetOwner());
-	FHitResult hitResult;
-	if (GetWorld()->LineTraceSingleByChannel(hitResult, position, end, ECC_Visibility, collisionParams))
-	{
-		position.Z = hitResult.ImpactPoint.Z + heightOffGround;
-	} else
-	{
-		//If trace does not hit anything, take actor's location and lower by an amount
-		position = position - FVector(0, 0, 150);
-	}
+	FVector position = GetGroundPosition(GetActorLocation());
+	position.Z += 25;
 
 	//Create a Transform to spawn from
 	FVector scale = FVector(5, 5, 1);
@@ -476,14 +605,40 @@ void ABaseBoss::GroundSlamAttack()
 
     if (!isGroundSlamSequence)
     {
-	    isAttacking = false;
+	    //isAttacking = false;
 	}
 }
+
+/**
+ * Spawns a shockwave attack around body which rapidly spreads out
+ */
+void ABaseBoss::AOEAttack()
+{
+	isAttacking = true;
+	
+	//Find position to spawn ground slam effect
+	//Get position
+	FVector position = GetGroundPosition(GetActorLocation());
+	
+	FTransform spawnTransform(FRotator::ZeroRotator, position, FVector(1, 1, 15));
+	SpawnEffects(AOE, spawnTransform);
+}
+
 
 //Called to clean up attack sequences
 void ABaseBoss::OnEndingDamage()
 {
-	isAttacking = false;
+	//Check if melee missed
+	if (isMeleeAttacking)
+	{
+		if (hitActors.Num() <= 0)
+		{
+			++numMissedMelee;
+			timeLastMissedMelee = GetWorld()->GetTimeSeconds() + timeResetMeleeMiss;
+		}
+	}
+	
+	//isAttacking = false;
 	isBeamAttacking = false;
 	isMeleeAttacking = false;
 
@@ -544,6 +699,28 @@ FVector ABaseBoss::GetThrowingDirection(FVector baseDirection, float angle)
 	
 	return FVector(x, y, baseDirection.Z);
 }
+
+FVector ABaseBoss::GetGroundPosition(FVector originPosition)
+{
+	//Find position to spawn ground slam effect
+	//Get position
+	FVector position = originPosition;
+	
+	//set to a specific height off the ground
+	//Get trace to find ground position, then add desired height to get position
+	FVector end = position - FVector(0, 0, GetActorScale3D().Z + 1000);
+	FCollisionQueryParams collisionParams(FName("GetGroundPosition"), false,GetOwner());
+	FHitResult hitResult;
+	if (GetWorld()->LineTraceSingleByChannel(hitResult, position, end, ECC_Visibility, collisionParams))
+	{
+		return hitResult.ImpactPoint;
+	} else
+	{
+		position.Z = position.Z - 200;
+		return position;
+	}
+}
+
 
 float ABaseBoss::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
@@ -618,3 +795,32 @@ void ABaseBoss::BeginBattle()
 	battleBegun = true;
 }
 
+/**
+* Takes the number of missed melee attacks and decides whether to do AOE attack
+* If one missed attack, returns 50% chance, 100% chance for more than one missed
+*/
+bool ABaseBoss::GetShouldAOE()
+{
+	float rand = FMath::RandRange(0, 100);
+	
+	switch (numMissedMelee)
+	{
+		case 0:
+			
+			return false;
+		
+		case 1:
+			
+			
+			if (rand < 50)
+			{
+				return true;
+			}
+		
+				return false;
+		
+		default:
+			
+			return true;
+	}
+}
