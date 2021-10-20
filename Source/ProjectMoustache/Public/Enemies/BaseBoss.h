@@ -31,7 +31,7 @@ class PROJECTMOUSTACHE_API ABaseBoss : public ACharacter
 {
 	GENERATED_BODY()
 
-	//Reference to the player's actor 
+	//Reference to the player's actor
 	AActor* playerReference;
 
 	//Names of sockets exposed to be edited in engine in case of changes
@@ -47,10 +47,10 @@ class PROJECTMOUSTACHE_API ABaseBoss : public ACharacter
 	//The cooldown after boss has grown
 	UPROPERTY(EditDefaultsOnly, Category = Abilities, meta = (AllowPrivateAccess = true))
 	float growSizeCoolDown;
-	
+
 	float timeLastGrowSize;
 	float timeBeganChangeSize;
-	
+
 	bool isGroundSlamSequence;
 	int spawnedShockwaves;
 	float timeLastShockwave;
@@ -63,7 +63,7 @@ class PROJECTMOUSTACHE_API ABaseBoss : public ACharacter
 
 	UPROPERTY(EditDefaultsOnly, Category = Combat, meta = (AllowPrivateAccess = true))
 	float timeBetweenMagicPointAttacks;
-	
+
 	UPROPERTY(EditDefaultsOnly, Category = Combat, meta = (AllowPrivateAccess = true))
 	FVector2D magicPointsBaseRange;
 
@@ -86,7 +86,7 @@ class PROJECTMOUSTACHE_API ABaseBoss : public ACharacter
 	float timeResetMeleeMiss;
 
 	float timeLastMissedMelee;
-	
+
 	//Number of barrages of projectiles thrown in a barrage
 	int numberOfProjectileBarrage;
 
@@ -140,7 +140,7 @@ class PROJECTMOUSTACHE_API ABaseBoss : public ACharacter
 	void HandleBossSizeChange();
 
 	FVector GetGroundPosition(FVector originPosition);
-	
+
 public:
 	// Sets default values for this character's properties
 	ABaseBoss();
@@ -192,7 +192,7 @@ protected:
 	//The distance the boss will melee attack
 	UPROPERTY(EditDefaultsOnly, Category = Combat, BlueprintReadOnly)
 	float meleeDistance;
-	
+
 	UPROPERTY(EditDefaultsOnly, Category = Combat, BlueprintReadOnly)
 	float meleeDamage;
 
@@ -202,10 +202,10 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, Category = Combat)
 	FVector2D projectileBarrageBaseRange;
-	
+
 	UPROPERTY(BlueprintReadOnly)
 	bool isProjectileBarage;
-	
+
 	UPROPERTY(EditDefaultsOnly, Category = Combat, BlueprintReadOnly)
 	float projectileDamage;
 
@@ -217,13 +217,13 @@ protected:
 
 	UPROPERTY(BlueprintReadWrite)
 	bool isAttacking;
-	
+
 	UPROPERTY(BlueprintReadOnly)
 	float timeBeganBeamAttack;
 
 	UPROPERTY(BlueprintReadWrite)
 	bool isMeleeAttacking;
-	
+
 	UPROPERTY(BlueprintReadWrite)
 	bool isBeamAttacking;
 
@@ -255,7 +255,7 @@ protected:
 
 	UFUNCTION(BlueprintCallable)
 	void BeginPointMagicAttack();
-	
+
 	void PointMagicAttack();
 
 	//Begins the beam attack sequence
@@ -305,7 +305,7 @@ protected:
 	 * Stores a list of hit actors for the beam attack and melee attacks to manage how many times individual actors are hit
 	 */
 	TArray<AActor*> hitActors;
-	
+
 	/**
 	 * Called to clean up attack sequences
 	 */
@@ -318,7 +318,7 @@ protected:
 	 */
 	UFUNCTION(BlueprintCallable)
 	void SetMoveSpeed(bool running);
-	
+
 	/**
 	 * Used to get a relevant move speed for the animation blueprint
 	 * Move speed is adjusted when boss enters large state, this returns the relative move speed without
@@ -333,11 +333,11 @@ protected:
 	*/
 	UFUNCTION(BlueprintCallable)
 	bool GetShouldAOE();
-	
+
 	UFUNCTION(BlueprintImplementableEvent)
 	void Die();
 
-public:	
+public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
@@ -352,7 +352,7 @@ public:
 	//Sets boss to shrinking state, and returns shrinking time
 	UFUNCTION(BlueprintCallable)
 	float BeginShrinkSize();
-	
+
 	UFUNCTION(BlueprintCallable)
 	int GetCurrentBossPhase() { return bossPhase; }
 
