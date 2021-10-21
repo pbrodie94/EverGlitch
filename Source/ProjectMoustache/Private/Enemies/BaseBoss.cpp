@@ -19,7 +19,7 @@ ABaseBoss::ABaseBoss()
 
 	battleBegun = false;
 	maxHealth = 5000;
-	
+
 	bossPhase = 1;
 	finalBossPhase = 3;
 
@@ -69,14 +69,14 @@ void ABaseBoss::BeginPlay()
 	largeSize = normalSize * 3;
 
 	battleBegun = false;
-	
+
 	if (maxHealth <= 0)
 	{
 		maxHealth = 5000;
 	}
 
 	health = maxHealth;
-	
+
 	if (runDistance <= 0)
 	{
 		runDistance = 1500;
@@ -209,7 +209,7 @@ void ABaseBoss::Tick(float DeltaTime)
 			isGroundSlamSequence = false;
 			isAttacking = false;
 		}
-		
+
 		if (GetWorld()->GetTimeSeconds() >= timeLastShockwave)
 		{
 			GroundSlamAttack();
@@ -233,7 +233,7 @@ void ABaseBoss::HandleBossSizeChange()
 	//If state is neutral, or the volume reference to spawn statues isn't found, do nothing
 	if (changeSizeState == Neutral)
 		return;
-	
+
 	//Get the wanted size based on the change size state
 	FVector wantedSize = largeSize;
 	FVector currentSize = normalSize;
@@ -272,7 +272,7 @@ void ABaseBoss::HandleBossSizeChange()
 			isLarge = false;
 			timeLastGrowSize = GetWorld()->GetTimeSeconds() + growSizeCoolDown;
 		}
-		
+
 		changeSizeState = Neutral;
 	}
 }
@@ -284,7 +284,7 @@ void ABaseBoss::BeginBeamAttack()
 	isBeamAttacking = true;
 
 	beamParticles = SpawnBeamParticles();
-	
+
 	timeBeganBeamAttack = GetWorld()->GetTimeSeconds() + beamChargingTime;
 }
 
@@ -300,7 +300,7 @@ void ABaseBoss::BeamAttack(float deltaTime)
 	{
 		playerReference = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
 	}
-	
+
 	if (ensure(playerReference))
 	{
 		beamTarget = FMath::Lerp(beamTarget, playerReference->GetActorLocation(), deltaTime * beamSpeed);
@@ -337,7 +337,7 @@ void ABaseBoss::BeamAttack(float deltaTime)
 		}
 	}
 
-	//Clear all hit actors 
+	//Clear all hit actors
 	if (GetWorld()->GetTimeSeconds() >= timeLastDamaged)
 	{
 		hitActors.Empty();
@@ -449,11 +449,11 @@ void ABaseBoss::ThrowProjectiles()
 			isProjectileBarage = true;
 		}
 	}
-	
+
 	//Get number of projectiles
 	int maxProjectiles = 3 + ((bossPhase - 1) * bossPhase);
 	int numberOfProjectiles = FMath::RandRange(1, maxProjectiles);
-	
+
 	//Get the base direction to fire in
 	if (playerReference == nullptr)
 	{
@@ -461,14 +461,14 @@ void ABaseBoss::ThrowProjectiles()
 	}
 
 	FVector playerPosition = GetActorForwardVector();
-	
+
 	if (ensure(playerReference))
 	{
 		playerPosition = playerReference->GetActorLocation();
 	}
 	FVector throwingPosition = GetMesh()->GetSocketLocation(throwningSocketName);
 	FVector baseDirection = playerPosition - throwingPosition;
-	
+
 	//Get size of projectiles based on size state
 	float size = (GetActorScale3D().X / largeSize.X) + 1;
 
@@ -484,7 +484,7 @@ void ABaseBoss::ThrowProjectiles()
 		if (ensure(projectile))
 		{
 			projectile->SetDamage(projectileDamage);
-			
+
 			//Adjust projectile based on phase
 			switch(bossPhase)
 			{
@@ -540,7 +540,7 @@ void ABaseBoss::ThrowProjectiles()
 		if (ensure(projectile))
 		{
 			projectile->SetDamage(projectileDamage);
-			
+
 			//Adjust projectile based on phase
 			switch(bossPhase)
 			{
@@ -589,7 +589,7 @@ void ABaseBoss::GroundSlamAttack()
 		isGroundSlamSequence = true;
 		return;
 	}
-	
+
 	//Find position to spawn ground slam effect
 	//Get position
 	FVector position = GetGroundPosition(GetActorLocation());
@@ -615,11 +615,11 @@ void ABaseBoss::GroundSlamAttack()
 void ABaseBoss::AOEAttack()
 {
 	isAttacking = true;
-	
+
 	//Find position to spawn ground slam effect
 	//Get position
 	FVector position = GetGroundPosition(GetActorLocation());
-	
+
 	FTransform spawnTransform(FRotator::ZeroRotator, position, FVector(1, 1, 15));
 	SpawnEffects(AOE, spawnTransform);
 }
@@ -637,7 +637,7 @@ void ABaseBoss::OnEndingDamage()
 			timeLastMissedMelee = GetWorld()->GetTimeSeconds() + timeResetMeleeMiss;
 		}
 	}
-	
+
 	//isAttacking = false;
 	isBeamAttacking = false;
 	isMeleeAttacking = false;
@@ -672,7 +672,7 @@ float ABaseBoss::BeginGrowingSize()
 	{
 		return 0;
 	}
-	
+
 	changeSizeState = Growing;
 	timeBeganChangeSize = GetWorld()->GetTimeSeconds() + growingTime;
 	statueSpawner->SpawnStatues(bossPhase);
@@ -696,7 +696,7 @@ FVector ABaseBoss::GetThrowingDirection(FVector baseDirection, float angle)
 	float radAngle = FMath::DegreesToRadians(angle);
 	float x = (FMath::Cos(radAngle) * baseDirection.X) - (FMath::Sin(radAngle) * baseDirection.Y);
 	float y = (FMath::Sin(radAngle) * baseDirection.X) + (FMath::Cos(radAngle) * baseDirection.Y);
-	
+
 	return FVector(x, y, baseDirection.Z);
 }
 
@@ -705,7 +705,7 @@ FVector ABaseBoss::GetGroundPosition(FVector originPosition)
 	//Find position to spawn ground slam effect
 	//Get position
 	FVector position = originPosition;
-	
+
 	//set to a specific height off the ground
 	//Get trace to find ground position, then add desired height to get position
 	FVector end = position - FVector(0, 0, GetActorScale3D().Z + 1000);
@@ -731,7 +731,7 @@ float ABaseBoss::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent,
 
 	//Boss phase damage reduction
 	float finalDamage = DamageAmount - (DamageAmount * (damageReductionMultiple * (bossPhase - 1)));
-	
+
 	//Decrement damage from health
 	health -= finalDamage;
 
@@ -755,7 +755,7 @@ float ABaseBoss::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent,
 		//Handle damage reactions
 		PlayAnimationMontage();
 	}
-	
+
 	return finalDamage;
 }
 
@@ -786,7 +786,7 @@ void ABaseBoss::SetMoveSpeed(bool running)
 	if (!isLarge)
 	{
 		GetCharacterMovement()->MaxWalkSpeed = running ? runSpeed : walkSpeed;
-	} 
+	}
 }
 
 //Begins the battle when the player enters the arena
@@ -802,25 +802,25 @@ void ABaseBoss::BeginBattle()
 bool ABaseBoss::GetShouldAOE()
 {
 	float rand = FMath::RandRange(0, 100);
-	
+
 	switch (numMissedMelee)
 	{
 		case 0:
-			
+
 			return false;
-		
+
 		case 1:
-			
-			
+
+
 			if (rand < 50)
 			{
 				return true;
 			}
-		
+
 				return false;
-		
+
 		default:
-			
+
 			return true;
 	}
 }
