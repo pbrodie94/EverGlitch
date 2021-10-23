@@ -12,11 +12,8 @@ UCLASS()
 class PROJECTMOUSTACHE_API AProjectileBase : public AActor
 {
 	GENERATED_BODY()
-
-	UPROPERTY(EditAnywhere)
-	float lifeSpan;
-
-public:
+	
+public:	
 	// Sets default values for this actor's properties
 	AProjectileBase();
 
@@ -24,13 +21,13 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	USphereComponent* sphereCollider;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	UStaticMeshComponent* projectileMesh;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	UProjectileMovementComponent* projectileMovement;
 
 	UPROPERTY(BlueprintReadOnly)
@@ -39,16 +36,15 @@ protected:
 	UPROPERTY(BlueprintReadOnly)
 	APawn* myOwner;
 
-public:
+	UFUNCTION()
+	virtual void OnBeginOverlapEvent(UPrimitiveComponent* overlappedComp, class AActor* otherActor,
+		class UPrimitiveComponent* otherComp, int32 otherBodyIndex, bool bFromSweep,
+		const FHitResult& sweepResult);
+
+public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	UFUNCTION(BlueprintCallable)
-	void SetProjectileSpeed(float speed);
+	void Initialize(float projectileDamage, APawn* owner);
 
-	UFUNCTION(BlueprintCallable)
-	void SetShouldBounce(bool shouldBounce);
-
-	UFUNCTION()
-	void SetDamage(float damageAmount);
 };
