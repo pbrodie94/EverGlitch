@@ -15,8 +15,8 @@ class PROJECTMOUSTACHE_API AProjectileBase : public AActor
 
 	UPROPERTY(EditAnywhere)
 	float lifeSpan;
-
-public:
+	
+public:	
 	// Sets default values for this actor's properties
 	AProjectileBase();
 
@@ -39,7 +39,7 @@ protected:
 	UPROPERTY(BlueprintReadOnly)
 	APawn* myOwner;
 
-public:
+public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
