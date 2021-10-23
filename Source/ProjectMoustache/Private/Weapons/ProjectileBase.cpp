@@ -13,7 +13,6 @@ AProjectileBase::AProjectileBase()
 	sphereCollider = CreateDefaultSubobject<USphereComponent>(TEXT("SphereCollider"));
 	sphereCollider->SetSphereRadius(25.0f);
 	sphereCollider->SetupAttachment(RootComponent);
-	sphereCollider->OnComponentBeginOverlap.AddDynamic(this, &AProjectileBase::OnBeginOverlapEvent);
 
 	//Create the static mesh, and attach to the sphere collider
 	projectileMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("ProjectileMesh"));
@@ -21,15 +20,23 @@ AProjectileBase::AProjectileBase()
 
 	//Create and initialize the projectile movement component
 	projectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileMovement"));
-	projectileMovement->Velocity = FVector(500.0f, 0, 0);
+	projectileMovement->InitialSpeed = 5000;
+	projectileMovement->MaxSpeed = 2500;
+	projectileMovement->Velocity = FVector(5000.0f, 0, 0);
 	projectileMovement->ProjectileGravityScale = 0;
+
+	lifeSpan = 10;
 }
 
 // Called when the game starts or when spawned
 void AProjectileBase::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+	if (lifeSpan > 0)
+	{
+		SetLifeSpan(lifeSpan);
+	}
 }
 
 // Called every frame
@@ -39,15 +46,17 @@ void AProjectileBase::Tick(float DeltaTime)
 
 }
 
-void AProjectileBase::Initialize(float projectileDamage, APawn* owner)
+void AProjectileBase::SetProjectileSpeed(float speed)
 {
-	this->damage = projectileDamage;
-	this->myOwner = owner;
+	projectileMovement->MaxSpeed = speed;
 }
 
-void AProjectileBase::OnBeginOverlapEvent
-(UPrimitiveComponent* overlappedComp, class AActor* otherActor, class UPrimitiveComponent* otherComp,
-		int32 otherBodyIndex, bool bFromSweep, const FHitResult& sweepResult)
+void AProjectileBase::SetShouldBounce(bool shouldBounce)
 {
-	
+	projectileMovement->bShouldBounce = shouldBounce;
+}
+
+void AProjectileBase::SetDamage(float damageAmount)
+{
+	damage = damageAmount;
 }
