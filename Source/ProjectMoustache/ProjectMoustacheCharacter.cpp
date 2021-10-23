@@ -12,8 +12,6 @@
 //////////////////////////////////////////////////////////////////////////
 // AProjectMoustacheCharacter
 
-
-
 AProjectMoustacheCharacter::AProjectMoustacheCharacter()
 {
 	// Set size for collision capsule
@@ -76,18 +74,8 @@ void AProjectMoustacheCharacter::SetupPlayerInputComponent(class UInputComponent
 
 	// VR headset functionality
 	PlayerInputComponent->BindAction("ResetVR", IE_Pressed, this, &AProjectMoustacheCharacter::OnResetVR);
-
-	PlayerInputComponent->BindAction("NinjaRightCross", IE_Pressed, this, &AProjectMoustacheCharacter::Melee);
 }
 
-void AProjectMoustacheCharacter::Melee()
-{
-	if (NinjaRightCross)
-	{
-		Getmesh()->SetAnimation(NinjaRightCross);
-		GetMesh()->PlayAnimation(NinjaRightCross, false);
-	}
-}
 
 void AProjectMoustacheCharacter::OnResetVR()
 {
