@@ -60,4 +60,3 @@ void AProjectileBase::SetDamage(float damageAmount)
 {
 	damage = damageAmount;
 }
-
