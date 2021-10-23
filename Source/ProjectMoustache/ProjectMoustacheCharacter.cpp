@@ -84,8 +84,8 @@ void AProjectMoustacheCharacter::Melee()
 {
 	if (NinjaRightCross)
 	{
-		Getmesh()->SetAnimation(NinjaRightCross);
-		GetMesh()->PlayAnimation(NinjaRightCross, false);
+		//Getmesh()->SetAnimation(NinjaRightCross);
+		//GetMesh()->PlayAnimation(NinjaRightCross, false);
 	}
 }
 
