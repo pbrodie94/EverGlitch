@@ -15,8 +15,8 @@ class PROJECTMOUSTACHE_API AProjectileBase : public AActor
 
 	UPROPERTY(EditAnywhere)
 	float lifeSpan;
-	
-public:	
+
+public:
 	// Sets default values for this actor's properties
 	AProjectileBase();
 
@@ -39,12 +39,7 @@ protected:
 	UPROPERTY(BlueprintReadOnly)
 	APawn* myOwner;
 
-	UFUNCTION()
-	virtual void OnBeginOverlapEvent(UPrimitiveComponent* overlappedComp, class AActor* otherActor,
-		class UPrimitiveComponent* otherComp, int32 otherBodyIndex, bool bFromSweep,
-		const FHitResult& sweepResult);
-
-public:	
+public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 

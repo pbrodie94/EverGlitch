@@ -13,7 +13,9 @@ enum EAttackType
 	Melee UMETA(DisplayName = "Melee"),
 	Projectile UMETA(DisplayName = "Projectile"),
 	Beam UMETA(DisplayName = "Beam"),
-	GroundSlam UMETA(DisplayName = "GroundSlam")
+	GroundSlam UMETA(DisplayName = "GroundSlam"),
+	PointMagic UMETA(DisplayName = "PointMagic"),
+	AOE UMETA(DisplayName = "AOE")
 };
 
 UENUM(BlueprintType)
@@ -29,7 +31,7 @@ class PROJECTMOUSTACHE_API ABaseBoss : public ACharacter
 {
 	GENERATED_BODY()
 
-	//Reference to the player's actor 
+	//Reference to the player's actor
 	AActor* playerReference;
 
 	//Names of sockets exposed to be edited in engine in case of changes
@@ -45,13 +47,25 @@ class PROJECTMOUSTACHE_API ABaseBoss : public ACharacter
 	//The cooldown after boss has grown
 	UPROPERTY(EditDefaultsOnly, Category = Abilities, meta = (AllowPrivateAccess = true))
 	float growSizeCoolDown;
-	
+
 	float timeLastGrowSize;
 	float timeBeganChangeSize;
-	
+
 	bool isGroundSlamSequence;
 	int spawnedShockwaves;
 	float timeLastShockwave;
+
+	bool isPointMagicAttack;
+	int numberMagicPointsToSpawn;
+	int numberSpawnedMagicPoints;
+
+	float timeLastPointMagicAttack;
+
+	UPROPERTY(EditDefaultsOnly, Category = Combat, meta = (AllowPrivateAccess = true))
+	float timeBetweenMagicPointAttacks;
+
+	UPROPERTY(EditDefaultsOnly, Category = Combat, meta = (AllowPrivateAccess = true))
+	FVector2D magicPointsBaseRange;
 
 	//Percentage (%) of damage reduction per phase
 	UPROPERTY(EditDefaultsOnly, Category = Status, meta = (AllowPrivateAccess = true))
@@ -63,6 +77,20 @@ class PROJECTMOUSTACHE_API ABaseBoss : public ACharacter
 	//The radius used by the sphere check for detecting hits on melee attacks
 	UPROPERTY(EditDefaultsOnly, Category = Combat)
 	float meleeHitRadius;
+
+	//Number of missed melee attacks, used to decide on AOE for melee dodge cheese
+	int numMissedMelee;
+
+	//The time to reset the melee misses
+	UPROPERTY(EditDefaultsOnly, Category = Combat, meta = (AllowPrivateAccess = true))
+	float timeResetMeleeMiss;
+
+	float timeLastMissedMelee;
+
+	//Number of barrages of projectiles thrown in a barrage
+	int numberOfProjectileBarrage;
+
+	int numberOfBarragesThrown;
 
 	//Interval between ground slam shockwaves
 	UPROPERTY(EditDefaultsOnly, Category = Combat, meta = (AllowPrivateAccess = true))
@@ -110,7 +138,9 @@ class PROJECTMOUSTACHE_API ABaseBoss : public ACharacter
 
 	//Function called tick function to handle the size changing sequence
 	void HandleBossSizeChange();
-	
+
+	FVector GetGroundPosition(FVector originPosition);
+
 public:
 	// Sets default values for this character's properties
 	ABaseBoss();
@@ -162,9 +192,19 @@ protected:
 	//The distance the boss will melee attack
 	UPROPERTY(EditDefaultsOnly, Category = Combat, BlueprintReadOnly)
 	float meleeDistance;
-	
+
 	UPROPERTY(EditDefaultsOnly, Category = Combat, BlueprintReadOnly)
 	float meleeDamage;
+
+	//Percentage of chance of a projectile barrage
+	UPROPERTY(EditDefaultsOnly, Category = Combat)
+	float barrageChancePercentage;
+
+	UPROPERTY(EditDefaultsOnly, Category = Combat)
+	FVector2D projectileBarrageBaseRange;
+
+	UPROPERTY(BlueprintReadOnly)
+	bool isProjectileBarage;
 
 	UPROPERTY(EditDefaultsOnly, Category = Combat, BlueprintReadOnly)
 	float projectileDamage;
@@ -177,13 +217,13 @@ protected:
 
 	UPROPERTY(BlueprintReadWrite)
 	bool isAttacking;
-	
+
 	UPROPERTY(BlueprintReadOnly)
 	float timeBeganBeamAttack;
 
 	UPROPERTY(BlueprintReadWrite)
 	bool isMeleeAttacking;
-	
+
 	UPROPERTY(BlueprintReadWrite)
 	bool isBeamAttacking;
 
@@ -209,6 +249,14 @@ protected:
 	 */
 	UFUNCTION(BlueprintCallable)
 	void GroundSlamAttack();
+
+	UFUNCTION(BlueprintCallable)
+	void AOEAttack();
+
+	UFUNCTION(BlueprintCallable)
+	void BeginPointMagicAttack();
+
+	void PointMagicAttack();
 
 	//Begins the beam attack sequence
 	UFUNCTION(BlueprintCallable)
@@ -257,7 +305,7 @@ protected:
 	 * Stores a list of hit actors for the beam attack and melee attacks to manage how many times individual actors are hit
 	 */
 	TArray<AActor*> hitActors;
-	
+
 	/**
 	 * Called to clean up attack sequences
 	 */
@@ -270,7 +318,7 @@ protected:
 	 */
 	UFUNCTION(BlueprintCallable)
 	void SetMoveSpeed(bool running);
-	
+
 	/**
 	 * Used to get a relevant move speed for the animation blueprint
 	 * Move speed is adjusted when boss enters large state, this returns the relative move speed without
@@ -278,11 +326,18 @@ protected:
 	 */
 	UFUNCTION(BlueprintCallable)
 	float GetModifiedMoveSpeed();
-	
+
+	/**
+	* Takes the number of missed melee attacks and decides whether to do AOE attack
+	* If one missed attack, returns 50% chance, 100% chance for more than one missed
+	*/
+	UFUNCTION(BlueprintCallable)
+	bool GetShouldAOE();
+
 	UFUNCTION(BlueprintImplementableEvent)
 	void Die();
 
-public:	
+public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
@@ -297,7 +352,7 @@ public:
 	//Sets boss to shrinking state, and returns shrinking time
 	UFUNCTION(BlueprintCallable)
 	float BeginShrinkSize();
-	
+
 	UFUNCTION(BlueprintCallable)
 	int GetCurrentBossPhase() { return bossPhase; }
 

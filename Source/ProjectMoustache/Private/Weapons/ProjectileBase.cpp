@@ -13,7 +13,6 @@ AProjectileBase::AProjectileBase()
 	sphereCollider = CreateDefaultSubobject<USphereComponent>(TEXT("SphereCollider"));
 	sphereCollider->SetSphereRadius(25.0f);
 	sphereCollider->SetupAttachment(RootComponent);
-	sphereCollider->OnComponentBeginOverlap.AddDynamic(this, &AProjectileBase::OnBeginOverlapEvent);
 
 	//Create the static mesh, and attach to the sphere collider
 	projectileMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("ProjectileMesh"));
@@ -47,13 +46,6 @@ void AProjectileBase::Tick(float DeltaTime)
 
 }
 
-void AProjectileBase::OnBeginOverlapEvent
-(UPrimitiveComponent* overlappedComp, class AActor* otherActor, class UPrimitiveComponent* otherComp,
-		int32 otherBodyIndex, bool bFromSweep, const FHitResult& sweepResult)
-{
-	
-}
-
 void AProjectileBase::SetProjectileSpeed(float speed)
 {
 	projectileMovement->MaxSpeed = speed;
@@ -68,4 +60,3 @@ void AProjectileBase::SetDamage(float damageAmount)
 {
 	damage = damageAmount;
 }
-
