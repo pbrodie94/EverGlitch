@@ -13,7 +13,7 @@ class PROJECTMOUSTACHE_API APlayerBase : public ACharacter
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = true))
 	class USpringArmComponent* cameraBoom;
-	
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = true))
 	class UCameraComponent* followCamera;
 
@@ -34,7 +34,7 @@ class PROJECTMOUSTACHE_API APlayerBase : public ACharacter
 
 	UPROPERTY(EditDefaultsOnly, Category = Stats, meta = (AllowPrivateAccess = true))
 	float dashPower;
-	
+
 	UPROPERTY(EditDefaultsOnly, Category = Stats, meta = (AllowPrivateAccess = true))
 	float dashDelayInterval;
 
@@ -47,11 +47,11 @@ class PROJECTMOUSTACHE_API APlayerBase : public ACharacter
 	bool isMeleeAttacking;
 
 	float timeLastDashed;
-	
+
 	void Dash();
-	
+
 	void DetectMeleeHits();
-	
+
 public:
 	// Sets default values for this character's properties
 	APlayerBase();
@@ -63,7 +63,7 @@ protected:
 	//Used to keep track of actors hit during hit detection
 	UPROPERTY(BlueprintReadWrite)
 	TArray<AActor*> hitActors;
-	
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Combat)
 	float projectileDamage;
 
@@ -80,7 +80,7 @@ protected:
 	UFUNCTION(BlueprintCallable)
 	void EndMeleeAttackDamage();
 
-public:	
+public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
