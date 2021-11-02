@@ -59,7 +59,7 @@ void APlayerBase::BeginPlay()
 	{
 		meleeDamage = 15;
 	}
-	
+
 	GetCharacterMovement()->JumpZVelocity = jumpHeight;
 	GetCharacterMovement()->AirControl = airControl;
 }
@@ -81,7 +81,7 @@ void APlayerBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
-	//Add controller axis bindings 
+	//Add controller axis bindings
 	PlayerInputComponent->BindAxis("MoveForward", this, &APlayerBase::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &APlayerBase::MoveRight);
 	PlayerInputComponent->BindAxis("Turn", this, &APawn::AddControllerYawInput);
@@ -134,7 +134,7 @@ void APlayerBase::Dash()
 	moveDirection.Z = 0;
 	moveDirection *= dashPower;
 	moveDirection.Z = 200;
-	
+
 	GetCharacterMovement()->Launch(moveDirection);
 
 	timeLastDashed = GetWorld()->GetTimeSeconds() + dashDelayInterval;
@@ -170,9 +170,9 @@ void APlayerBase::DetectMeleeHits()
 float APlayerBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
 	health -= DamageAmount;
-	
+
 	GetWorld()->GetFirstPlayerController()->PlayerCameraManager->StartCameraShake(cameraShake, 1);
-	
+
 	if (health <= 0)
 	{
 		//Dead
@@ -194,4 +194,3 @@ void APlayerBase::EndMeleeAttackDamage()
 	isMeleeAttacking = false;
 	hitActors.Empty();
 }
-
