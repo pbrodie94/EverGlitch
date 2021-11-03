@@ -23,6 +23,8 @@ APlayerBase::APlayerBase()
 	dashPower = 1000;
 	dashDelayInterval = 0.5f;
 
+	percentageDamageChange = 1;
+	projectileDamage = 20;
 	meleeDamage = 15;
 
 	//Don't rotate when the camera rotates
@@ -38,7 +40,7 @@ APlayerBase::APlayerBase()
 
 	//Create camera boom arm component, and set default values
 	cameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoomArm"));
-	cameraBoom->SetupAttachment(RootComponent);
+	cameraBoom->SetupAttachment(GetMesh());
 	cameraBoom->TargetArmLength = 500.0f;
     cameraBoom->SetRelativeLocation(FVector(0, 0, 170));
     cameraBoom->bUsePawnControlRotation = true;
@@ -60,6 +62,7 @@ void APlayerBase::BeginPlay()
 		meleeDamage = 15;
 	}
 
+	runSpeed = GetCharacterMovement()->MaxWalkSpeed;
 	GetCharacterMovement()->JumpZVelocity = jumpHeight;
 	GetCharacterMovement()->AirControl = airControl;
 }
@@ -134,7 +137,7 @@ void APlayerBase::Dash()
 	moveDirection.Z = 0;
 	moveDirection *= dashPower;
 	moveDirection.Z = 200;
-
+	
 	GetCharacterMovement()->Launch(moveDirection);
 
 	timeLastDashed = GetWorld()->GetTimeSeconds() + dashDelayInterval;
@@ -177,6 +180,7 @@ float APlayerBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEven
 	{
 		//Dead
 		health = 0;
+		Die();
 	}
 
 	return DamageAmount;
