@@ -334,6 +334,9 @@ protected:
 	UFUNCTION(BlueprintCallable)
 	bool GetShouldAOE();
 
+	UFUNCTION(BlueprintCallable)
+	void PlayerDied();
+
 	UFUNCTION(BlueprintImplementableEvent)
 	void Die();
 
