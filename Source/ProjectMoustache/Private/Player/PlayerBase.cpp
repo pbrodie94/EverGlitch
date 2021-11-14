@@ -101,6 +101,8 @@ void APlayerBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
 	PlayerInputComponent->BindAction("Dash", IE_Pressed, this, &APlayerBase::Dash);
 	PlayerInputComponent->BindAction("Action", IE_Pressed, this, &APlayerBase::InteractWithObject);
+	PlayerInputComponent->BindAction("Aim", IE_Pressed, this, &APlayerBase::BeginAiming);
+	PlayerInputComponent->BindAction("Aim", IE_Released, this, &APlayerBase::EndAiming);
 	PlayerInputComponent->BindAction("Shoot", IE_Pressed, this, &APlayerBase::Fire);
 }
 
@@ -279,12 +281,60 @@ void APlayerBase::EndMeleeAttackDamage()
 	hitActors.Empty();
 }
 
+void APlayerBase::BeginAiming_Implementation()
+{
+	if (isDead)
+	{
+		return;
+	}
+
+	isAiming = true;
+	GetCharacterMovement()->bOrientRotationToMovement = false;
+	GetCharacterMovement()->MaxWalkSpeed = 350;
+
+	// Call to observers if any exist
+	if (observers.Num() > 0)
+	{
+		for (auto obs : observers)
+		{
+			if (obs != nullptr)
+			{
+				obs->Execute_OnPlayerBeginAiming(obs.GetObject());
+			}
+		}
+	}
+}
+
+void APlayerBase::EndAiming_Implementation()
+{
+	isAiming = false;
+    GetCharacterMovement()->bOrientRotationToMovement = true;
+    GetCharacterMovement()->MaxWalkSpeed = 600;
+
+	// Call to observers if any exist
+	if (observers.Num() > 0)
+	{
+		for (auto obs : observers)
+		{
+			if (obs != nullptr)
+			{
+				obs->Execute_OnPlayerEndAiming(obs.GetObject());
+			}
+		}
+	}
+}
+
 void APlayerBase::Die_Implementation()
 {
 	//Reset all temporary values
 	ApplyDamageChange(0, 0);
 	ApplySpeedChange(0, 0);
 	ApplyJumpChange(0, 0);
+
+	if (isAiming)
+	{
+		EndAiming();
+	}
 
 	//Remove any interactable objects
 	if (currentInteractableObject != nullptr)
@@ -456,4 +506,58 @@ void APlayerBase::OnJumChangeExpired()
 {
 	GetCharacterMovement()->JumpZVelocity = jumpHeight;
 	GetWorld()->GetTimerManager().ClearTimer(jumpTimerHandle);
+}
+
+/**
+* Returns player's current location
+*/
+FVector APlayerBase::GetPlayerLocation_Implementation()
+{
+	return GetActorLocation();
+}
+
+/**
+* Returns player's current forward direction
+*/
+FVector APlayerBase::GetPlayerForwardDirection_Implementation()
+{
+	return GetMesh()->GetForwardVector();
+}
+
+/**
+* Returns player's current rotation
+*/
+FRotator APlayerBase::GetPlayerRotation_Implementation()
+{
+	return GetActorRotation();
+}
+
+/**
+* Returns player's current velocity
+*/
+float APlayerBase::GetCurrentPlayerVelocity_Implementation()
+{
+	return GetCharacterMovement()->Velocity.Size();
+}
+
+/**
+* Subscribes actors as a new player observer
+* Must implement the Player Observer Interface
+*/
+void APlayerBase::SubscribeAsObserver_Implementation(const TScriptInterface<IPlayerObserver>& newObserver)
+{
+	observers.AddUnique(newObserver);
+}
+
+/**
+* Unsubscribes an actor as a player observer
+*/
+void APlayerBase::UnSubscribePlayerObserver_Implementation(const TScriptInterface<IPlayerObserver>& oldObserver)
+{
+	if (!observers.Contains(oldObserver))
+	{
+		return;
+	}
+
+	observers.Remove(oldObserver);
 }

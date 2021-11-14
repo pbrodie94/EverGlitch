@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Interactable.h"
+#include "PlayerObserver.h"
 #include "UObject/Interface.h"
 #include "PlayerCharacter.generated.h"
 
@@ -83,4 +84,41 @@ public:
 	 */
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	FVector GetCameraLocation();
+
+	/**
+	 * Returns player's current location
+	 */
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	FVector GetPlayerLocation();
+
+	/**
+	 * Returns player's current forward direction
+	 */
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	FVector GetPlayerForwardDirection();
+
+	/**
+	* Returns player's current forward direction
+	*/
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	FRotator GetPlayerRotation();
+
+	/**
+	 * Returns player's current velocity
+	 */
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	float GetCurrentPlayerVelocity();
+
+	/**
+	 * Subscribes actors as a new player observer
+	 * Must implement the Player Observer Interface
+	 */
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void SubscribeAsObserver(const TScriptInterface<IPlayerObserver>& newObserver);
+
+	/**
+	 * Unsubscribes an actor as a player observer
+	 */
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void UnSubscribePlayerObserver(const TScriptInterface<IPlayerObserver>& oldObserver);
 };

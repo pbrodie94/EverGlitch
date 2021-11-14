@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "PlayerCharacter.h"
+#include "PlayerObserver.h"
 #include "GameFramework/Character.h"
 #include "PlayerBase.generated.h"
 
@@ -153,6 +154,10 @@ protected:
 	UPROPERTY(BlueprintReadWrite)
 	TScriptInterface<IInteractable> currentInteractableObject;
 
+	//List of objects observing the player
+	UPROPERTY(BlueprintReadOnly)
+	TArray<TScriptInterface<IPlayerObserver>> observers;
+
 	//Handles movement
 	void MoveForward(float value);
 	void MoveRight(float value);
@@ -172,9 +177,18 @@ protected:
 	//Partially implemented in cpp, remainder in blueprint
 	UFUNCTION(BlueprintNativeEvent)
 	void Die();
+	void Die_Implementation();
 	
 	UFUNCTION(BlueprintCallable)
 	bool GetIsMeleeAttacking() { return isMeleeAttacking; }
+
+	UFUNCTION(BlueprintNativeEvent)
+	void BeginAiming();
+	void BeginAiming_Implementation();
+
+	UFUNCTION(BlueprintNativeEvent)
+	void EndAiming();
+	void EndAiming_Implementation();
 
 public:
 	// Called every frame
@@ -260,4 +274,47 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	FVector GetCameraLocation();
 	FVector GetCameraLocation_Implementation();
+
+	/**
+	* Returns player's current location
+	*/
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	FVector GetPlayerLocation();
+	FVector GetPlayerLocation_Implementation();
+
+	/**
+	* Returns player's current forward direction
+	*/
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	FVector GetPlayerForwardDirection();
+	FVector GetPlayerForwardDirection_Implementation();
+
+	/**
+	* Returns player's current rotation
+	*/
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	FRotator GetPlayerRotation();
+	FRotator GetPlayerRotation_Implementation();
+
+	/**
+	* Returns player's current velocity
+	*/
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	float GetCurrentPlayerVelocity();
+	float GetCurrentPlayerVelocity_Implementation();
+
+	/**
+	* Subscribes actors as a new player observer
+	* Must implement the Player Observer Interface
+	*/
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void SubscribeAsObserver(const TScriptInterface<IPlayerObserver>& newObserver);
+	void SubscribeAsObserver_Implementation(const TScriptInterface<IPlayerObserver>& newObserver);
+
+	/**
+	* Unsubscribes an actor as a player observer
+	*/
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void UnSubscribePlayerObserver(const TScriptInterface<IPlayerObserver>& oldObserver);
+	void UnSubscribePlayerObserver_Implementation(const TScriptInterface<IPlayerObserver>& oldObserver);
 };
