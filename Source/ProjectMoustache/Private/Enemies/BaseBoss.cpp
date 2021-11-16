@@ -795,6 +795,13 @@ void ABaseBoss::BeginBattle()
 	battleBegun = true;
 }
 
+//Player died, stop attacking
+void ABaseBoss::PlayerDied()
+{
+	battleBegun = false;
+}
+
+
 /**
 * Takes the number of missed melee attacks and decides whether to do AOE attack
 * If one missed attack, returns 50% chance, 100% chance for more than one missed

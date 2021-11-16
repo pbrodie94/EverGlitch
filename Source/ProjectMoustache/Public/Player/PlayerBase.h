@@ -11,10 +11,10 @@ class PROJECTMOUSTACHE_API APlayerBase : public ACharacter
 {
 	GENERATED_BODY()
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = true))
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Camera, meta = (AllowPrivateAccess = true))
 	class USpringArmComponent* cameraBoom;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = true))
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Camera, meta = (AllowPrivateAccess = true))
 	class UCameraComponent* followCamera;
 
 	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = true))
@@ -26,7 +26,10 @@ class PROJECTMOUSTACHE_API APlayerBase : public ACharacter
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = true))
 	float aimSensitivityY;
 
-	UPROPERTY(EditDefaultsOnly, Category = Stats, meta = (AllowPrivateAccess = true))
+	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = true))
+	float runSpeed;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Stats, meta = (AllowPrivateAccess = true))
 	float jumpHeight;
 
 	UPROPERTY(EditDefaultsOnly, Category = Stats, meta = (AllowPrivateAccess = true))
@@ -38,10 +41,10 @@ class PROJECTMOUSTACHE_API APlayerBase : public ACharacter
 	UPROPERTY(EditDefaultsOnly, Category = Stats, meta = (AllowPrivateAccess = true))
 	float dashDelayInterval;
 
-	UPROPERTY(EditDefaultsOnly, Category = Stats, meta = (AllowPrivateAccess = true))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Stats, meta = (AllowPrivateAccess = true))
 	float health;
 
-	UPROPERTY(EditDefaultsOnly, Category = Stats, meta = (AllowPrivateAccess = true))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Stats, meta = (AllowPrivateAccess = true))
 	float maxHealth;
 
 	bool isMeleeAttacking;
@@ -59,16 +62,22 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-
+	
 	//Used to keep track of actors hit during hit detection
 	UPROPERTY(BlueprintReadWrite)
 	TArray<AActor*> hitActors;
+
+	UPROPERTY(BlueprintReadWrite)
+	float percentageDamageChange;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Combat)
 	float projectileDamage;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Combat)
 	float meleeDamage;
+
+	UPROPERTY(BlueprintReadWrite)
+	bool isDead;
 
 	//Handles movement
 	void MoveForward(float value);
@@ -79,6 +88,12 @@ protected:
 
 	UFUNCTION(BlueprintCallable)
 	void EndMeleeAttackDamage();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void Die();
+
+	UFUNCTION(BlueprintCallable)
+	bool GetIsMeleeAttacking() { return isMeleeAttacking; }
 
 public:
 	// Called every frame
