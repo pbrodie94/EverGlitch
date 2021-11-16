@@ -15,13 +15,13 @@ APlayerBase::APlayerBase()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	//Set default variable values
+	// Set default variable values
 	aimSensitivityX = 45.0f;
 	aimSensitivityY = 45.0f;
 
 	jumpHeight = 600.0f;
 	airControl = 0.2f;
-	dashPower = 1000;
+	dashPower = 1500;
 	dashDelayInterval = 0.5f;
 
 	combatStanceTime = 3;
@@ -30,25 +30,25 @@ APlayerBase::APlayerBase()
 	projectileDamage = 20;
 	meleeDamage = 15;
 
-	//Don't rotate when the camera rotates
+	// Don't rotate when the camera rotates
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationYaw = false;
 	bUseControllerRotationRoll = false;
 
-	//Configure character movement
+	// Configure character movement
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 	GetCharacterMovement()->RotationRate = FRotator(0.0f, 540.0f, 0.0f);
 	GetCharacterMovement()->JumpZVelocity = jumpHeight;
 	GetCharacterMovement()->AirControl = airControl;
 
-	//Create camera boom arm component, and set default values
+	// Create camera boom arm component, and set default values
 	cameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoomArm"));
 	cameraBoom->SetupAttachment(GetMesh());
 	cameraBoom->TargetArmLength = 500.0f;
     cameraBoom->SetRelativeLocation(FVector(0, 0, 170));
     cameraBoom->bUsePawnControlRotation = true;
 
-	//Create camera component, and set default values
+	// Create camera component, and set default values
     followCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
 	followCamera->SetupAttachment(cameraBoom, USpringArmComponent::SocketName);
 	followCamera->SetRelativeLocation(FVector(0, 50, 0));
@@ -67,8 +67,55 @@ void APlayerBase::BeginPlay()
 		meleeDamage = 15;
 	}
 
+	if (projectileDamage <= 0)
+	{
+		projectileDamage = 20;
+	}
+
+	if (aimSensitivityX <= 0)
+	{
+		aimSensitivityX = 45;
+	}
+
+	if (aimSensitivityY <= 0)
+	{
+		aimSensitivityY = 45;
+	}
+
+	if (jumpHeight <= 0)
+	{
+		jumpHeight = 600;
+	}
+
+	if (dashPower <= 0)
+	{
+		dashPower = 1500;
+	}
+
+	if (maxHealth <= 0)
+	{
+		maxHealth = 100;
+	}
+
+	if (health <= 0)
+	{
+		health = maxHealth;
+	} else if (health > maxHealth)
+	{
+		health = maxHealth;
+	}
+
+	if (combatStanceTime <= 0)
+	{
+		combatStanceTime = 3;
+	}
+
 	//Sets player's default values for reference
 	runSpeed = GetCharacterMovement()->MaxWalkSpeed;
+	if (aimSpeed <= 0)
+	{
+		aimSpeed = runSpeed / 2;
+	}
 	GetCharacterMovement()->JumpZVelocity = jumpHeight;
 	GetCharacterMovement()->AirControl = airControl;
 }
@@ -140,13 +187,13 @@ void APlayerBase::MoveRight(float value)
 */
 void APlayerBase::Dash()
 {
-	if (GetWorld()->GetTimeSeconds() < timeNextDash)
+	if (GetWorld()->GetTimeSeconds() < timeNextDash || isAiming)
 	{
 		return;
 	}
 
 	//Get direction to dash in, excluding upwards velocity
-	FVector moveDirection = GetVelocity();
+	FVector moveDirection = GetActorForwardVector();
 	moveDirection.Normalize();
 	moveDirection.Z = 0;
 	moveDirection *= dashPower;
@@ -290,7 +337,7 @@ void APlayerBase::BeginAiming_Implementation()
 
 	isAiming = true;
 	GetCharacterMovement()->bOrientRotationToMovement = false;
-	GetCharacterMovement()->MaxWalkSpeed = 350;
+	GetCharacterMovement()->MaxWalkSpeed = aimSpeed;
 
 	// Call to observers if any exist
 	if (observers.Num() > 0)
@@ -309,7 +356,7 @@ void APlayerBase::EndAiming_Implementation()
 {
 	isAiming = false;
     GetCharacterMovement()->bOrientRotationToMovement = true;
-    GetCharacterMovement()->MaxWalkSpeed = 600;
+    GetCharacterMovement()->MaxWalkSpeed = runSpeed;
 
 	// Call to observers if any exist
 	if (observers.Num() > 0)
@@ -521,7 +568,7 @@ FVector APlayerBase::GetPlayerLocation_Implementation()
 */
 FVector APlayerBase::GetPlayerForwardDirection_Implementation()
 {
-	return GetMesh()->GetForwardVector();
+	return GetActorForwardVector();
 }
 
 /**

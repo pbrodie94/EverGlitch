@@ -37,7 +37,7 @@ class PROJECTMOUSTACHE_API ACompanionBase : public APawn, public IPlayerObserver
 	float maxSpeedRange;
 
 	// Tick delay to update offset
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Timers, meta = (AllowPrivateAccess = true))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Movement, meta = (AllowPrivateAccess = true))
 	float updateOffsetInterval;
 
 	// Rate of rotation interpolation
@@ -84,12 +84,12 @@ class PROJECTMOUSTACHE_API ACompanionBase : public APawn, public IPlayerObserver
 	bool playerIsAiming;
 
 	/**
-	 * Updates the following offset to a random value
-	 */
-	void UpdateFollowPositionOffset();
+	* Updates the follow position, and gets random offsets, and switches sides it follows on on an interval
+	*/
+	void UpdateFollowPosition();
 
 	/**
-	 * Updates the following velocity
+	 * Updates the following velocity and rotation
 	 */
 	void UpdateFollowVelocity(float deltaTime);
 

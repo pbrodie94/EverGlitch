@@ -12,14 +12,14 @@ ACompanionBase::ACompanionBase()
 	PrimaryActorTick.bCanEverTick = true;
 
 	// Set default values
-	baseMoveSpeed = 100;
+	baseMoveSpeed = 50;
 	maxSpeed = 5000;
-	maxSpeedRange = 5000;
-	baseRotationRate = 3;
-	velocityInterpolationRate = 3;
-	updateOffsetInterval = 5;
+	maxSpeedRange = 3000;
+	baseRotationRate = 0.5f;
+	velocityInterpolationRate = 1;
+	updateOffsetInterval = 3;
 
-	checkChangeSidesIntervalRange = FVector2D(10, 20);
+	checkChangeSidesIntervalRange = FVector2D(10, 30);
 	followPositionOffset = FVector(-100, 100, 100);
 	followDistanceThreshold = 100;
 	offsetAmount = FVector(20, 20, 50);
@@ -37,6 +37,46 @@ ACompanionBase::ACompanionBase()
 void ACompanionBase::BeginPlay()
 {
 	Super::BeginPlay();
+
+	if (baseMoveSpeed <= 0)
+	{
+		baseMoveSpeed = 50;
+	}
+
+	if (maxSpeed <= 0)
+	{
+		maxSpeed = 3000;
+	}
+
+	if (updateOffsetInterval <= 0)
+	{
+		updateOffsetInterval = 3;
+	}
+
+	if (baseRotationRate <= 0)
+	{
+		baseRotationRate = 0.5f;
+	}
+
+	if (velocityInterpolationRate <= 0)
+	{
+		velocityInterpolationRate = 1;
+	}
+
+	if (followDistanceThreshold <= 0)
+	{
+		followDistanceThreshold = 200;
+	}
+
+	if (checkChangeSidesIntervalRange.X <= 0)
+	{
+		checkChangeSidesIntervalRange.X = 10;
+	}
+
+	if (checkChangeSidesIntervalRange.Y <= 0)
+	{
+		checkChangeSidesIntervalRange.Y = 30;
+	}
 
 	// Get reference to player's interface
 	AActor* player = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
@@ -60,12 +100,9 @@ void ACompanionBase::BeginPlay()
 	baseFollowPosition = playerInterface->Execute_GetPlayerLocation(playerInterface.GetObject()) + GetRotatedVector(followPositionOffset, playerRotation);
 	wantedFollowLocation = baseFollowPosition;
 	
-	// Set update tick timers
-	UWorld* world = GetWorld();
-
 	// Set change sides interval
 	float randInterval = FMath::RandRange(checkChangeSidesIntervalRange.X, checkChangeSidesIntervalRange.Y);
-	timeNextCheckSwitchSides = world->GetTimeSeconds() + randInterval;
+	timeNextCheckSwitchSides = GetWorld()->GetTimeSeconds() + randInterval;
 }
 
 // Called every frame
@@ -73,14 +110,14 @@ void ACompanionBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	UpdateFollowPositionOffset();
+	UpdateFollowPosition();
 	UpdateFollowVelocity(DeltaTime);
 }
 
 /**
-* Updates the following offset to a random value, and randomly changes the side to follow on
+* Updates the follow position, and gets random offsets, and switches sides it follows on on an interval
 */
-void ACompanionBase::UpdateFollowPositionOffset()
+void ACompanionBase::UpdateFollowPosition()
 {
 	// Switch the side the companion follows on on an interval
 	// Skip if the player is aiming
@@ -91,13 +128,14 @@ void ACompanionBase::UpdateFollowPositionOffset()
 		timeNextCheckSwitchSides = GetWorld()->GetTimeSeconds() + randInterval;
 	}
 
-	// Sets a random offset to give the floating effect
-	float playerVelocity = playerInterface->Execute_GetCurrentPlayerVelocity(playerInterface.GetObject());
+	// Updates the base follow position
 	float playerRotation = playerInterface->Execute_GetPlayerRotation(playerInterface.GetObject()).Yaw;
 	baseFollowPosition = playerInterface->Execute_GetPlayerLocation(playerInterface.GetObject()) + GetRotatedVector(followPositionOffset, playerRotation);
 
+	// Sets a random offset to give the floating effect
 	if (GetWorld()->GetTimeSeconds() > timeNextCheckOffset)
 	{
+		float playerVelocity = playerInterface->Execute_GetCurrentPlayerVelocity(playerInterface.GetObject());
 		FVector offset = GetRotatedVector(offsetAmount, GetActorRotation().Yaw);
 		if (playerVelocity > baseMoveSpeed)
 		{
@@ -110,11 +148,12 @@ void ACompanionBase::UpdateFollowPositionOffset()
 		timeNextCheckOffset = GetWorld()->GetTimeSeconds() + updateOffsetInterval;
 	}
 
+	// Apply to wanted location
 	wantedFollowLocation = baseFollowPosition + currentOffset;
 }
 
 /**
-* Updates the following velocity
+* Updates the following velocity and rotation
 */
 void ACompanionBase::UpdateFollowVelocity(float deltaTime)
 {

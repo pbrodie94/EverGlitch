@@ -35,6 +35,10 @@ class PROJECTMOUSTACHE_API APlayerBase : public ACharacter, public IPlayerCharac
 	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = true))
 	float runSpeed;
 
+	// Speed while aiming
+	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = true))
+	float aimSpeed;
+
 	//Default jump height
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Stats, meta = (AllowPrivateAccess = true))
 	float jumpHeight;

@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Interactable.h"
+#include "Interactables/Interactable.h"
 #include "PlayerObserver.h"
 #include "UObject/Interface.h"
 #include "PlayerCharacter.generated.h"
