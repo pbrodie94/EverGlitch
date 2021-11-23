@@ -54,6 +54,9 @@ APlayerBase::APlayerBase()
 	followCamera->SetRelativeLocation(FVector(0, 50, 0));
 	followCamera->bUsePawnControlRotation = false;
 
+	// Create inventory component
+	//inventoryComponent = CreateDefaultSubobject<UInventoryComponentBase>(TEXT("InventoryComponent"));
+
 	godMode = false;
 }
 
@@ -148,6 +151,7 @@ void APlayerBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
 	PlayerInputComponent->BindAction("Dash", IE_Pressed, this, &APlayerBase::Dash);
 	PlayerInputComponent->BindAction("Action", IE_Pressed, this, &APlayerBase::InteractWithObject);
+	PlayerInputComponent->BindAction("Inventory", IE_Pressed, this, &APlayerBase::ToggleInventory);
 	PlayerInputComponent->BindAction("Aim", IE_Pressed, this, &APlayerBase::BeginAiming);
 	PlayerInputComponent->BindAction("Aim", IE_Released, this, &APlayerBase::EndAiming);
 	PlayerInputComponent->BindAction("Shoot", IE_Pressed, this, &APlayerBase::Fire);
@@ -391,6 +395,15 @@ void APlayerBase::Die_Implementation()
 
 	isDead = true;
 }
+
+void APlayerBase::ToggleInventory_Implementation()
+{
+	/*if (inventoryComponent != nullptr)
+	{
+		inventoryComponent->ToggleInventory();
+	}*/
+}
+
 
 /**
 * If player has a current interactable object reference, interact with it

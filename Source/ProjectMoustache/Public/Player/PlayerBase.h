@@ -6,6 +6,7 @@
 #include "PlayerCharacter.h"
 #include "PlayerObserver.h"
 #include "GameFramework/Character.h"
+#include "Interactables/InventoryComponentBase.h"
 #include "PlayerBase.generated.h"
 
 UCLASS()
@@ -126,6 +127,9 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+
+	/*UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UInventoryComponentBase* inventoryComponent;*/
 	
 	//Used to keep track of actors hit during hit detection
 	UPROPERTY(BlueprintReadWrite)
@@ -194,6 +198,9 @@ protected:
 	void EndAiming();
 	void EndAiming_Implementation();
 
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void ToggleInventory();
+
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -204,11 +211,13 @@ public:
 	//Takes in damage, and returns the actual damage
 	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 
-	UFUNCTION(BlueprintCallable)
-	float GetCurrentHealth() { return health; }
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	float GetCurrentHealth();
+	float GetCurrentHealth_Implementation() { return health; }
 
-	UFUNCTION(BlueprintCallable)
-	float GetMaxHealth() { return maxHealth; }
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	float GetMaxHealth();
+	float GetMaxHealth_Implementation() { return maxHealth; }
 
 	//Player Character interface functions
 	/**
