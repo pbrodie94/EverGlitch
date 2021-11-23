@@ -4,12 +4,12 @@
 
 AItemBase::AItemBase()
 {
-	PrimaryActorTick.bCanEverTick = false;
+	PrimaryActorTick.bCanEverTick = true;
 }
 
 void AItemBase::BeginPlay()
 {
-	
+	Super::BeginPlay();
 }
 
 
