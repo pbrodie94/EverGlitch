@@ -8,14 +8,44 @@
 #include "InventoryComponentBase.generated.h"
 
 USTRUCT(BlueprintType)
+struct FInventoryItem
+{
+	GENERATED_BODY()
+
+	// Item's name
+	UPROPERTY(BlueprintReadWrite)
+	FText itemName;
+	
+	// Item's description
+	UPROPERTY(BlueprintReadWrite)
+	FText itemDescription;
+	
+	// Item's icon
+	UPROPERTY(BlueprintReadWrite)
+	UTexture2D* itemIcon;
+	
+	// The item reference for the inventory slot
+	UPROPERTY(BlueprintReadWrite)
+	TSubclassOf<class AItemBase> itemClass;
+
+	// Is the item stackable?
+	UPROPERTY(BlueprintReadWrite)
+	bool isStackable;
+
+	// How much can the item be stacked?
+	UPROPERTY(BlueprintReadWrite)
+	int maxStackSize;
+};
+
+USTRUCT(BlueprintType)
 struct FInventorySlot
 {
 	GENERATED_BODY()
 
-	// The item reference for the inventory slot
+	// Item struct
 	UPROPERTY(BlueprintReadWrite)
-	AItemBase* item;
-
+	FInventoryItem item;
+	
 	// The quantity of the item in the slot
 	UPROPERTY(BlueprintReadWrite)
 	int quantity;

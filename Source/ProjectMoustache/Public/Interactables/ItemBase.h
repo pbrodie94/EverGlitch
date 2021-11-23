@@ -36,6 +36,9 @@ class PROJECTMOUSTACHE_API AItemBase : public AActor
 	// Max stack size of the item in inventory
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = InventoryProperties)
 	int maxStackSize;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = InventoryProperties)
+	int quantity;
 	
 	public:	
 	// Called every frame

@@ -5,11 +5,28 @@
 AItemBase::AItemBase()
 {
 	PrimaryActorTick.bCanEverTick = true;
+
+	quantity = 1;
 }
 
 void AItemBase::BeginPlay()
 {
 	Super::BeginPlay();
+	
+	if (quantity <= 0 || !isStackable)
+	{
+		quantity = 1;
+	}
+
+	if (isStackable && maxStackSize <= 0)
+	{
+		isStackable = false;
+	}
+	
+	if (isStackable && quantity > maxStackSize)
+	{
+		quantity = maxStackSize;
+	}
 }
 
 
