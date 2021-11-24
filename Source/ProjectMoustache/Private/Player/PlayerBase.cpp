@@ -6,6 +6,9 @@
 #include "Debug/ReporterBase.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Player/Grabber.h"
+#include "Engine/World.h"
+#include "DrawDebugHelpers.h"
 #include "Kismet/KismetSystemLibrary.h"
 
 // Sets default values
