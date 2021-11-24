@@ -3,6 +3,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "MagicComponent.h"
+#include "MagicSpellBase.h"
 #include "PlayerCharacter.h"
 #include "PlayerObserver.h"
 #include "GameFramework/Character.h"
@@ -25,6 +27,9 @@ class PROJECTMOUSTACHE_API APlayerBase : public ACharacter, public IPlayerCharac
 	//Reference to the camera shake object
 	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = true))
 	TSubclassOf<UMatineeCameraShake> cameraShake;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = true))
+	UMagicComponent* magicComponent;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = true))
 	float aimSensitivityX;
@@ -100,6 +105,10 @@ class PROJECTMOUSTACHE_API APlayerBase : public ACharacter, public IPlayerCharac
 	 * Will be moved to weapon class when created
 	 */
 	void DetectMeleeHits();
+
+	void CastMagicSpell();
+
+	void CastSupportSpell();
 
 	/**
 	 * If player has a current interactable object reference, interact with it

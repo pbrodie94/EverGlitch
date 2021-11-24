@@ -54,6 +54,9 @@ APlayerBase::APlayerBase()
 	followCamera->SetRelativeLocation(FVector(0, 50, 0));
 	followCamera->bUsePawnControlRotation = false;
 
+	// Magic component
+	magicComponent = CreateDefaultSubobject<UMagicComponent>(TEXT("MagicComponent"));
+
 	// Create inventory component
 	//inventoryComponent = CreateDefaultSubobject<UInventoryComponentBase>(TEXT("InventoryComponent"));
 
@@ -289,6 +292,7 @@ void APlayerBase::DetectMeleeHits()
 		}
 	}
 }
+
 
 //Takes in damage, and returns the actual damage
 float APlayerBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
