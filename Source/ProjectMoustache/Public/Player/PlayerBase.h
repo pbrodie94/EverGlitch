@@ -74,7 +74,7 @@ class PROJECTMOUSTACHE_API APlayerBase : public ACharacter, public IPlayerCharac
 	float combatStanceTime;
 
 	bool isMeleeAttacking;
-	
+
 	//Time able to fire again, time plus delay set every shot
 	float timeNextShot;
 
@@ -83,7 +83,7 @@ class PROJECTMOUSTACHE_API APlayerBase : public ACharacter, public IPlayerCharac
 
 	//Timer handles
 	FTimerHandle rangedCombatTimerHandle;
-	
+
 	FTimerHandle damageTimerHandle;
 	FTimerHandle speedTimerHandle;
 	FTimerHandle jumpTimerHandle;
@@ -139,7 +139,7 @@ protected:
 
 	/*UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	UInventoryComponentBase* inventoryComponent;*/
-	
+
 	//Used to keep track of actors hit during hit detection
 	UPROPERTY(BlueprintReadWrite)
 	TArray<AActor*> hitActors;
@@ -147,7 +147,7 @@ protected:
 	//Multiplier for damage values used for applying damage changes
 	UPROPERTY(BlueprintReadWrite)
 	float percentageDamageChange;
-	
+
 	UPROPERTY(BlueprintReadWrite)
 	bool isAiming;
 
@@ -195,7 +195,7 @@ protected:
 	UFUNCTION(BlueprintNativeEvent)
 	void Die();
 	void Die_Implementation();
-	
+
 	UFUNCTION(BlueprintCallable)
 	bool GetIsMeleeAttacking() { return isMeleeAttacking; }
 

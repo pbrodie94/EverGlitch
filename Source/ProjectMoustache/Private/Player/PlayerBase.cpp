@@ -205,7 +205,7 @@ void APlayerBase::Dash()
 	moveDirection.Z = 0;
 	moveDirection *= dashPower;
 	moveDirection.Z = 200;
-	
+
 	GetCharacterMovement()->Launch(moveDirection);
 
 	timeNextDash = GetWorld()->GetTimeSeconds() + dashDelayInterval;
@@ -222,7 +222,7 @@ void APlayerBase::Fire()
 	{
 		return;
 	}
-	
+
 	UWorld* world = GetWorld();
 	if (world->GetTimeSeconds() < timeNextShot)
 	{
@@ -234,13 +234,13 @@ void APlayerBase::Fire()
 	firePosition += FVector(0, 0, 50);
 	FRotator direction = UKismetMathLibrary::MakeRotFromX(followCamera->GetForwardVector());
 	SpawnProjectile(FTransform(direction, firePosition, FVector(1, 1, 1)));
-	
+
 	//Switch to combat stance and set timer to end combat stance
 	GetCharacterMovement()->bOrientRotationToMovement = false;
-	
+
 	world->GetTimerManager().ClearTimer(rangedCombatTimerHandle);
 	world->GetTimerManager().SetTimer(rangedCombatTimerHandle, this, &APlayerBase::OnCombatStanceEnd, combatStanceTime);
-	
+
 	timeNextShot = GetWorld()->GetTimeSeconds() + fireDelay;
 }
 
@@ -281,7 +281,7 @@ void APlayerBase::DetectMeleeHits()
 			{
 				continue;
 			}
-			
+
 			//Check if melee attack has hit an enemy
 			if (hit.Actor->ActorHasTag("Enemy") && !hitActors.Contains(hit.Actor))
 			{
@@ -307,7 +307,7 @@ float APlayerBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEven
 	{
 		return 0;
 	}
-	
+
 	health -= DamageAmount;
 
 	GetWorld()->GetFirstPlayerController()->PlayerCameraManager->StartCameraShake(cameraShake, 1);
@@ -431,7 +431,7 @@ bool APlayerBase::ApplyHealth_Implementation(float amount)
 	{
 		return false;
 	}
-	
+
 	health += FMath::Abs(amount);
 	if (health > maxHealth)
 	{
@@ -454,7 +454,7 @@ void APlayerBase::ApplyDamageChange_Implementation(float percentage, float durat
 
 	//Handle duration
 	UWorld* world = GetWorld();
-	
+
 	if (duration <= 0)
 	{
 		world->GetTimerManager().ClearTimer(damageTimerHandle);
@@ -477,7 +477,7 @@ void APlayerBase::ApplySpeedChange_Implementation(float percentage, float durati
 
 	//Handle duration
 	UWorld* world = GetWorld();
-	
+
 	if (duration <= 0)
 	{
 		world->GetTimerManager().ClearTimer(speedTimerHandle);
@@ -500,7 +500,7 @@ void APlayerBase::ApplyJumpChange_Implementation(float percentage, float duratio
 
 	//Handle duration
 	UWorld* world = GetWorld();
-	
+
 	if (duration <= 0)
 	{
 		world->GetTimerManager().ClearTimer(jumpTimerHandle);
@@ -529,7 +529,7 @@ void APlayerBase::RemoveSelfAsInteractable_Implementation(const TScriptInterface
 	{
 		return;
 	}
-	
+
 	currentInteractableObject.SetInterface(nullptr);
 	currentInteractableObject.SetObject(nullptr);
 }
