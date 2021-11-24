@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "Player/Grabber.h"
 #include "PlayerBase.generated.h"
 
 UCLASS()
