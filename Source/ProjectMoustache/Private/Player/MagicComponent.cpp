@@ -6,6 +6,7 @@
 #include <lmerr.h>
 
 #include "Kismet/GameplayStatics.h"
+#include "Player/PlayerCharacter.h"
 
 // Sets default values for this component's properties
 UMagicComponent::UMagicComponent()
@@ -44,6 +45,12 @@ void UMagicComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 
 void UMagicComponent::CastPowerSpell()
 {
+	IPlayerCharacter* player = Cast<IPlayerCharacter>(GetOwner());
+	if (player != nullptr && player->Execute_GetIsPlayerDead(GetOwner()))
+	{
+		return;
+	}
+	
 	if (powerSpell != nullptr)
 	{
 		APawn* ownerPawn = Cast<APawn>(GetOwner());
@@ -53,6 +60,12 @@ void UMagicComponent::CastPowerSpell()
 
 void UMagicComponent::CastSupportSpell()
 {
+	IPlayerCharacter* player = Cast<IPlayerCharacter>(GetOwner());
+	if (player != nullptr && player->Execute_GetIsPlayerDead(GetOwner()))
+	{
+		return;
+	}
+	
 	if (supportSpell != nullptr)
 	{
 		APawn* ownerPawn = Cast<APawn>(GetOwner());

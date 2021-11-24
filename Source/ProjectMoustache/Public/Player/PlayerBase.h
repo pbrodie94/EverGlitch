@@ -228,6 +228,10 @@ public:
 	float GetMaxHealth();
 	float GetMaxHealth_Implementation() { return maxHealth; }
 
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	bool GetIsPlayerDead();
+	bool GetIsPlayerDead_Implementation() { return isDead; }
+
 	//Player Character interface functions
 	/**
 	* Used to add health to player, and returns false if health is full

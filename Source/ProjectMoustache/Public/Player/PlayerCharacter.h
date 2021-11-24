@@ -30,6 +30,9 @@ public:
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	float GetMaxHealth();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	bool GetIsPlayerDead();
 	
 	/**
 	 * Used to add health to player

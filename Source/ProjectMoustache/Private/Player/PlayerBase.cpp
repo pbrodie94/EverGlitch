@@ -162,6 +162,11 @@ void APlayerBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 
 void APlayerBase::MoveForward(float value)
 {
+	if (isDead)
+	{
+		return;
+	}
+	
 	if (Controller != nullptr && value != 0)
 	{
 		//Get forward direction
@@ -176,6 +181,11 @@ void APlayerBase::MoveForward(float value)
 
 void APlayerBase::MoveRight(float value)
 {
+	if (isDead)
+	{
+		return;
+	}
+	
 	if (Controller != nullptr && value != 0)
 	{
 		//Get forward direction
@@ -194,6 +204,11 @@ void APlayerBase::MoveRight(float value)
 */
 void APlayerBase::Dash()
 {
+	if (isDead)
+	{
+		return;
+	}
+	
 	if (GetWorld()->GetTimeSeconds() < timeNextDash || isAiming)
 	{
 		return;
@@ -385,6 +400,8 @@ void APlayerBase::Die_Implementation()
 	ApplyDamageChange(0, 0);
 	ApplySpeedChange(0, 0);
 	ApplyJumpChange(0, 0);
+
+	EndMeleeAttackDamage();
 
 	if (isAiming)
 	{
