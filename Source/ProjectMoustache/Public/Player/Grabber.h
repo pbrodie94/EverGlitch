@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "PlayerCharacter.h"
 #include "Components/ActorComponent.h"
 #include "PhysicsEngine/PhysicsHandleComponent.h"
 #include "Components/InputComponent.h"
@@ -13,6 +14,28 @@ UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class PROJECTMOUSTACHE_API UGrabber : public UActorComponent
 {
 	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = true))
+	float grabDistance;
+
+	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = true))
+	FVector holdOffset;
+
+	UPROPERTY()
+	UInputComponent* InputComponent = nullptr;
+
+	UPROPERTY()
+	UPhysicsHandleComponent* PhysicsHandle = nullptr;
+
+	UPROPERTY()
+	TScriptInterface<IPlayerCharacter> playerCharacter;
+	
+	FVector GetLineStart();
+	FVector GetLineEnd();
+	FHitResult LineTrace();
+	
+	void Grab();
+	void Release();
 
 public:	
 	// Sets default values for this component's properties
@@ -25,14 +48,5 @@ protected:
 public:	
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
-
-private:
-	FVector GetLineStart();
-	FVector GetLineEnd();
-	FHitResult LineTrace();
-	UInputComponent* InputComponent = nullptr;
-	UPhysicsHandleComponent* PhysicsHandle = nullptr;
-
-	void Grab();
-	void Release();
+	
 };

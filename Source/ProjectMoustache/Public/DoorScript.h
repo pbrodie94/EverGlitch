@@ -29,9 +29,12 @@ public:
 		
 
 private:
+	
 	AActor* Owner;
+	
 	UPROPERTY(EditAnywhere)
-		ATriggerVolume* TriggerVolume;
+	ATriggerVolume* TriggerVolume;
+	
 	AActor* DefaultPawn;
 
 	float DoorOpenDuration = 0.5;

@@ -3,8 +3,8 @@
 
 #include "Player/Grabber.h"
 #include "Engine/World.h"
-
 #include "DrawDebugHelpers.h"
+#include "Kismet/KismetMathLibrary.h"
 
 // Sets default values for this component's properties
 UGrabber::UGrabber()
@@ -14,6 +14,9 @@ UGrabber::UGrabber()
 	PrimaryComponentTick.bCanEverTick = true;
 
 	// ...
+
+	grabDistance = 150;
+	holdOffset = FVector(100, 0, -50);
 }
 
 
@@ -28,13 +31,18 @@ void UGrabber::BeginPlay()
 
 	if (InputComponent)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Input Component has found "));
 		InputComponent->BindAction("Action", IE_Pressed, this, &UGrabber::Grab);
-		InputComponent->BindAction("Action", IE_Released, this, &UGrabber::Release);
+		//InputComponent->BindAction("Action", IE_Released, this, &UGrabber::Release);
 	}
 	else
 	{
 		UE_LOG(LogTemp, Error, TEXT("Input Component has not found "));
+	}
+
+	if (GetOwner()->GetClass()->ImplementsInterface(UPlayerCharacter::StaticClass()))
+	{
+		playerCharacter.SetInterface(GetOwner());
+		playerCharacter.SetObject(GetOwner());
 	}
 	
 }
@@ -53,23 +61,18 @@ void UGrabber::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompone
 
 FVector UGrabber::GetLineStart()
 {
-	FVector Start;
-	FRotator ViewRotator;
-	GetWorld()->GetFirstPlayerController()->GetPlayerViewPoint(Start, ViewRotator);
-	return Start;
+	return playerCharacter->Execute_GetPlayerLocation(GetOwner()) + UKismetMathLibrary::RotateAngleAxis(holdOffset,
+		playerCharacter->Execute_GetPlayerRotation(GetOwner()).Yaw, FVector::UpVector);
 }
 
 FVector UGrabber::GetLineEnd()
 {
-	FVector Start;
-	FRotator ViewRotator;
-	GetWorld()->GetFirstPlayerController()->GetPlayerViewPoint(Start, ViewRotator);
-	return Start + ViewRotator.Vector() * 300;;
+	FVector Start = GetLineStart();
+	return Start + (playerCharacter->Execute_GetPlayerForwardDirection(GetOwner()) * grabDistance);
 }
 
 FHitResult UGrabber::LineTrace()
 {
-	DrawDebugLine(GetWorld(), GetLineStart(), GetLineEnd(), FColor(255, 0, 0), false, 0, 0, 10);
 	FHitResult Hit;
 
 	GetWorld()->LineTraceSingleByObjectType(
@@ -79,30 +82,38 @@ FHitResult UGrabber::LineTrace()
 		FCollisionObjectQueryParams(ECollisionChannel::ECC_PhysicsBody),
 		FCollisionQueryParams(FName(TEXT("")), false, GetOwner())
 	);
-
-	AActor* Actor = Hit.GetActor();
-	if (Actor)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Line Hit:%s "), *Actor->GetName());
-	}
+	
 	return Hit;
 }
 
 void UGrabber::Grab()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Grab has pressed "));
+	if (playerCharacter == nullptr)
+	{
+		return;
+	}
+	
+	if (playerCharacter->Execute_GetHasInteractable(GetOwner()))
+	{
+		return;
+	}
+
+	if (PhysicsHandle && PhysicsHandle->GrabbedComponent)
+	{
+		Release();
+		return;
+	}
+	
 	FHitResult Hit = LineTrace();
 	UPrimitiveComponent* ComponentToGrab = Hit.GetComponent();
-	if (Hit.GetActor() && PhysicsHandle)
+	if (ComponentToGrab != nullptr && PhysicsHandle)
 	{
 		PhysicsHandle->GrabComponentAtLocationWithRotation(ComponentToGrab, NAME_None, ComponentToGrab->GetOwner()->GetActorLocation(), GetOwner()->GetActorRotation());
-		UE_LOG(LogTemp, Warning, TEXT("Grabed! "));
 	}
 }
 
 void UGrabber::Release()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Release has pressed "));
 	if (PhysicsHandle)
 	{
 		PhysicsHandle->ReleaseComponent();

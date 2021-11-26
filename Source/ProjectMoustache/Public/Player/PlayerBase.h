@@ -295,6 +295,13 @@ public:
 	bool GetHasInteractable_Implementation();
 
 	/**
+	* Returns the unique interactable message for each interactable
+	*/
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	FText GetInteractableMessage();
+	FText GetInteractableMessage_Implementation();
+
+	/**
 	* Returns the camera's current location
 	*/
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)

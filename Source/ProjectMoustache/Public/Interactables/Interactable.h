@@ -25,4 +25,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void Interact();
+
+	// Complete the sentence
+	// Press 'F' to ...
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	FText GetInteractableMessage();
 };

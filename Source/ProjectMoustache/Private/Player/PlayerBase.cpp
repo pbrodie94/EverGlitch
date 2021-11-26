@@ -560,6 +560,14 @@ bool APlayerBase::GetHasInteractable_Implementation()
 }
 
 /**
+* Returns the unique interactable message for each interactable
+*/
+FText APlayerBase::GetInteractableMessage_Implementation()
+{
+	return currentInteractableObject->Execute_GetInteractableMessage(currentInteractableObject.GetObject());
+}
+
+/**
 * Returns the camera's current location
 */
 FVector APlayerBase::GetCameraLocation_Implementation()

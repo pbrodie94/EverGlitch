@@ -60,7 +60,11 @@ void UDoorScript::CloseDoor()
 float UDoorScript::GetTotalMassInTrigger()
 {
 	TArray<AActor*> Actors;
-	if (TriggerVolume == nullptr)return 0;
+	if (TriggerVolume == nullptr)
+	{
+		return 0;
+	}
+
 	TriggerVolume->GetOverlappingActors(Actors);
 
 	float TotalMass = 0;
