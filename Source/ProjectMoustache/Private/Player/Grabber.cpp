@@ -16,6 +16,7 @@ UGrabber::UGrabber()
 	// ...
 
 	grabDistance = 150;
+	grabInterpSpeed = 30;
 	holdOffset = FVector(100, 0, -50);
 }
 
@@ -55,7 +56,10 @@ void UGrabber::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompone
 
 	if (PhysicsHandle && PhysicsHandle->GrabbedComponent)
 	{
-		PhysicsHandle->SetTargetLocation(GetLineEnd());
+		FVector wantedPosition = GetLineEnd() + FVector(0, 0, 50);
+		FVector smoothPosition = FMath::VInterpTo(PhysicsHandle->GetGrabbedComponent()->GetComponentLocation(),
+			wantedPosition, DeltaTime, grabInterpSpeed);
+		PhysicsHandle->SetTargetLocation(smoothPosition);
 	}
 }
 

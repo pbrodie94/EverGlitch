@@ -19,6 +19,9 @@ class PROJECTMOUSTACHE_API UGrabber : public UActorComponent
 	float grabDistance;
 
 	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = true))
+	float grabInterpSpeed;
+
+	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = true))
 	FVector holdOffset;
 
 	UPROPERTY()
