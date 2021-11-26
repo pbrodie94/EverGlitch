@@ -24,7 +24,7 @@ void UDoorScript::BeginPlay()
 
 	Owner = GetOwner();
 	DefaultPawn = GetWorld()->GetFirstPlayerController()->GetPawn();
-	
+
 }
 
 
@@ -76,4 +76,3 @@ float UDoorScript::GetTotalMassInTrigger()
 	UE_LOG(LogTemp, Warning, TEXT("Total Mass is %f ! "), TotalMass);
 	return TotalMass;
 }
-

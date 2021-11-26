@@ -166,7 +166,7 @@ void APlayerBase::MoveForward(float value)
 	{
 		return;
 	}
-	
+
 	if (Controller != nullptr && value != 0)
 	{
 		//Get forward direction
@@ -185,7 +185,7 @@ void APlayerBase::MoveRight(float value)
 	{
 		return;
 	}
-	
+
 	if (Controller != nullptr && value != 0)
 	{
 		//Get forward direction
@@ -208,7 +208,7 @@ void APlayerBase::Dash()
 	{
 		return;
 	}
-	
+
 	if (GetWorld()->GetTimeSeconds() < timeNextDash || isAiming)
 	{
 		return;

@@ -44,7 +44,7 @@ void UGrabber::BeginPlay()
 		playerCharacter.SetInterface(GetOwner());
 		playerCharacter.SetObject(GetOwner());
 	}
-	
+
 }
 
 
@@ -82,7 +82,7 @@ FHitResult UGrabber::LineTrace()
 		FCollisionObjectQueryParams(ECollisionChannel::ECC_PhysicsBody),
 		FCollisionQueryParams(FName(TEXT("")), false, GetOwner())
 	);
-	
+
 	return Hit;
 }
 
@@ -92,7 +92,7 @@ void UGrabber::Grab()
 	{
 		return;
 	}
-	
+
 	if (playerCharacter->Execute_GetHasInteractable(GetOwner()))
 	{
 		return;
@@ -103,7 +103,7 @@ void UGrabber::Grab()
 		Release();
 		return;
 	}
-	
+
 	FHitResult Hit = LineTrace();
 	UPrimitiveComponent* ComponentToGrab = Hit.GetComponent();
 	if (ComponentToGrab != nullptr && PhysicsHandle)
@@ -119,4 +119,3 @@ void UGrabber::Release()
 		PhysicsHandle->ReleaseComponent();
 	}
 }
-
