@@ -30,6 +30,10 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = MagicSpell)
 	FText spellDescription;
 
+	// UI Icon for the spell
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = MagicSpell)
+	UTexture2D* spellIcon;
+
 	// Amount of damage done
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = MagicSpell)
 	float damage;
@@ -41,6 +45,9 @@ protected:
 	// Time it takes between casting
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = MagicSpell)
 	float coolDownTime;
+
+	UPROPERTY()
+	float timeCasted;
 
 	// Implementation of the casting of the spell
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
@@ -63,4 +70,13 @@ public:
 	
 	UFUNCTION(BlueprintCallable)
 	FText GetSpellDescription() { return spellDescription; }
+
+	UFUNCTION(BlueprintCallable)
+	UTexture2D* GetSpellIcon() { return spellIcon; }
+
+	UFUNCTION(BlueprintCallable)
+	float GetCoolDownTime() { return coolDownTime; }
+
+	UFUNCTION(BlueprintCallable)
+	float GetCoolDownRemaining();
 };

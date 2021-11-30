@@ -106,10 +106,6 @@ class PROJECTMOUSTACHE_API APlayerBase : public ACharacter, public IPlayerCharac
 	 */
 	void DetectMeleeHits();
 
-	void CastMagicSpell();
-
-	void CastSupportSpell();
-
 	/**
 	 * If player has a current interactable object reference, interact with it
 	 */
