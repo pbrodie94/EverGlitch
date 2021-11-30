@@ -187,7 +187,6 @@ void ABaseBoss::Tick(float DeltaTime)
 	//Handle beam attack
 	if (isBeamAttacking)
 	{
-		//BeamAttackEffects(DeltaTime);
 		BeamAttack(DeltaTime);
 	}
 
@@ -380,7 +379,6 @@ void ABaseBoss::DetectMeleeHits()
 				FDamageEvent damageEvent;
 				hitResult.Actor->TakeDamage(beamDamage, damageEvent, GetController(), this);
 				hitActors.AddUnique(hitResult.Actor.Get());
-				timeLastDamaged = GetWorld()->GetTimeSeconds() + beamDamageInterval;
 				break;
 			}
 		}
@@ -829,5 +827,19 @@ bool ABaseBoss::GetShouldAOE()
 		default:
 
 			return true;
+	}
+}
+
+void ABaseBoss::Die_Implementation()
+{
+	isAttacking = false;
+	isBeamAttacking = false;
+	isMeleeAttacking = false;
+	isProjectileBarage = false;
+	isPointMagicAttack = false;
+	
+	if (beamParticles != nullptr)
+	{
+		beamParticles->DestroyComponent();
 	}
 }
