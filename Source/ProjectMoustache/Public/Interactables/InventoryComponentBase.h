@@ -42,6 +42,11 @@ struct FInventorySlot
 {
 	GENERATED_BODY()
 
+	FInventorySlot()
+	{
+		quantity = -1;
+	}
+
 	// Item struct
 	UPROPERTY(BlueprintReadWrite)
 	FInventoryItem item;
@@ -87,6 +92,9 @@ class PROJECTMOUSTACHE_API UInventoryComponentBase : public UActorComponent
 	void UpdateQuickslots(int slotIndex);
 
 	void RemoveDuplicateQuickSlotItems(int slotNumber, int itemIndex);
+	
+	bool CreateStack(FInventorySlot newItem);
+	bool AddToStack(FInventorySlot newItem, int slotIndex);
 
 public:	
 	// Sets default values for this component's properties
@@ -114,6 +122,18 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	int numberOfSlots;
 
+	UFUNCTION(BlueprintCallable)
+	bool GetItemHasPartialStack(FInventorySlot queryItem);
+
+	UFUNCTION(BlueprintCallable)
+	int GetItemPartialStackIndex(FInventorySlot queryItem);
+
+	UFUNCTION(BlueprintCallable)
+	int GetItemIndex(FInventorySlot queryItem);
+
+	UFUNCTION(BlueprintCallable)
+	void RemoveItem(int itemIndex);
+
 	// Use inventory item
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	bool UseItem(int itemIndex);
@@ -125,6 +145,15 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
+	UFUNCTION(BlueprintCallable)
+	bool AddToInventory(FInventorySlot newItem);
+
+	UFUNCTION(BlueprintCallable)
+	bool GetHasItem(TSubclassOf<AItemBase> queryItem);
+
+	UFUNCTION(BlueprintCallable)
+	int GetItemQuantity(TSubclassOf<AItemBase> queryItem);
+	
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void ToggleInventory();
 	void ToggleInventory_Implementation() { }

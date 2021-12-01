@@ -26,6 +26,9 @@ void UInventoryComponentBase::BeginPlay()
 		inputComponent->BindAction("QuickSlot2", IE_Pressed, this, &UInventoryComponentBase::UseQuickSlotTwo);
 		inputComponent->BindAction("QuickSlot3", IE_Pressed, this, &UInventoryComponentBase::UseQuickSlotThree);
 	}
+
+	inventory.SetNum(numberOfSlots);
+
 }
 
 
@@ -36,6 +39,152 @@ void UInventoryComponentBase::TickComponent(float DeltaTime, ELevelTick TickType
 
 	// ...
 }
+
+bool UInventoryComponentBase::AddToInventory(FInventorySlot newItem)
+{
+	if (newItem.item.isStackable)
+	{
+		if (GetItemHasPartialStack(newItem))
+		{
+			int partialStack = GetItemPartialStackIndex(newItem);
+			if (partialStack >= 0)
+			{
+				return AddToStack(newItem, GetItemPartialStackIndex(newItem));
+			}
+		}
+	}
+
+	return CreateStack(newItem);
+}
+
+bool UInventoryComponentBase::CreateStack(FInventorySlot newItem)
+{
+	for (int i = 0; i < inventory.Num() - 1; ++i)
+	{
+		if (inventory[i].quantity <= 0)
+		{
+			inventory[i] = newItem;
+			return true;
+		}
+	}
+
+	return false;
+}
+
+bool UInventoryComponentBase::AddToStack(FInventorySlot newItem, int slotIndex)
+{
+	if (inventory[slotIndex].quantity + newItem.quantity > inventory[slotIndex].item.maxStackSize)
+	{
+		int excessItem = (inventory[slotIndex].quantity + newItem.quantity) - inventory[slotIndex].item.maxStackSize;
+		FInventorySlot modifiedItem = newItem;
+		modifiedItem.quantity = excessItem;
+		AddToInventory(modifiedItem);
+		return true;
+	}
+
+	inventory[slotIndex].quantity += newItem.quantity;
+	return true;
+}
+
+bool UInventoryComponentBase::GetHasItem(TSubclassOf<AItemBase> queryItem)
+{
+	for (auto item : inventory)
+	{
+		if (item.item.itemClass == queryItem)
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
+bool UInventoryComponentBase::GetItemHasPartialStack(FInventorySlot queryItem)
+{
+	for (auto item : inventory)
+	{
+		if (item.quantity <= 0)
+		{
+			return false;
+		}
+		
+		if (queryItem.item.itemClass == item.item.itemClass)
+		{
+			if (item.quantity < item.item.maxStackSize)
+			{
+				return true;
+			}
+		}
+	}
+
+	return false;
+}
+
+int UInventoryComponentBase::GetItemPartialStackIndex(FInventorySlot queryItem)
+{
+	for (int i = 0; i < inventory.Num() - 1; ++i)
+	{
+		if (queryItem.item.itemClass == inventory[i].item.itemClass)
+		{
+			if (inventory[i].quantity < inventory[i].item.maxStackSize)
+			{
+				return i;
+			}
+		}
+	}
+
+	return -1;
+}
+
+
+int UInventoryComponentBase::GetItemQuantity(TSubclassOf<AItemBase> queryItem)
+{
+	int itemQuantity = 0;
+	for (auto item : inventory)
+	{
+		if (item.item.itemClass == queryItem)
+		{
+			itemQuantity += item.quantity;
+		}
+	}
+
+	return itemQuantity;
+}
+
+void UInventoryComponentBase::RemoveItem(int itemIndex)
+{
+	if (itemIndex < 0 || itemIndex > inventory.Num() - 1)
+	{
+		return;
+	}
+
+	inventory[itemIndex] = FInventorySlot();
+	
+	for (int i = itemIndex; i < inventory.Num() - 2; ++i)
+	{
+		if (inventory[i + 1].quantity > 0)
+		{
+			inventory[i] = inventory[i + 1];
+		} else
+		{
+			break;
+		}
+	}
+}
+
+int UInventoryComponentBase::GetItemIndex(FInventorySlot queryItem)
+{
+	for (int i = 0; i < inventory.Num() - 1; ++i)
+	{
+		if (inventory[i].item.itemClass == queryItem.item.itemClass)
+		{
+			return i;
+		}
+	}
+	
+	return -1;
+}
+
 
 FInventorySlot UInventoryComponentBase::GetInventoryItemAtIndex(int index)
 {
