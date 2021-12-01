@@ -337,7 +337,7 @@ protected:
 	UFUNCTION(BlueprintCallable)
 	void PlayerDied();
 
-	UFUNCTION(BlueprintImplementableEvent)
+	UFUNCTION(BlueprintNativeEvent)
 	void Die();
 
 public:
