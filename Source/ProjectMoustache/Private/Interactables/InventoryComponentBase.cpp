@@ -56,7 +56,7 @@ void UInventoryComponentBase::UseQuickSlotOne()
 	{
 		if (UseItem(quickSlot1.inventoryIndex))
 		{
-			if (quickSlot1.inventoryItem.quantity <= 0)
+			if (quickSlot1.inventoryItem.quantity <= 1)
 			{
 				UpdateQuickslots(1);
 				quickSlot1 = FQuickSlotItem();
@@ -73,7 +73,7 @@ void UInventoryComponentBase::UseQuickSlotTwo()
 	{
 		if (UseItem(quickSlot2.inventoryIndex))
 		{
-			if (quickSlot2.inventoryItem.quantity <= 0)
+			if (quickSlot2.inventoryItem.quantity <= 1)
 			{
 				UpdateQuickslots(2);
 				quickSlot2 = FQuickSlotItem();
@@ -90,7 +90,7 @@ void UInventoryComponentBase::UseQuickSlotThree()
 	{
 		if (UseItem(quickSlot3.inventoryIndex))
 		{
-			if (quickSlot3.inventoryItem.quantity <= 0)
+			if (quickSlot3.inventoryItem.quantity <= 1)
 			{
 				UpdateQuickslots(3);
 				quickSlot3 = FQuickSlotItem();
