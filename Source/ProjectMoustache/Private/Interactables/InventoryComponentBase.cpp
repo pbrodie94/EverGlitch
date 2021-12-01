@@ -54,7 +54,15 @@ void UInventoryComponentBase::UseQuickSlotOne()
 {
 	if (quickSlot1.inventoryItem.quantity > 0)
 	{
-		UseItem(quickSlot1.inventoryIndex);
+		if (UseItem(quickSlot1.inventoryIndex))
+		{
+			if (quickSlot1.inventoryItem.quantity <= 0)
+			{
+				UpdateQuickslots(1);
+				quickSlot1 = FQuickSlotItem();
+				return;
+			}
+		}
 		SetQuickSlotItem(1, quickSlot1.inventoryIndex);
 	}
 }
@@ -63,7 +71,15 @@ void UInventoryComponentBase::UseQuickSlotTwo()
 {
 	if (quickSlot2.inventoryItem.quantity > 0)
 	{
-		UseItem(quickSlot2.inventoryIndex);
+		if (UseItem(quickSlot2.inventoryIndex))
+		{
+			if (quickSlot2.inventoryItem.quantity <= 0)
+			{
+				UpdateQuickslots(2);
+				quickSlot2 = FQuickSlotItem();
+				return;
+			} 
+		}
 		SetQuickSlotItem(2, quickSlot2.inventoryIndex);
 	}
 }
@@ -72,10 +88,77 @@ void UInventoryComponentBase::UseQuickSlotThree()
 {
 	if (quickSlot3.inventoryItem.quantity > 0)
 	{
-		UseItem(quickSlot3.inventoryIndex);
+		if (UseItem(quickSlot3.inventoryIndex))
+		{
+			if (quickSlot3.inventoryItem.quantity <= 0)
+			{
+				UpdateQuickslots(3);
+				quickSlot3 = FQuickSlotItem();
+				return;
+			}
+		}
 		SetQuickSlotItem(3, quickSlot3.inventoryIndex);
 	}	
 }
+
+void UInventoryComponentBase::UpdateQuickslots(int slotIndex)
+{
+	int itemIndex = 0;
+	
+	switch(slotIndex)
+	{
+	case 1:
+		itemIndex = quickSlot1.inventoryIndex;
+
+		if (quickSlot2.inventoryIndex > itemIndex)
+		{
+			--quickSlot2.inventoryIndex;
+		}
+
+		if (quickSlot3.inventoryIndex > itemIndex)
+		{
+			--quickSlot3.inventoryIndex;
+		}
+		
+		break;
+
+	case 2:
+
+		itemIndex = quickSlot2.inventoryIndex;
+
+		if (quickSlot1.inventoryIndex > itemIndex)
+		{
+			--quickSlot1.inventoryIndex;
+		}
+
+		if (quickSlot3.inventoryIndex > itemIndex)
+		{
+			--quickSlot3.inventoryIndex;
+		}
+		
+		break;
+
+	case 3:
+		itemIndex = quickSlot3.inventoryIndex;
+
+		if (quickSlot1.inventoryIndex > itemIndex)
+		{
+			--quickSlot1.inventoryIndex;
+		}
+
+		if (quickSlot2.inventoryIndex > itemIndex)
+		{
+			--quickSlot2.inventoryIndex;
+		}
+		
+		break;
+
+	default:
+		
+		break;
+	}
+}
+
 
 FQuickSlotItem UInventoryComponentBase::GetQuickSlotItem(int quickSlot)
 {
@@ -218,8 +301,8 @@ int UInventoryComponentBase::GetSelectedItemIndex()
 
 void UInventoryComponentBase::DeselectAll()
 {
-	for (auto item : inventory)
+	for (int i = 0; i < inventory.Num() - 1; ++i)
 	{
-		item.isSelected = false;
+		inventory[i].isSelected = false;
 	}
 }

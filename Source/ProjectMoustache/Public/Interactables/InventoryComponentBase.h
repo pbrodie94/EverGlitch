@@ -63,6 +63,7 @@ struct FQuickSlotItem
 	FQuickSlotItem()
 	{
 		inventoryItem.quantity = -1;
+		inventoryIndex = -1;
 	}
 	
 	// Item and quantity
@@ -83,6 +84,7 @@ class PROJECTMOUSTACHE_API UInventoryComponentBase : public UActorComponent
 	void UseQuickSlotOne();
 	void UseQuickSlotTwo();
 	void UseQuickSlotThree();
+	void UpdateQuickslots(int slotIndex);
 
 	void RemoveDuplicateQuickSlotItems(int slotNumber, int itemIndex);
 
