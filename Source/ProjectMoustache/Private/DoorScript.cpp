@@ -24,7 +24,7 @@ void UDoorScript::BeginPlay()
 
 	Owner = GetOwner();
 	DefaultPawn = GetWorld()->GetFirstPlayerController()->GetPawn();
-	
+
 }
 
 
@@ -60,7 +60,11 @@ void UDoorScript::CloseDoor()
 float UDoorScript::GetTotalMassInTrigger()
 {
 	TArray<AActor*> Actors;
-	if (TriggerVolume == nullptr)return 0;
+	if (TriggerVolume == nullptr)
+	{
+		return 0;
+	}
+
 	TriggerVolume->GetOverlappingActors(Actors);
 
 	float TotalMass = 0;
@@ -72,4 +76,3 @@ float UDoorScript::GetTotalMassInTrigger()
 	UE_LOG(LogTemp, Warning, TEXT("Total Mass is %f ! "), TotalMass);
 	return TotalMass;
 }
-
