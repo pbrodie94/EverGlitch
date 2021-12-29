@@ -18,6 +18,10 @@ class PROJECTMOUSTACHE_API AMagicSpellBase : public AActor
 	UPROPERTY()
 	float timeNextFire;
 
+	// Used to get cooldown percentage
+	UPROPERTY()
+	float timeFired;
+
 protected:
 
 	virtual void BeginPlay() override;
@@ -29,6 +33,10 @@ protected:
 	// Description of the spell
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = MagicSpell)
 	FText spellDescription;
+
+	// Spell icon
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = MagicSpell)
+	UTexture2D* spellIcon;
 
 	// Amount of damage done
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = MagicSpell)
@@ -63,4 +71,16 @@ public:
 	
 	UFUNCTION(BlueprintCallable)
 	FText GetSpellDescription() { return spellDescription; }
+
+	UFUNCTION(BlueprintCallable)
+	UTexture2D* GetSpellIcon() { return spellIcon; }
+
+	UFUNCTION(BlueprintCallable)
+	float GetCooldownTime() { return coolDownTime; }
+
+	/**
+	 * Returns the percentage of time left before can fire again
+	 */
+	UFUNCTION(BlueprintCallable)
+	float GetCooldownProgress();
 };

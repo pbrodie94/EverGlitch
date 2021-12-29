@@ -23,6 +23,12 @@ void AMagicSpellBase::Execute(APawn* userActor)
 
 	CastSpell(userActor);
 
+	timeFired = world->GetTimeSeconds();
 	timeNextFire = world->GetTimeSeconds() + coolDownTime;
 }
 
+float AMagicSpellBase::GetCooldownProgress()
+{
+	float time = (GetWorld()->GetTimeSeconds() - timeFired) / coolDownTime;
+	return FMath::Clamp(time, 0.0f, 1.0f);
+}
