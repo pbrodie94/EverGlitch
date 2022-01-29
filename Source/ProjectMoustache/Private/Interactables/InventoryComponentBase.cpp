@@ -3,12 +3,16 @@
 
 #include "Interactables/InventoryComponentBase.h"
 
+#include <set>
+
 // Sets default values for this component's properties
 UInventoryComponentBase::UInventoryComponentBase()
 {
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = false;
+
+	selectedItem = -1;
 	
 }
 
@@ -32,6 +36,7 @@ void UInventoryComponentBase::BeginPlay()
 	}
 
 	inventory.SetNum(numberOfSlots);
+	SetSelectedItem(-1);
 }
 
 
@@ -54,7 +59,7 @@ bool UInventoryComponentBase::AddToInventory(FInventorySlot itemToAdd)
 	{
 		return AddToStack(itemToAdd, GetPartialStackIndex(itemToAdd));
 	}
-
+	
 	return CreateStack(itemToAdd);
 }
 
@@ -121,38 +126,145 @@ bool UInventoryComponentBase::AddToStack(FInventorySlot itemToAdd, int index)
 
 void UInventoryComponentBase::UseQuickSlot1()
 {
-	UseQuickSlot(quickSlot1);
+	UseQuickSlot(1);
 }
 
 void UInventoryComponentBase::UseQuickSlot2()
 {
-	UseQuickSlot(quickSlot2);
+	UseQuickSlot(2);
 }
 
 void UInventoryComponentBase::UseQuickSlot3()
 {
-	UseQuickSlot(quickSlot3);
+	UseQuickSlot(3);
 }
 
-void UInventoryComponentBase::UseQuickSlot(FQuickSlot quickSlot)
+bool UInventoryComponentBase::UseQuickSlot(int slotNumber)
 {
-	if (quickSlot.itemIndex < 0)
+	if (GetQuickSlot(slotNumber).itemIndex < 0)
 	{
-		return;
+		return false;
 	}
 
-	if (quickSlot.item.quantity <= 0)
+	if (GetQuickSlot(slotNumber).item.quantity <= 0)
 	{
-		return;
+		return false;
 	}
 
-	if (UseItem(quickSlot.itemIndex))
+	if (UseItem(GetQuickSlot(slotNumber).itemIndex))
 	{
-		if (quickSlot.item.quantity <= 1)
+		//UpdateQuickSlots();
+		
+		// Used all of the item in the slot
+		if (GetQuickSlot(slotNumber).item.quantity <= 1)
 		{
-			
+			switch(slotNumber)
+			{
+				case 1:
+					if (quickSlot2.itemIndex > quickSlot1.itemIndex)
+					{
+						--quickSlot2.itemIndex;
+					}
+
+					if (quickSlot3.itemIndex > quickSlot1.itemIndex)
+					{
+						--quickSlot3.itemIndex;
+					}
+
+					quickSlot1.itemIndex = -1;
+					break;
+				case 2:
+					if (quickSlot1.itemIndex > quickSlot2.itemIndex)
+					{
+						--quickSlot1.itemIndex;
+					}
+
+					if (quickSlot3.itemIndex > quickSlot2.itemIndex)
+					{
+						--quickSlot3.itemIndex;
+					}
+
+					quickSlot2.itemIndex = -1;
+					break;
+				case 3:
+					if (quickSlot1.itemIndex > quickSlot3.itemIndex)
+					{
+						--quickSlot1.itemIndex;
+					}
+
+					if (quickSlot2.itemIndex > quickSlot3.itemIndex)
+					{
+						--quickSlot2.itemIndex;
+					}
+
+					quickSlot3.itemIndex = -1;
+					break;
+				default:
+					break;
+			}
 		}
+
+		UpdateQuickSlots();
+
+		OnQuickslotsUpdated.Broadcast();
+
+		return true;
 	}
+
+	return false;
+}
+
+void UInventoryComponentBase::UpdateQuickSlots()
+{
+	if (quickSlot1.itemIndex > -1)
+	{
+		quickSlot1.item = GetInventoryItemAtIndex(quickSlot1.itemIndex);
+	}
+
+	if (quickSlot2.itemIndex > -1)
+	{
+		quickSlot2.item = GetInventoryItemAtIndex(quickSlot2.itemIndex);
+	}
+
+	if (quickSlot3.itemIndex > -1)
+	{
+		quickSlot3.item = GetInventoryItemAtIndex(quickSlot3.itemIndex);
+	}
+}
+
+bool UInventoryComponentBase::SetSelectedItem(int itemIndex)
+{
+	// Deselect all items
+	for (int i = 0; i < inventory.Num(); ++i)
+	{
+		if (inventory[i].quantity <= 0)
+		{
+			break;
+		}
+
+		inventory[i].isSelected = false;
+	}
+
+	if (itemIndex < 0)
+	{
+		selectedItem = -1;
+		return false;
+	}
+
+	if (inventory[itemIndex].quantity <= 0)
+	{
+		selectedItem = -1;
+		return false;
+	}
+
+	selectedItem = itemIndex;
+	inventory[itemIndex].isSelected = true;
+	return true;
+}
+
+void UInventoryComponentBase::ClearSelectedItem()
+{
+	selectedItem = -1;
 }
 
 
@@ -288,6 +400,70 @@ bool UInventoryComponentBase::GetHasItemWithQuantity(TSubclassOf<AItemBase> quer
 	return false;
 }
 
+void UInventoryComponentBase::SetQuickslotItem(int inventoryIndex, int quickSlot)
+{
+	// Ensure the equipped 
+	if (inventory[inventoryIndex].quantity <= 0)
+	{
+		return;
+	}
+
+	// Check that no other quick slots have the item equipped
+	switch (quickSlot)
+	{
+		case 1:
+			if (quickSlot2.itemIndex == inventoryIndex)
+			{
+				quickSlot2 = FQuickSlot();
+			}
+
+			if (quickSlot3.itemIndex == inventoryIndex)
+			{
+				quickSlot3 = FQuickSlot();
+			}
+
+			quickSlot1.itemIndex = inventoryIndex;
+			quickSlot1.item = GetInventoryItemAtIndex(inventoryIndex);
+			break;
+		case 2:
+			if (quickSlot1.itemIndex == inventoryIndex)
+			{
+				quickSlot1 = FQuickSlot();
+			}
+
+			if (quickSlot3.itemIndex == inventoryIndex)
+			{
+				quickSlot3 = FQuickSlot();
+			}
+
+			quickSlot2.itemIndex = inventoryIndex;
+			quickSlot2.item = GetInventoryItemAtIndex(inventoryIndex);
+			break;
+		case 3:
+			if (quickSlot1.itemIndex == inventoryIndex)
+			{
+				quickSlot1 = FQuickSlot();
+			}
+
+			if (quickSlot2.itemIndex == inventoryIndex)
+			{
+				quickSlot2 = FQuickSlot();
+			}
+
+			quickSlot3.itemIndex = inventoryIndex;
+			quickSlot3.item = GetInventoryItemAtIndex(inventoryIndex);
+			break;
+		default:
+
+			break;
+	}
+
+	OnQuickslotsUpdated.Broadcast();
+
+	ClearSelectedItem();
+}
+
+
 /**
 * Returns a reference to the quick slot.
 * If an index outside of 1 - 3 is passed in, a default quick slot
@@ -310,3 +486,13 @@ FQuickSlot UInventoryComponentBase::GetQuickSlot(int quickSlotIndex)
 			return FQuickSlot();
 	}
 }
+
+FInventorySlot UInventoryComponentBase::GetInventoryItemAtIndex(int index)
+{
+	if (index < 0 || index > inventory.Num())
+	{
+		return FInventorySlot();
+	}
+	return inventory[index];
+}
+

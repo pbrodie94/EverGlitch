@@ -46,6 +46,7 @@ struct FInventorySlot
 	{
 		item = FInventoryItem();
 		quantity = 0;
+		isSelected = false;
 	}
 
 	// Item struct
@@ -55,6 +56,8 @@ struct FInventorySlot
 	// The quantity of the item in the slot
 	UPROPERTY(BlueprintReadWrite)
 	int quantity;
+
+	bool isSelected;
 };
 
 USTRUCT(BlueprintType)
@@ -74,6 +77,8 @@ struct FQuickSlot
 	UPROPERTY(BlueprintReadWrite)
 	FInventorySlot item;
 };
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnQuickslotsUpdated);
 
 UCLASS(Blueprintable, ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class PROJECTMOUSTACHE_API UInventoryComponentBase : public UActorComponent
@@ -114,7 +119,7 @@ class PROJECTMOUSTACHE_API UInventoryComponentBase : public UActorComponent
 	// Returns -1 if inventory is full
 	int GetNextEmptySlot();
 
-	void UseQuickSlot(FQuickSlot quickSlot);
+	int selectedItem;
 
 public:	
 	// Sets default values for this component's properties
@@ -138,14 +143,21 @@ protected:
 	void UseQuickSlot1();
 	void UseQuickSlot2();
 	void UseQuickSlot3();
+	void UpdateQuickSlots();
 	
 public:	
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
-
+	
+	UPROPERTY(BlueprintAssignable)
+	FOnQuickslotsUpdated OnQuickslotsUpdated;
+	
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	bool UseItem(int index);
 	bool UseItem_Implementation(int index) { return false; }
+
+	UFUNCTION(BlueprintCallable)
+	bool UseQuickSlot(int slotNumber);
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void ToggleInventory();
@@ -170,7 +182,13 @@ public:
 	int GetInventorySize() { return inventory.Num(); }
 
 	UFUNCTION(BlueprintCallable)
+	FInventorySlot GetInventoryItemAtIndex(int index);
+
+	UFUNCTION(BlueprintCallable)
 	TArray<FInventorySlot> GetInventory() { return inventory; }
+
+	UFUNCTION(BlueprintCallable)
+	void SetQuickslotItem(int inventoryIndex, int quickSlot);
 
 	/**
 	 * Returns a reference to the quick slot.
@@ -179,4 +197,13 @@ public:
 	 */
 	UFUNCTION(BlueprintCallable)
 	FQuickSlot GetQuickSlot(int quickSlotIndex);
+
+	UFUNCTION(BlueprintCallable)
+	bool SetSelectedItem(int itemIndex);
+
+	UFUNCTION(BlueprintCallable)
+	void ClearSelectedItem();
+
+	UFUNCTION(BlueprintCallable)
+	int GetSelectedItem() { return selectedItem; }
 };
