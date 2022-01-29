@@ -9,7 +9,7 @@
 #include "StatueSpawner.generated.h"
 
 
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class PROJECTMOUSTACHE_API UStatueSpawner : public UActorComponent
 {
 	GENERATED_BODY()
