@@ -26,7 +26,7 @@ void UMagicComponent::BeginPlay()
 	if (inputComponent != nullptr)
 	{
 		inputComponent->BindAction("Ability1", IE_Pressed, this, &UMagicComponent::CastSupportSpell);
-		inputComponent->BindAction("Ability2", IE_Pressed, this, &UMagicComponent::CastPowerSpell);
+		inputComponent->BindAction("Ability2", IE_Pressed, this, &UMagicComponent::CastDestructionSpell);
 	}
 	
 }
@@ -40,7 +40,7 @@ void UMagicComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 	// ...
 }
 
-void UMagicComponent::CastPowerSpell()
+void UMagicComponent::CastDestructionSpell()
 {
 	IPlayerCharacter* player = Cast<IPlayerCharacter>(GetOwner());
 	if (player != nullptr && player->Execute_GetIsPlayerDead(GetOwner()))
@@ -48,10 +48,10 @@ void UMagicComponent::CastPowerSpell()
 		return;
 	}
 	
-	if (powerSpell != nullptr)
+	if (destructionSpell != nullptr)
 	{
 		APawn* ownerPawn = Cast<APawn>(GetOwner());
-		powerSpell->Execute(ownerPawn);
+		destructionSpell->Execute(ownerPawn);
 	}
 }
 
@@ -74,7 +74,7 @@ void UMagicComponent::SetPowerMagicSpell_Implementation(AMagicSpellBase* newMagi
 {
 	if (newMagicSpell != nullptr)
 	{
-		powerSpell = newMagicSpell;
+		destructionSpell = newMagicSpell;
 	}
 }
 
@@ -86,9 +86,9 @@ void UMagicComponent::SetSupportMagicSpell_Implementation(AMagicSpellBase* newSu
 	}
 }
 
-AMagicSpellBase* UMagicComponent::GetCurrentPowerSpell()
+AMagicSpellBase* UMagicComponent::GetCurrentDestructionSpell()
 {
-	return powerSpell;
+	return destructionSpell;
 }
 
 AMagicSpellBase* UMagicComponent::GetCurrentSupportSpell()
