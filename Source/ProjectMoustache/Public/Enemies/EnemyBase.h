@@ -1,0 +1,79 @@
+﻿// Fill out your copyright notice in the Description page of Project Settings.
+
+#pragma once
+
+#include "CoreMinimal.h"
+#include "EnemyInterface.h"
+#include "GameFramework/Character.h"
+#include "EnemyBase.generated.h"
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnDied, TScriptInterface<IEnemyInterface>, enemyInterface);
+
+UCLASS()
+class PROJECTMOUSTACHE_API AEnemyBase : public ACharacter, public IEnemyInterface
+{
+	GENERATED_BODY()
+
+public:
+	// Sets default values for this character's properties
+	AEnemyBase();
+
+protected:
+
+	// Health the enemy starts with, defaults to max health
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Stats)
+	float startingHealth;
+
+	// Maximum possible health, if less than 1: defaults to 100
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Stats)
+	float maxHealth;
+
+	// Current health
+	UPROPERTY(BlueprintReadWrite)
+	float currentHealth;
+
+	// Base attack damage
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Combat)
+	float baseDamage;
+	
+	// Called when the game starts or when spawned
+	virtual void BeginPlay() override;
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void Die();
+	void Die_Implementation();
+
+public:
+
+	//UPROPERTY(BlueprintAssignable)
+	FOnDied OnDied;
+	
+	// Called every frame
+	virtual void Tick(float DeltaTime) override;
+
+	// Called to bind functionality to input
+	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
+
+	/**
+	* Returns the enemy's current health
+	*/
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	float GetCurrentHealth();
+	float GetCurrentHealth_Implementation() { return currentHealth; }
+
+	/**
+	* Returns the enemy's maximum health
+	*/
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	float GetMaxHealth();
+	float GetMaxHealth_Implementation() { return maxHealth; }
+
+	/**
+	* Returns if the enemy is still alive
+	*/
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	bool GetIsDead();
+	bool GetIsDead_Implementation() { return currentHealth <= 0; }
+};

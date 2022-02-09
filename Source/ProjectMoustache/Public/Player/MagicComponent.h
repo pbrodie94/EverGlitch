@@ -37,7 +37,7 @@ public:
 	* Equips a new magic spell
 	*/
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	void SetPowerMagicSpell(AMagicSpellBase* newMagicSpell);
+	void SetDestructionMagicSpell(AMagicSpellBase* newMagicSpell);
 
 	/**
 	* Equips a new support spell
