@@ -42,10 +42,11 @@ void UCombatManagerComponent::TickComponent(float DeltaTime, ELevelTick TickType
 
 /**
 * Allows enemies to request to engage player
+* Engaging enemies are allowed to get into battle range
 * Returns true if there is space for an engaging enemy
 * Otherwise returns false
 */
-bool UCombatManagerComponent::RequestEngagePlayer(TScriptInterface<IEnemyInterface> enemyRef)
+bool UCombatManagerComponent::RequestEngagePlayer(AEnemyBase* enemyRef)
 {
 	// If null, return false 
 	if (enemyRef == nullptr)
@@ -70,10 +71,30 @@ bool UCombatManagerComponent::RequestEngagePlayer(TScriptInterface<IEnemyInterfa
 }
 
 /**
+* Returns true if passed in enemy is registered to be engaging
+*/
+bool UCombatManagerComponent::GetIsEngaging(AEnemyBase* enemyRef)
+{
+	// If null return false
+	if (enemyRef == nullptr)
+	{
+		return false;
+	}
+	
+	if (!engagingEnemies.Contains(enemyRef))
+	{
+		return false;
+	}
+
+	return true;
+}
+
+/**
 * Notifies finished engaging player
 */
-void UCombatManagerComponent::NotifyFinishedEngaging(TScriptInterface<IEnemyInterface> enemyRef)
+void UCombatManagerComponent::NotifyFinishedEngaging(AEnemyBase* enemyRef)
 {
+	// If engaging enemies list does not contain the passed in enemy, do nothing
 	if (!engagingEnemies.Contains(enemyRef))
 	{
 		return;
@@ -84,14 +105,18 @@ void UCombatManagerComponent::NotifyFinishedEngaging(TScriptInterface<IEnemyInte
 
 /**
 * Allows enemies to request to attack
+* Attacking enemies are able to perform an attack
+* This is to ensure no more than a set number of enemies are performing an attack at any one time
 */
-bool UCombatManagerComponent::RequestAttackPlayer(TScriptInterface<IEnemyInterface> enemyRef)
+bool UCombatManagerComponent::RequestAttackPlayer(AEnemyBase* enemyRef)
 {
+	// If null or too many attackers, return false
 	if (enemyRef == nullptr || attackingEnemies.Num() >= maxAttackingEnemies)
 	{
 		return false;
 	}
 
+	// Enemy is already attacking, return true
 	if (attackingEnemies.Contains(enemyRef))
 	{
 		return true;
@@ -103,9 +128,27 @@ bool UCombatManagerComponent::RequestAttackPlayer(TScriptInterface<IEnemyInterfa
 }
 
 /**
+* Returns true if passed in enemy is registered to be attacking
+*/
+bool UCombatManagerComponent::GetIsAttacking(AEnemyBase* enemyRef)
+{
+	if (enemyRef == nullptr)
+	{
+		return false;
+	}
+
+	if (!attackingEnemies.Contains(enemyRef))
+	{
+		return false;
+	}
+
+	return true;
+}
+
+/**
 * Enemy has finished attacking
 */
-void UCombatManagerComponent::NotifyFinishedAttacking(TScriptInterface<IEnemyInterface> enemyRef)
+void UCombatManagerComponent::NotifyFinishedAttacking(AEnemyBase* enemyRef)
 {
 	if (!attackingEnemies.Contains(enemyRef))
 	{
@@ -118,7 +161,7 @@ void UCombatManagerComponent::NotifyFinishedAttacking(TScriptInterface<IEnemyInt
 /**
 * Subscribes enemies to the combat manager
 */
-void UCombatManagerComponent::SubscribeSelfToCombatManager(TScriptInterface<IEnemyInterface> enemyRef)
+void UCombatManagerComponent::SubscribeSelfToCombatManager(AEnemyBase* enemyRef)
 {
 	if (activeEnemies.Contains(enemyRef))
 	{
@@ -127,17 +170,15 @@ void UCombatManagerComponent::SubscribeSelfToCombatManager(TScriptInterface<IEne
 
 	activeEnemies.AddUnique(enemyRef);
 
-	AEnemyBase* enemy = Cast<AEnemyBase>(enemyRef.GetObject());
-	if (enemy != nullptr)
-	{
-		enemy->OnDied.AddDynamic(this, &UCombatManagerComponent::UnsubscribeFromCombatManager);
-	}
+	// Subscribe to delegates that remove enemy from list if they are no longer alerted attacking player
+	enemyRef->OnDied.AddUniqueDynamic(this, &UCombatManagerComponent::UnsubscribeFromCombatManager);
+	enemyRef->OnDied.AddUniqueDynamic(this, &UCombatManagerComponent::UnsubscribeFromCombatManager);
 }
 
 /**
 * Removes an enemy from the combat manager
 */
-void UCombatManagerComponent::UnsubscribeFromCombatManager(TScriptInterface<IEnemyInterface> enemyRef)
+void UCombatManagerComponent::UnsubscribeFromCombatManager(AEnemyBase* enemyRef)
 {
 	if (enemyRef == nullptr || !activeEnemies.Contains(enemyRef))
 	{
@@ -149,6 +190,11 @@ void UCombatManagerComponent::UnsubscribeFromCombatManager(TScriptInterface<IEne
 	if (engagingEnemies.Contains(enemyRef))
 	{
 		engagingEnemies.Remove(enemyRef);
+	}
+
+	if (attackingEnemies.Contains(enemyRef))
+	{
+		attackingEnemies.Remove(enemyRef);
 	}
 }
 

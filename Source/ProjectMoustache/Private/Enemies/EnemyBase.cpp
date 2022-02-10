@@ -51,6 +51,7 @@ float AEnemyBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent
 	if (currentHealth <= 0)
 	{
 		currentHealth = 0;
+		OnDied.Broadcast(this); 
 		Die();
 	}
 
@@ -59,5 +60,5 @@ float AEnemyBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent
 
 void AEnemyBase::Die_Implementation()
 {
-	OnDied.Broadcast(this);
+	//OnDied.Broadcast(this);
 }

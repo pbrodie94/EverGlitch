@@ -7,7 +7,7 @@
 #include "GameFramework/Character.h"
 #include "EnemyBase.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnDied, TScriptInterface<IEnemyInterface>, enemyInterface);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FCombatManagerResponses, class AEnemyBase*, enemyInterface);
 
 UCLASS()
 class PROJECTMOUSTACHE_API AEnemyBase : public ACharacter, public IEnemyInterface
@@ -45,8 +45,13 @@ protected:
 
 public:
 
-	//UPROPERTY(BlueprintAssignable)
-	FOnDied OnDied;
+	// Delegate for enemy dying
+	UPROPERTY(BlueprintAssignable)
+	FCombatManagerResponses OnDied;
+
+	// Delegate for enemy transitioning from alerted state
+	UPROPERTY(BlueprintAssignable)
+	FCombatManagerResponses OnSwitchedState;
 	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;

@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "Enemies/EnemyInterface.h"
 #include "CombatManagerComponent.generated.h"
 
 
@@ -23,15 +22,15 @@ class PROJECTMOUSTACHE_API UCombatManagerComponent : public UActorComponent
 	
 	// Active enemies
 	UPROPERTY()
-	TArray<TScriptInterface<IEnemyInterface>> activeEnemies;
+	TArray<class AEnemyBase*> activeEnemies;
 
 	// Engaging enemies
 	UPROPERTY()
-	TArray<TScriptInterface<IEnemyInterface>> engagingEnemies;
+	TArray<class AEnemyBase*> engagingEnemies;
 
 	// Attacking enemies
 	UPROPERTY()
-	TArray<TScriptInterface<IEnemyInterface>> attackingEnemies;
+	TArray<class AEnemyBase*> attackingEnemies;
 
 public:	
 	// Sets default values for this component's properties
@@ -47,40 +46,55 @@ public:
 
 	/**
 	 * Allows enemies to request to engage player
+	 * Engaging enemies are allowed to get into battle range
 	 * Returns true if there is space for an engaging enemy
 	 * Otherwise returns false
 	 */
 	UFUNCTION(BlueprintCallable)
-	bool RequestEngagePlayer(TScriptInterface<IEnemyInterface> enemyRef);
+	bool RequestEngagePlayer(class AEnemyBase* enemyRef);
+
+	/**
+	* Returns true if passed in enemy is registered to be engaging
+	*/
+	UFUNCTION(BlueprintCallable)
+	bool GetIsEngaging(class AEnemyBase* enemyRef);
 
 	/**
 	 * Notifies finished engaging player
 	 */
 	UFUNCTION(BlueprintCallable)
-	void NotifyFinishedEngaging(TScriptInterface<IEnemyInterface> enemyRef);
+	void NotifyFinishedEngaging(class AEnemyBase* enemyRef);
 
 	/**
 	 * Allows enemies to request to attack
+	 * Attacking enemies are able to perform an attack
+	 * This is to ensure no more than a set number of enemies are performing an attack at any one time
 	 */
 	UFUNCTION(BlueprintCallable)
-	bool RequestAttackPlayer(TScriptInterface<IEnemyInterface> enemyRef);
+	bool RequestAttackPlayer(class AEnemyBase* enemyRef);
+
+	/**
+	 * Returns true if passed in enemy is registered to be attacking
+	 */
+	UFUNCTION(BlueprintCallable)
+	bool GetIsAttacking(class AEnemyBase* enemyRef);
 
 	/**
 	 * Enemy has finished attacking
 	 */
 	UFUNCTION(BlueprintCallable)
-	void NotifyFinishedAttacking(TScriptInterface<IEnemyInterface> enemyRef);
+	void NotifyFinishedAttacking(class AEnemyBase* enemyRef);
 	
 	/**
 	 * Subscribes enemies to the combat manager
 	 */
 	UFUNCTION(BlueprintCallable)
-	void SubscribeSelfToCombatManager(TScriptInterface<IEnemyInterface> enemyRef);
+	void SubscribeSelfToCombatManager(class AEnemyBase* enemyRef);
 
 	/**
 	 * Removes an enemy from the combat manager
 	 */
 	UFUNCTION(BlueprintCallable)
-	void UnsubscribeFromCombatManager(TScriptInterface<IEnemyInterface> enemyRef);
+	void UnsubscribeFromCombatManager(class AEnemyBase* enemyRef);
 		
 };
