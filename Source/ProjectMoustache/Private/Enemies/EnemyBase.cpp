@@ -3,13 +3,15 @@
 
 #include "Enemies/EnemyBase.h"
 
+#include "GameFramework/CharacterMovementComponent.h"
+
 
 // Sets default values
 AEnemyBase::AEnemyBase()
 {
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-
+	
 	maxHealth = 100;
 }
 
@@ -60,5 +62,10 @@ float AEnemyBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent
 
 void AEnemyBase::Die_Implementation()
 {
-	//OnDied.Broadcast(this);
+	OnDied.Broadcast(this);
+}
+
+void AEnemyBase::SetMoveSpeed(bool running)
+{
+	GetCharacterMovement()->MaxWalkSpeed = running ? runSpeed : walkSpeed;
 }

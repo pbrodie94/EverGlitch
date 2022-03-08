@@ -172,7 +172,6 @@ void UCombatManagerComponent::SubscribeSelfToCombatManager(AEnemyBase* enemyRef)
 
 	// Subscribe to delegates that remove enemy from list if they are no longer alerted attacking player
 	enemyRef->OnDied.AddUniqueDynamic(this, &UCombatManagerComponent::UnsubscribeFromCombatManager);
-	enemyRef->OnDied.AddUniqueDynamic(this, &UCombatManagerComponent::UnsubscribeFromCombatManager);
 }
 
 /**

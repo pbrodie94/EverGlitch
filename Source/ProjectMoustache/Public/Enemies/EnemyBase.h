@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "EnemyInterface.h"
+#include "Components/CapsuleComponent.h"
 #include "GameFramework/Character.h"
 #include "EnemyBase.generated.h"
 
@@ -19,6 +20,15 @@ public:
 	AEnemyBase();
 
 protected:
+
+	UPROPERTY(BlueprintReadWrite)
+	float moveSpeed;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Movement)
+	float walkSpeed;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Movement)
+	float runSpeed;
 
 	// Health the enemy starts with, defaults to max health
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Stats)
@@ -61,6 +71,9 @@ public:
 
 	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 
+	UFUNCTION(BlueprintCallable)
+	virtual void SetMoveSpeed(bool running);
+	
 	/**
 	* Returns the enemy's current health
 	*/
