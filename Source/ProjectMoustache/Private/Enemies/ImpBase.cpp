@@ -2,7 +2,7 @@
 
 
 #include "Enemies/ImpBase.h"
-
+#include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 
