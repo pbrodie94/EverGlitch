@@ -1,0 +1,485 @@
+Begin Object Class=/Script/Engine.Material Name="GRASS_m"
+   Begin Object Class=/Script/UnrealEd.SceneThumbnailInfoWithPrimitive Name="SceneThumbnailInfoWithPrimitive_0"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionWorldPosition Name="MaterialExpressionWorldPosition_1"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionWorldPosition Name="MaterialExpressionWorldPosition_0"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionVertexColor Name="MaterialExpressionVertexColor_0"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionVectorParameter Name="MaterialExpressionVectorParameter_2"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionVectorParameter Name="MaterialExpressionVectorParameter_1"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionVectorParameter Name="MaterialExpressionVectorParameter_0"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionTextureSample Name="MaterialExpressionTextureSample_7"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionTextureSample Name="MaterialExpressionTextureSample_2"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionTextureSample Name="MaterialExpressionTextureSample_0"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionScalarParameter Name="MaterialExpressionScalarParameter_6"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionScalarParameter Name="MaterialExpressionScalarParameter_5"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionScalarParameter Name="MaterialExpressionScalarParameter_4"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionScalarParameter Name="MaterialExpressionScalarParameter_3"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionScalarParameter Name="MaterialExpressionScalarParameter_2"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionScalarParameter Name="MaterialExpressionScalarParameter_13"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionScalarParameter Name="MaterialExpressionScalarParameter_12"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionScalarParameter Name="MaterialExpressionScalarParameter_11"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionScalarParameter Name="MaterialExpressionScalarParameter_10"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionScalarParameter Name="MaterialExpressionScalarParameter_1"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionScalarParameter Name="MaterialExpressionScalarParameter_0"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionSaturate Name="MaterialExpressionSaturate_0"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionPanner Name="MaterialExpressionPanner_0"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionMultiply Name="MaterialExpressionMultiply_1"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionMultiply Name="MaterialExpressionMultiply_0"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionMaterialFunctionCall Name="MaterialExpressionMaterialFunctionCall_2"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionMaterialFunctionCall Name="MaterialExpressionMaterialFunctionCall_0"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionLinearInterpolate Name="MaterialExpressionLinearInterpolate_5"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionLinearInterpolate Name="MaterialExpressionLinearInterpolate_4"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionLinearInterpolate Name="MaterialExpressionLinearInterpolate_3"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionLinearInterpolate Name="MaterialExpressionLinearInterpolate_2"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionLinearInterpolate Name="MaterialExpressionLinearInterpolate_1"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionLinearInterpolate Name="MaterialExpressionLinearInterpolate_0"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionDivide Name="MaterialExpressionDivide_1"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionDivide Name="MaterialExpressionDivide_0"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionConstant3Vector Name="MaterialExpressionConstant3Vector_3"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionConstant3Vector Name="MaterialExpressionConstant3Vector_0"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionConstant Name="MaterialExpressionConstant_0"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionComponentMask Name="MaterialExpressionComponentMask_1"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionComponentMask Name="MaterialExpressionComponentMask_0"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionAppendVector Name="MaterialExpressionAppendVector_0"
+   End Object
+   Begin Object Name="SceneThumbnailInfoWithPrimitive_0"
+   End Object
+   Begin Object Name="MaterialExpressionWorldPosition_1"
+      MaterialExpressionEditorX=-976
+      MaterialExpressionEditorY=928
+      MaterialExpressionGuid=F96554F84BA34AEF6080D39ED50D4D56
+      Material=Material'"GRASS_m"'
+   End Object
+   Begin Object Name="MaterialExpressionWorldPosition_0"
+      MaterialExpressionEditorX=-576
+      MaterialExpressionEditorY=-16
+      MaterialExpressionGuid=F96554F84BA34AEF6080D39ED50D4D56
+      Material=Material'"GRASS_m"'
+   End Object
+   Begin Object Name="MaterialExpressionVertexColor_0"
+      MaterialExpressionEditorX=1520
+      MaterialExpressionEditorY=96
+      MaterialExpressionGuid=AA4A5058408D2F5506A51F8791F0C5B1
+      Material=Material'"GRASS_m"'
+   End Object
+   Begin Object Name="MaterialExpressionVectorParameter_2"
+      DefaultValue=(R=0.000000,G=0.093750,B=0.008022,A=1.000000)
+      ParameterName="Grass Variation"
+      ExpressionGUID=44878624465FE818DA3071A0B34B17B9
+      MaterialExpressionEditorX=-128
+      MaterialExpressionEditorY=-128
+      MaterialExpressionGuid=EB23CC7347BC8D6314F1E598E9618D14
+      Material=Material'"GRASS_m"'
+   End Object
+   Begin Object Name="MaterialExpressionVectorParameter_1"
+      DefaultValue=(R=0.119538,G=0.108766,B=0.000000,A=1.000000)
+      ParameterName="Grass Secondary"
+      ExpressionGUID=B48DEEE947A32704381C8FB8ADEEE77F
+      MaterialExpressionEditorX=-32
+      MaterialExpressionEditorY=-688
+      MaterialExpressionGuid=DF3971454B3A162768840B9FF8A57E70
+      Material=Material'"GRASS_m"'
+   End Object
+   Begin Object Name="MaterialExpressionVectorParameter_0"
+      DefaultValue=(R=0.119538,G=0.072272,B=0.000000,A=1.000000)
+      ParameterName="Grass Primary"
+      ExpressionGUID=1DE7529B45E40756967984961C1AA05D
+      MaterialExpressionEditorX=16
+      MaterialExpressionEditorY=-1200
+      MaterialExpressionGuid=E41E1B664B9FDD33F20E2EB75CE74209
+      Material=Material'"GRASS_m"'
+   End Object
+   Begin Object Name="MaterialExpressionTextureSample_7"
+      Coordinates=(Expression=MaterialExpressionComponentMask'"GRASS_m:MaterialExpressionComponentMask_0"')
+      Texture=Texture2D'"/Game/SubPar/FOLIAGE/GRASS/Substance_graph_foliage_Gradient.Substance_graph_foliage_Gradient"'
+      SamplerType=SAMPLERTYPE_LinearGrayscale
+      MaterialExpressionEditorX=-144
+      MaterialExpressionEditorY=144
+      MaterialExpressionGuid=8B8A9C824DE39D970D6263B6178058CD
+      Material=Material'"GRASS_m"'
+   End Object
+   Begin Object Name="MaterialExpressionTextureSample_2"
+      Coordinates=(Expression=MaterialExpressionPanner'"GRASS_m:MaterialExpressionPanner_0"')
+      MaterialExpressionEditorX=-224
+      MaterialExpressionEditorY=1344
+      MaterialExpressionGuid=5F9BBC8E4310C08E33238F9FB78C193F
+      Material=Material'"GRASS_m"'
+   End Object
+   Begin Object Name="MaterialExpressionTextureSample_0"
+      Coordinates=(Expression=MaterialExpressionPanner'"GRASS_m:MaterialExpressionPanner_0"')
+      Texture=Texture2D'"/Game/SubPar/FOLIAGE/GRASS/Substance_graph_Wind_lines.Substance_graph_Wind_lines"'
+      MaterialExpressionEditorX=-128
+      MaterialExpressionEditorY=784
+      MaterialExpressionGuid=D7F106BF46050B8F987C238CFC247CE3
+      Material=Material'"GRASS_m"'
+   End Object
+   Begin Object Name="MaterialExpressionScalarParameter_6"
+      DefaultValue=0.250000
+      ParameterName="wind speed"
+      ExpressionGUID=15747B0343FDDC9CEBE1B69B19371FE6
+      MaterialExpressionEditorX=1424
+      MaterialExpressionEditorY=432
+      MaterialExpressionGuid=B4CD291441E3AF32109B16A69C044515
+      Material=Material'"GRASS_m"'
+   End Object
+   Begin Object Name="MaterialExpressionScalarParameter_5"
+      DefaultValue=1.250000
+      ParameterName="wind weight"
+      ExpressionGUID=A050BC0F47102F053A3FCABF33E2C02F
+      MaterialExpressionEditorX=1376
+      MaterialExpressionEditorY=304
+      MaterialExpressionGuid=B4CD291441E3AF32109B16A69C044515
+      Material=Material'"GRASS_m"'
+   End Object
+   Begin Object Name="MaterialExpressionScalarParameter_4"
+      DefaultValue=0.600000
+      ParameterName="wind intensity"
+      ExpressionGUID=28D81847455F0B5E34F8E6824CEE9A20
+      MaterialExpressionEditorX=1360
+      MaterialExpressionEditorY=224
+      MaterialExpressionGuid=B4CD291441E3AF32109B16A69C044515
+      Material=Material'"GRASS_m"'
+   End Object
+   Begin Object Name="MaterialExpressionScalarParameter_3"
+      DefaultValue=20000.000000
+      ParameterName="Grass Variation"
+      ExpressionGUID=306F48DA4459D4F8B122F4A7E4D5C3C4
+      MaterialExpressionEditorX=-544
+      MaterialExpressionEditorY=80
+      MaterialExpressionGuid=1844B34A4C11BBCB25A648B8FE53A866
+      Material=Material'"GRASS_m"'
+   End Object
+   Begin Object Name="MaterialExpressionScalarParameter_2"
+      ParameterName="Grass Gradient"
+      ExpressionGUID=7738872A40C769969EDCF09486EAD583
+      MaterialExpressionEditorX=-320
+      MaterialExpressionEditorY=-352
+      MaterialExpressionGuid=0A9A2EC74AC5A0ECEB172890677E12A9
+      Material=Material'"GRASS_m"'
+   End Object
+   Begin Object Name="MaterialExpressionScalarParameter_13"
+      ExpressionGUID=7A8DF2204AA9C054E1AD2D8EE07934CE
+      MaterialExpressionEditorX=192
+      MaterialExpressionEditorY=1168
+      MaterialExpressionGuid=B6EDBEEC43A52F38D8A1DDB97FB9B494
+      Material=Material'"GRASS_m"'
+   End Object
+   Begin Object Name="MaterialExpressionScalarParameter_12"
+      ParameterName="Grass Lines Speed U"
+      ExpressionGUID=3E72976B45B45B862A5DC684EE6C999C
+      MaterialExpressionEditorX=-800
+      MaterialExpressionEditorY=1104
+      MaterialExpressionGuid=A9A35E4A4B3DADCE72A3099286BC3159
+      Material=Material'"GRASS_m"'
+   End Object
+   Begin Object Name="MaterialExpressionScalarParameter_11"
+      ParameterName="Grass Lines Speed V"
+      ExpressionGUID=B2E8A5694425955890CC31A18FADE7EA
+      MaterialExpressionEditorX=-800
+      MaterialExpressionEditorY=1200
+      MaterialExpressionGuid=3F6149F941B3528F869C47B9ABB8ED1B
+      Material=Material'"GRASS_m"'
+   End Object
+   Begin Object Name="MaterialExpressionScalarParameter_10"
+      DefaultValue=14068.954102
+      ParameterName="Wind Lines"
+      ExpressionGUID=BE66467346574F082BEE37BCF52D49F6
+      MaterialExpressionEditorX=-992
+      MaterialExpressionEditorY=1056
+      MaterialExpressionGuid=1844B34A4C11BBCB25A648B8FE53A866
+      Material=Material'"GRASS_m"'
+   End Object
+   Begin Object Name="MaterialExpressionScalarParameter_1"
+      DefaultValue=1.000000
+      ParameterName="Roughness"
+      ExpressionGUID=2DE7E8AB48A4707E2343908E7710E163
+      MaterialExpressionEditorX=1472
+      MaterialExpressionEditorY=-112
+      MaterialExpressionGuid=6A8C57384DBC563D5DE0298188C851D2
+      Material=Material'"GRASS_m"'
+   End Object
+   Begin Object Name="MaterialExpressionScalarParameter_0"
+      ParameterName="Spec"
+      ExpressionGUID=768ECFDE49ACF8392499868D3D427B02
+      MaterialExpressionEditorX=1328
+      MaterialExpressionEditorY=-144
+      MaterialExpressionGuid=1E5BC51E4BD96AF19997D8863725214A
+      Material=Material'"GRASS_m"'
+   End Object
+   Begin Object Name="MaterialExpressionSaturate_0"
+      Input=(Expression=MaterialExpressionMultiply'"GRASS_m:MaterialExpressionMultiply_0"')
+      MaterialExpressionEditorX=16
+      MaterialExpressionEditorY=-432
+      MaterialExpressionGuid=86AED4234BE1355AACFB2E9A1BEDB40F
+      Material=Material'"GRASS_m"'
+   End Object
+   Begin Object Name="MaterialExpressionPanner_0"
+      Coordinate=(Expression=MaterialExpressionComponentMask'"GRASS_m:MaterialExpressionComponentMask_1"')
+      Speed=(Expression=MaterialExpressionAppendVector'"GRASS_m:MaterialExpressionAppendVector_0"')
+      MaterialExpressionEditorX=-368
+      MaterialExpressionEditorY=944
+      MaterialExpressionGuid=4957EBA344A2202E11B07C9C6E076B2A
+      Material=Material'"GRASS_m"'
+   End Object
+   Begin Object Name="MaterialExpressionMultiply_1"
+      A=(Expression=MaterialExpressionTextureSample'"GRASS_m:MaterialExpressionTextureSample_2"',Mask=1,MaskR=1,MaskG=1,MaskB=1)
+      B=(Expression=MaterialExpressionScalarParameter'"GRASS_m:MaterialExpressionScalarParameter_13"')
+      MaterialExpressionEditorX=352
+      MaterialExpressionEditorY=992
+      MaterialExpressionGuid=15DEF8A247D81DA0B99A1D9FA6317F85
+      Material=Material'"GRASS_m"'
+   End Object
+   Begin Object Name="MaterialExpressionMultiply_0"
+      A=(Expression=MaterialExpressionMaterialFunctionCall'"GRASS_m:MaterialExpressionMaterialFunctionCall_0"',OutputIndex=1)
+      B=(Expression=MaterialExpressionScalarParameter'"GRASS_m:MaterialExpressionScalarParameter_2"')
+      MaterialExpressionEditorX=-112
+      MaterialExpressionEditorY=-432
+      MaterialExpressionGuid=EE563A3045B1A61C35095181AB27D14A
+      Material=Material'"GRASS_m"'
+   End Object
+   Begin Object Name="MaterialExpressionMaterialFunctionCall_2"
+      MaterialFunction=MaterialFunction'"/Engine/Functions/Engine_MaterialFunctions01/WorldPositionOffset/SimpleGrassWind.SimpleGrassWind"'
+      FunctionInputs(0)=(ExpressionInputId=59B25CA344057CBC047826BBB081BB6A,Input=(Expression=MaterialExpressionScalarParameter'"GRASS_m:MaterialExpressionScalarParameter_4"',InputName="WindIntensity"))
+      FunctionInputs(1)=(ExpressionInputId=9F127867429E94C853245BA415B9133D,Input=(Expression=MaterialExpressionScalarParameter'"GRASS_m:MaterialExpressionScalarParameter_5"',InputName="WindWeight"))
+      FunctionInputs(2)=(ExpressionInputId=B142CFD84EFE5357F8C6E6A44E070E4D,Input=(Expression=MaterialExpressionScalarParameter'"GRASS_m:MaterialExpressionScalarParameter_6"',InputName="WindSpeed"))
+      FunctionInputs(3)=(ExpressionInputId=12C80829425389C3EE47AC97BD178E9D,Input=(Expression=MaterialExpressionScalarParameter'"GRASS_m:MaterialExpressionScalarParameter_6"',InputName="AdditionalWPO"))
+      FunctionOutputs(0)=(ExpressionOutputId=786F77A7413AC09BF7F84581E91EE756,Output=(OutputName="Result"))
+      MaterialExpressionEditorX=1536
+      MaterialExpressionEditorY=304
+      MaterialExpressionGuid=D701B25D45F4C3C64AD85EA6DEE2B39A
+      Material=Material'"GRASS_m"'
+      Outputs(0)=(OutputName="Result")
+   End Object
+   Begin Object Name="MaterialExpressionMaterialFunctionCall_0"
+      MaterialFunction=MaterialFunction'"/Engine/Functions/Engine_MaterialFunctions01/Gradient/LinearGradient.LinearGradient"'
+      FunctionInputs(0)=(ExpressionInputId=956846354D2549E665DAC68533EC21EC,Input=(OutputIndex=-1,InputName="UV Channel"))
+      FunctionOutputs(0)=(ExpressionOutputId=0F11154B443B1137CC9914998FC01F5E,Output=(OutputName="UGradient"))
+      FunctionOutputs(1)=(ExpressionOutputId=D0E9AADC4F9EEDBBFD95F9B3A5165013,Output=(OutputName="VGradient"))
+      MaterialExpressionEditorX=-368
+      MaterialExpressionEditorY=-464
+      MaterialExpressionGuid=9A23B2784F7602FEBDAD1D881FC2F97B
+      Material=Material'"GRASS_m"'
+      Outputs(0)=(OutputName="UGradient")
+      Outputs(1)=(OutputName="VGradient")
+   End Object
+   Begin Object Name="MaterialExpressionLinearInterpolate_5"
+      A=(Expression=MaterialExpressionLinearInterpolate'"GRASS_m:MaterialExpressionLinearInterpolate_2"')
+      B=(Expression=MaterialExpressionLinearInterpolate'"GRASS_m:MaterialExpressionLinearInterpolate_4"')
+      Alpha=(Expression=MaterialExpressionTextureSample'"GRASS_m:MaterialExpressionTextureSample_0"',Mask=1,MaskR=1,MaskG=1,MaskB=1)
+      MaterialExpressionEditorX=704
+      MaterialExpressionEditorY=-48
+      MaterialExpressionGuid=4ECF0D8440311BBC58E70FA58CCB9C03
+      Material=Material'"GRASS_m"'
+   End Object
+   Begin Object Name="MaterialExpressionLinearInterpolate_4"
+      A=(Expression=MaterialExpressionVectorParameter'"GRASS_m:MaterialExpressionVectorParameter_1"',Mask=1,MaskR=1,MaskG=1,MaskB=1)
+      B=(Expression=MaterialExpressionConstant3Vector'"GRASS_m:MaterialExpressionConstant3Vector_0"')
+      Alpha=(Expression=MaterialExpressionTextureSample'"GRASS_m:MaterialExpressionTextureSample_7"',Mask=1,MaskR=1,MaskG=1,MaskB=1)
+      MaterialExpressionEditorX=528
+      MaterialExpressionEditorY=64
+      MaterialExpressionGuid=6732373F4FD0AEDC13C0B08C3F780611
+      Material=Material'"GRASS_m"'
+   End Object
+   Begin Object Name="MaterialExpressionLinearInterpolate_3"
+      A=(Expression=MaterialExpressionConstant'"GRASS_m:MaterialExpressionConstant_0"')
+      B=(Expression=MaterialExpressionMaterialFunctionCall'"GRASS_m:MaterialExpressionMaterialFunctionCall_2"')
+      Alpha=(Expression=MaterialExpressionVertexColor'"GRASS_m:MaterialExpressionVertexColor_0"',OutputIndex=1,Mask=1,MaskR=1)
+      MaterialExpressionEditorX=1776
+      MaterialExpressionEditorY=80
+      MaterialExpressionGuid=A7E7040C43B3F2A2256EF29573723D34
+      Material=Material'"GRASS_m"'
+   End Object
+   Begin Object Name="MaterialExpressionLinearInterpolate_2"
+      A=(Expression=MaterialExpressionLinearInterpolate'"GRASS_m:MaterialExpressionLinearInterpolate_0"')
+      B=(Expression=MaterialExpressionLinearInterpolate'"GRASS_m:MaterialExpressionLinearInterpolate_1"')
+      Alpha=(Expression=MaterialExpressionTextureSample'"GRASS_m:MaterialExpressionTextureSample_7"',Mask=1,MaskR=1,MaskG=1,MaskB=1)
+      MaterialExpressionEditorX=688
+      MaterialExpressionEditorY=-208
+      MaterialExpressionGuid=48EBE5234A4A1EC43A87BABF64C21901
+      Material=Material'"GRASS_m"'
+   End Object
+   Begin Object Name="MaterialExpressionLinearInterpolate_1"
+      A=(Expression=MaterialExpressionVectorParameter'"GRASS_m:MaterialExpressionVectorParameter_1"',Mask=1,MaskR=1,MaskG=1,MaskB=1)
+      B=(Expression=MaterialExpressionConstant3Vector'"GRASS_m:MaterialExpressionConstant3Vector_0"')
+      Alpha=(Expression=MaterialExpressionSaturate'"GRASS_m:MaterialExpressionSaturate_0"')
+      MaterialExpressionEditorX=528
+      MaterialExpressionEditorY=-128
+      MaterialExpressionGuid=48EBE5234A4A1EC43A87BABF64C21901
+      Material=Material'"GRASS_m"'
+   End Object
+   Begin Object Name="MaterialExpressionLinearInterpolate_0"
+      A=(Expression=MaterialExpressionConstant3Vector'"GRASS_m:MaterialExpressionConstant3Vector_0"')
+      B=(Expression=MaterialExpressionConstant3Vector'"GRASS_m:MaterialExpressionConstant3Vector_0"')
+      Alpha=(Expression=MaterialExpressionVectorParameter'"GRASS_m:MaterialExpressionVectorParameter_1"',Mask=1,MaskR=1,MaskG=1,MaskB=1)
+      MaterialExpressionEditorX=704
+      MaterialExpressionEditorY=-768
+      MaterialExpressionGuid=D9AB3058443511CBB64020AAF141C876
+      Material=Material'"GRASS_m"'
+   End Object
+   Begin Object Name="MaterialExpressionDivide_1"
+      A=(Expression=MaterialExpressionWorldPosition'"GRASS_m:MaterialExpressionWorldPosition_1"')
+      B=(Expression=MaterialExpressionScalarParameter'"GRASS_m:MaterialExpressionScalarParameter_10"')
+      MaterialExpressionEditorX=-752
+      MaterialExpressionEditorY=1008
+      MaterialExpressionGuid=51726C0A42458837F8564483CCCB59BD
+      Material=Material'"GRASS_m"'
+   End Object
+   Begin Object Name="MaterialExpressionDivide_0"
+      A=(Expression=MaterialExpressionWorldPosition'"GRASS_m:MaterialExpressionWorldPosition_0"')
+      B=(Expression=MaterialExpressionScalarParameter'"GRASS_m:MaterialExpressionScalarParameter_3"')
+      MaterialExpressionEditorX=-352
+      MaterialExpressionEditorY=64
+      MaterialExpressionGuid=51726C0A42458837F8564483CCCB59BD
+      Material=Material'"GRASS_m"'
+   End Object
+   Begin Object Name="MaterialExpressionConstant3Vector_3"
+      Constant=(R=0.007136,G=0.046875,B=0.000000,A=0.000000)
+      MaterialExpressionEditorX=96
+      MaterialExpressionEditorY=304
+      MaterialExpressionGuid=DEA07C4440FE64190D53569272AEEE74
+      Material=Material'"GRASS_m"'
+   End Object
+   Begin Object Name="MaterialExpressionConstant3Vector_0"
+      Constant=(R=0.119792,G=0.068733,B=0.000000,A=0.000000)
+      MaterialExpressionEditorX=112
+      MaterialExpressionEditorY=-272
+      MaterialExpressionGuid=1CCD922B4D3BC9A0BFC9D08925431320
+      Material=Material'"GRASS_m"'
+   End Object
+   Begin Object Name="MaterialExpressionConstant_0"
+      MaterialExpressionEditorX=1680
+      MaterialExpressionEditorY=80
+      MaterialExpressionGuid=A6A58EAF4694DC9005836BABE8D54F5E
+      Material=Material'"GRASS_m"'
+   End Object
+   Begin Object Name="MaterialExpressionComponentMask_1"
+      Input=(Expression=MaterialExpressionDivide'"GRASS_m:MaterialExpressionDivide_1"')
+      R=True
+      G=True
+      MaterialExpressionEditorX=-608
+      MaterialExpressionEditorY=944
+      MaterialExpressionGuid=FEED3E204DB139B9D63CCFB1B5D5E075
+      Material=Material'"GRASS_m"'
+   End Object
+   Begin Object Name="MaterialExpressionComponentMask_0"
+      Input=(Expression=MaterialExpressionDivide'"GRASS_m:MaterialExpressionDivide_0"')
+      R=True
+      G=True
+      MaterialExpressionEditorX=-224
+      MaterialExpressionEditorY=64
+      MaterialExpressionGuid=FEED3E204DB139B9D63CCFB1B5D5E075
+      Material=Material'"GRASS_m"'
+   End Object
+   Begin Object Name="MaterialExpressionAppendVector_0"
+      A=(Expression=MaterialExpressionScalarParameter'"GRASS_m:MaterialExpressionScalarParameter_12"')
+      B=(Expression=MaterialExpressionScalarParameter'"GRASS_m:MaterialExpressionScalarParameter_11"')
+      MaterialExpressionEditorX=-464
+      MaterialExpressionEditorY=1056
+      MaterialExpressionGuid=63A9143745CB1A07CCF724997C654724
+      Material=Material'"GRASS_m"'
+   End Object
+   BaseColor=(Expression=MaterialExpressionConstant3Vector'"MaterialExpressionConstant3Vector_0"')
+   WorldPositionOffset=(Expression=MaterialExpressionLinearInterpolate'"MaterialExpressionLinearInterpolate_3"')
+   bUsedWithInstancedStaticMeshes=True
+   EditorX=912
+   EditorY=-96
+   Expressions(0)=MaterialExpressionConstant3Vector'"MaterialExpressionConstant3Vector_0"'
+   Expressions(1)=MaterialExpressionLinearInterpolate'"MaterialExpressionLinearInterpolate_3"'
+   Expressions(2)=MaterialExpressionLinearInterpolate'"MaterialExpressionLinearInterpolate_5"'
+   Expressions(3)=MaterialExpressionLinearInterpolate'"MaterialExpressionLinearInterpolate_0"'
+   Expressions(4)=MaterialExpressionScalarParameter'"MaterialExpressionScalarParameter_0"'
+   Expressions(5)=MaterialExpressionScalarParameter'"MaterialExpressionScalarParameter_1"'
+   Expressions(6)=MaterialExpressionMaterialFunctionCall'"MaterialExpressionMaterialFunctionCall_0"'
+   Expressions(7)=MaterialExpressionScalarParameter'"MaterialExpressionScalarParameter_2"'
+   Expressions(8)=MaterialExpressionMultiply'"MaterialExpressionMultiply_0"'
+   Expressions(9)=MaterialExpressionSaturate'"MaterialExpressionSaturate_0"'
+   Expressions(10)=MaterialExpressionLinearInterpolate'"MaterialExpressionLinearInterpolate_1"'
+   Expressions(11)=MaterialExpressionLinearInterpolate'"MaterialExpressionLinearInterpolate_2"'
+   Expressions(12)=MaterialExpressionWorldPosition'"MaterialExpressionWorldPosition_0"'
+   Expressions(13)=MaterialExpressionComponentMask'"MaterialExpressionComponentMask_0"'
+   Expressions(14)=MaterialExpressionScalarParameter'"MaterialExpressionScalarParameter_3"'
+   Expressions(15)=MaterialExpressionDivide'"MaterialExpressionDivide_0"'
+   Expressions(16)=MaterialExpressionVectorParameter'"MaterialExpressionVectorParameter_0"'
+   Expressions(17)=MaterialExpressionVectorParameter'"MaterialExpressionVectorParameter_1"'
+   Expressions(18)=MaterialExpressionVectorParameter'"MaterialExpressionVectorParameter_2"'
+   Expressions(19)=MaterialExpressionMaterialFunctionCall'"MaterialExpressionMaterialFunctionCall_2"'
+   Expressions(20)=MaterialExpressionScalarParameter'"MaterialExpressionScalarParameter_4"'
+   Expressions(21)=MaterialExpressionScalarParameter'"MaterialExpressionScalarParameter_5"'
+   Expressions(22)=MaterialExpressionScalarParameter'"MaterialExpressionScalarParameter_6"'
+   Expressions(23)=MaterialExpressionVertexColor'"MaterialExpressionVertexColor_0"'
+   Expressions(24)=MaterialExpressionConstant'"MaterialExpressionConstant_0"'
+   Expressions(25)=MaterialExpressionWorldPosition'"MaterialExpressionWorldPosition_1"'
+   Expressions(26)=MaterialExpressionComponentMask'"MaterialExpressionComponentMask_1"'
+   Expressions(27)=MaterialExpressionScalarParameter'"MaterialExpressionScalarParameter_10"'
+   Expressions(28)=MaterialExpressionDivide'"MaterialExpressionDivide_1"'
+   Expressions(29)=MaterialExpressionConstant3Vector'"MaterialExpressionConstant3Vector_3"'
+   Expressions(30)=MaterialExpressionLinearInterpolate'"MaterialExpressionLinearInterpolate_4"'
+   Expressions(31)=MaterialExpressionPanner'"MaterialExpressionPanner_0"'
+   Expressions(32)=MaterialExpressionScalarParameter'"MaterialExpressionScalarParameter_11"'
+   Expressions(33)=MaterialExpressionScalarParameter'"MaterialExpressionScalarParameter_12"'
+   Expressions(34)=MaterialExpressionAppendVector'"MaterialExpressionAppendVector_0"'
+   Expressions(35)=MaterialExpressionMultiply'"MaterialExpressionMultiply_1"'
+   Expressions(36)=MaterialExpressionScalarParameter'"MaterialExpressionScalarParameter_13"'
+   Expressions(37)=MaterialExpressionTextureSample'"MaterialExpressionTextureSample_2"'
+   Expressions(38)=MaterialExpressionTextureSample'"MaterialExpressionTextureSample_0"'
+   Expressions(39)=MaterialExpressionTextureSample'"MaterialExpressionTextureSample_7"'
+   ParameterGroupData(0)=(GroupName="None")
+   ParameterGroupData(1)=(GroupName="None")
+   ParameterGroupData(2)=(GroupName="None")
+   ParameterGroupData(3)=(GroupName="None")
+   ParameterGroupData(4)=(GroupName="None")
+   ParameterGroupData(5)=(GroupName="None")
+   ParameterGroupData(6)=(GroupName="None")
+   ParameterGroupData(7)=(GroupName="None")
+   ParameterGroupData(8)=(GroupName="None")
+   ParameterGroupData(9)=(GroupName="None")
+   ParameterGroupData(10)=(GroupName="None")
+   ParameterGroupData(11)=(GroupName="None")
+   ParameterGroupData(12)=(GroupName="None")
+   ParameterGroupData(13)=(GroupName="None")
+   bCanMaskedBeAssumedOpaque=True
+   StateId=6FF27D7F481E2F3BD892F88955EDAC1F
+   CachedExpressionData=(Parameters=(RuntimeEntries[0]=(NameHashes=(440574345582452634,1256827507025214853,1762108615425884250,2314283520598880508,3987503927601199328,7933842740086680578,10371715421228879687,14164357665241128226,16991577894760724667,17591656907863491323,18105765479274530238),ParameterInfos=((Name="Roughness"),(Name="Grass Gradient"),(Name="wind intensity"),(Name="wind speed"),(Name="Wind Lines"),(Name="Spec"),(Name="Param"),(Name="Grass Variation"),(Name="Grass Lines Speed V"),(Name="Grass Lines Speed U"),(Name="wind weight")),ExpressionGuids=(2DE7E8AB48A4707E2343908E7710E163,7738872A40C769969EDCF09486EAD583,28D81847455F0B5E34F8E6824CEE9A20,15747B0343FDDC9CEBE1B69B19371FE6,BE66467346574F082BEE37BCF52D49F6,768ECFDE49ACF8392499868D3D427B02,7A8DF2204AA9C054E1AD2D8EE07934CE,306F48DA4459D4F8B122F4A7E4D5C3C4,B2E8A5694425955890CC31A18FADE7EA,3E72976B45B45B862A5DC684EE6C999C,A050BC0F47102F053A3FCABF33E2C02F),Overrides=(False,False,False,False,False,False,False,False,False,False,False)),RuntimeEntries[1]=(NameHashes=(614867835112362390,8499718262731502242,14164357665241128226),ParameterInfos=((Name="Grass Secondary"),(Name="Grass Primary"),(Name="Grass Variation")),ExpressionGuids=(B48DEEE947A32704381C8FB8ADEEE77F,1DE7529B45E40756967984961C1AA05D,44878624465FE818DA3071A0B34B17B9),Overrides=(False,False,False)),ScalarValues=(1.000000,0.000000,0.600000,0.250000,14068.954102,0.000000,0.000000,20000.000000,0.000000,0.000000,1.250000),VectorValues=((R=0.119538,G=0.108766,B=0.000000,A=1.000000),(R=0.119538,G=0.072272,B=0.000000,A=1.000000),(R=0.000000,G=0.093750,B=0.008022,A=1.000000)),ScalarMinMaxValues=((X=0.000000,Y=0.000000),(X=0.000000,Y=0.000000),(X=0.000000,Y=0.000000),(X=0.000000,Y=0.000000),(X=0.000000,Y=0.000000),(X=0.000000,Y=0.000000),(X=0.000000,Y=0.000000),(X=0.000000,Y=0.000000),(X=0.000000,Y=0.000000),(X=0.000000,Y=0.000000),(X=0.000000,Y=0.000000)),ScalarCurveValues=(None,None,None,None,None,None,None,None,None,None,None),ScalarCurveAtlasValues=(None,None,None,None,None,None,None,None,None,None,None),VectorChannelNameValues=((),(),()),VectorUsedAsChannelMaskValues=(False,False,False)),ReferencedTextures=(None,Texture2D'"/Game/SubPar/FOLIAGE/GRASS/Substance_graph_Wind_lines.Substance_graph_Wind_lines"',Texture2D'"/Game/SubPar/FOLIAGE/GRASS/Substance_graph_foliage_Gradient.Substance_graph_foliage_Gradient"'),FunctionInfos=((StateId=B7C71B914E2BB667772D6CBE2AB55665,Function=MaterialFunction'"/Engine/Functions/Engine_MaterialFunctions01/Gradient/LinearGradient.LinearGradient"'),(StateId=49637CE3497F6537F49E7E9678C0735F,Function=MaterialFunction'"/Engine/Functions/Engine_MaterialFunctions01/WorldPositionOffset/SimpleGrassWind.SimpleGrassWind"')),QualityLevelsUsed=(False,False,False,False))
+   ThumbnailInfo=SceneThumbnailInfoWithPrimitive'"SceneThumbnailInfoWithPrimitive_0"'
+   ParameterOverviewExpansion=(("-12Global", True))
+   LightingGuid=A69E383948375B9546D6D4A930BD8F76
+End Object
