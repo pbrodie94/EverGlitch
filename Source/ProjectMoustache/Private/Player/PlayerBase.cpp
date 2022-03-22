@@ -223,7 +223,9 @@ void APlayerBase::Dash()
 	moveDirection.Z = 200;
 
 	GetCharacterMovement()->Launch(moveDirection);
-
+	
+	HandleDashEffects(); 
+	
 	timeNextDash = GetWorld()->GetTimeSeconds() + dashDelayInterval;
 
 }
@@ -365,6 +367,10 @@ void APlayerBase::EndMeleeAttackDamage()
 {
 	isMeleeAttacking = false;
 	hitActors.Empty();
+}
+
+void APlayerBase::HandleDashEffects_Implementation()
+{
 }
 
 void APlayerBase::BeginAiming_Implementation()
