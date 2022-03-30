@@ -13,12 +13,12 @@ class PROJECTMOUSTACHE_API UMagicComponent : public UActorComponent
 	GENERATED_BODY()
 
 	UPROPERTY()
-	AMagicSpellBase* powerSpell;
+	AMagicSpellBase* destructionSpell;
 
 	UPROPERTY()
 	AMagicSpellBase* supportSpell;
 
-	void CastPowerSpell();
+	void CastDestructionSpell();
 	void CastSupportSpell();
 	
 public:	
@@ -46,7 +46,7 @@ public:
 	void SetSupportMagicSpell(AMagicSpellBase* newSupportSpell);
 
 	UFUNCTION(BlueprintCallable)
-	AMagicSpellBase* GetCurrentPowerSpell();
+	AMagicSpellBase* GetCurrentDestructionSpell();
 
 	UFUNCTION(BlueprintCallable)
 	AMagicSpellBase* GetCurrentSupportSpell();

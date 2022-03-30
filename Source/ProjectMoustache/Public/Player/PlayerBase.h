@@ -9,6 +9,7 @@
 #include "PlayerObserver.h"
 #include "GameFramework/Character.h"
 #include "Interactables/InventoryComponentBase.h"
+#include "Weapons/WeaponBase.h"
 #include "PlayerBase.generated.h"
 
 UCLASS()
@@ -95,11 +96,16 @@ class PROJECTMOUSTACHE_API APlayerBase : public ACharacter, public IPlayerCharac
 	void Fire();
 
 	/**
+	 * Called when the fire button is released
+	 */
+	void FireUp();
+
+	/**
 	 * Takes the movement direction of the player, excludes the vertical direction
 	 * then applies a dash force, as well as a slight upwards force to keep from getting stuck on floor
 	 */
 	void Dash();
-
+	
 	/**
 	 * Hit detection for melee hits
 	 * Will be moved to weapon class when created
@@ -139,6 +145,12 @@ protected:
 
 	/*UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	UInventoryComponentBase* inventoryComponent;*/
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TSubclassOf<AWeaponBase> startingWeapon;
+
+	UPROPERTY(BlueprintReadWrite)
+	AWeaponBase* currentWeapon;
 
 	//Used to keep track of actors hit during hit detection
 	UPROPERTY(BlueprintReadWrite)
@@ -187,6 +199,10 @@ protected:
 	UFUNCTION(BlueprintCallable)
 	void EndMeleeAttackDamage();
 
+	UFUNCTION(BlueprintNativeEvent) // Expects that the function is defined in Blueprint
+	void HandleDashEffects(); // Put whatever parametres you need
+	void HandleDashEffects_Implentaion();
+	
 	//Function for spawning projectiles in blueprint
 	UFUNCTION(BlueprintImplementableEvent)
 	void SpawnProjectile(FTransform spawnTransform);

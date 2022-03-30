@@ -158,6 +158,7 @@ void APlayerBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	PlayerInputComponent->BindAction("Aim", IE_Pressed, this, &APlayerBase::BeginAiming);
 	PlayerInputComponent->BindAction("Aim", IE_Released, this, &APlayerBase::EndAiming);
 	PlayerInputComponent->BindAction("Shoot", IE_Pressed, this, &APlayerBase::Fire);
+	PlayerInputComponent->BindAction("Shoot", IE_Released, this, &APlayerBase::FireUp);
 }
 
 void APlayerBase::MoveForward(float value)
@@ -222,7 +223,9 @@ void APlayerBase::Dash()
 	moveDirection.Z = 200;
 
 	GetCharacterMovement()->Launch(moveDirection);
-
+	
+	HandleDashEffects(); 
+	
 	timeNextDash = GetWorld()->GetTimeSeconds() + dashDelayInterval;
 
 }
@@ -244,20 +247,35 @@ void APlayerBase::Fire()
 		return;
 	}
 
+	/*
 	//Create transform, and call to blueprint to spawn projectile
 	FVector firePosition = GetActorLocation() + (followCamera->GetForwardVector() * 100);
 	firePosition += FVector(0, 0, 50);
 	FRotator direction = UKismetMathLibrary::MakeRotFromX(followCamera->GetForwardVector());
 	SpawnProjectile(FTransform(direction, firePosition, FVector(1, 1, 1)));
 
-	//Switch to combat stance and set timer to end combat stance
-	GetCharacterMovement()->bOrientRotationToMovement = false;
+	timeNextShot = GetWorld()->GetTimeSeconds() + fireDelay;*/
 
-	world->GetTimerManager().ClearTimer(rangedCombatTimerHandle);
-	world->GetTimerManager().SetTimer(rangedCombatTimerHandle, this, &APlayerBase::OnCombatStanceEnd, combatStanceTime);
-
-	timeNextShot = GetWorld()->GetTimeSeconds() + fireDelay;
+	if (currentWeapon != nullptr)
+	{
+		if (currentWeapon->OnFireDown())
+		{
+			//Switch to combat stance and set timer to end combat stance
+			GetCharacterMovement()->bOrientRotationToMovement = false;
+			world->GetTimerManager().ClearTimer(rangedCombatTimerHandle);
+			world->GetTimerManager().SetTimer(rangedCombatTimerHandle, this, &APlayerBase::OnCombatStanceEnd, combatStanceTime);
+		}
+	}
 }
+
+void APlayerBase::FireUp()
+{
+	if (currentWeapon != nullptr)
+	{
+		currentWeapon->OnFireUp();
+	}
+}
+
 
 /**
 * Expiry function for the combat stance timer
@@ -349,6 +367,10 @@ void APlayerBase::EndMeleeAttackDamage()
 {
 	isMeleeAttacking = false;
 	hitActors.Empty();
+}
+
+void APlayerBase::HandleDashEffects_Implementation()
+{
 }
 
 void APlayerBase::BeginAiming_Implementation()
