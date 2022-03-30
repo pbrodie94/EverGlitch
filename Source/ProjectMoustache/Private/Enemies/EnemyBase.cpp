@@ -33,10 +33,10 @@ void AEnemyBase::BeginPlay()
 
 	currentHealth = startingHealth > 0 ? startingHealth : maxHealth;
 
-	fireResistance = FMath::Clamp(fireResistance, -100.0f, 100.0f);
-	iceResistance = FMath::Clamp(iceResistance, -100.0f, 100.0f);
-	lightningResistance = FMath::Clamp(lightningResistance, -100.0f, 100.0f);
-	waterResistance = FMath::Clamp(waterResistance, -100.0f, 100.0f);
+	fireResistance = FMath::Clamp(fireResistance, -100.0f, 200.0f);
+	iceResistance = FMath::Clamp(iceResistance, -100.0f, 200.0f);
+	lightningResistance = FMath::Clamp(lightningResistance, -100.0f, 200.0f);
+	waterResistance = FMath::Clamp(waterResistance, -100.0f, 200.0f);
 }
 
 // Called every frame
@@ -125,6 +125,7 @@ float AEnemyBase::TakeIncomingDamage_Implementation(float damageAmount, AActor* 
 
 	float damage = damageAmount;
 
+	// Adjust damage based on status effects
 	if (damageData.statusEffect.statusEffectType != None)
 	{
 		const FStatusEffect elementEffect = damageData.statusEffect;
@@ -140,15 +141,27 @@ float AEnemyBase::TakeIncomingDamage_Implementation(float damageAmount, AActor* 
 				damage *= (waterResistance / 100);
 				break;
 			case Static:
-				damage *= (lightningResistance / 100);\
+				damage *= (lightningResistance / 100);
+
+				// Add damage increase if wet
+				if (GetHasStatusEffect(Wet))
+				{
+					UWetStatus* wetStatus = Cast<UWetStatus>(GetStatusEffect(Wet));
+					if (wetStatus != nullptr)
+					{
+						damage *= (1 + (wetStatus->GetEffectAmount() / 100));
+					}
+				}
+			
 				break;
 			default:
 				break;
 		}
 
+		// Determine if status effect is applied
 		if (elementEffect.statusInflictChance > 0 && elementEffect.duration > 0)
 		{
-			float rand = FMath::RandRange(0, 100);
+			const float rand = FMath::RandRange(0, 100);
 			if (rand < elementEffect.statusInflictChance)
 			{
 				AddStatusEffect(elementEffect);
@@ -178,10 +191,33 @@ void AEnemyBase::AddStatusEffect_Implementation(FStatusEffect statusEffect)
 	switch (statusEffect.statusEffectType)
 	{
 		case Burn:
+
+			if (GetHasStatusEffect(Wet))
+			{
+				RemoveStatus(Wet);
+				return;
+			}
 			
 			if (fireResistance <= 0)
 			{
 				return;
+			}
+
+			// Check if already have burn status
+			if (GetHasStatusEffect(Burn))
+			{
+				// Check if burn status has less time left than new status
+				UStatusEffectBase* burnStatus = GetStatusEffect(Burn);
+				if (burnStatus != nullptr)
+				{
+					if (burnStatus->GetTimeRemaining() > statusEffect.duration)
+					{
+						return;
+					}
+				}
+
+				// Remove then add new status
+				RemoveStatus(Burn);
 			}
 			
 			status = NewObject<UBurnStatus>();
@@ -194,6 +230,21 @@ void AEnemyBase::AddStatusEffect_Implementation(FStatusEffect statusEffect)
 				return;
 			}
 
+			// Check if has chilled status
+			if (GetHasStatusEffect(Chilled))
+			{
+				UStatusEffectBase* chilledStatus = GetStatusEffect(Chilled);
+				if (chilledStatus != nullptr)
+				{
+					if (chilledStatus->GetTimeRemaining() > statusEffect.duration)
+					{
+						return;
+					}
+				}
+
+				RemoveStatus(Chilled);
+			}
+
 			status = NewObject<UChilledStatus>();
 			
 			break;
@@ -202,6 +253,21 @@ void AEnemyBase::AddStatusEffect_Implementation(FStatusEffect statusEffect)
 			if (lightningResistance <= 0)
 			{
 				return;
+			}
+
+			// Check if has static status
+			if (GetHasStatusEffect(Static))
+			{
+				UStatusEffectBase* staticStatus = GetStatusEffect(Static);
+				if (staticStatus != nullptr)
+				{
+					if (staticStatus->GetTimeRemaining() > statusEffect.duration)
+					{
+						return;
+					}
+				}
+
+				RemoveStatus(Static);
 			}
 
 			status = NewObject<UStaticEffect>();
@@ -214,6 +280,21 @@ void AEnemyBase::AddStatusEffect_Implementation(FStatusEffect statusEffect)
 				return;
 			}
 
+			// Check if has wet status
+			if (GetHasStatusEffect(Wet))
+			{
+				UStatusEffectBase* wetStatus = GetStatusEffect(Wet);
+				if (wetStatus != nullptr)
+				{
+					if (wetStatus->GetTimeRemaining() > statusEffect.duration)
+					{
+						return;
+					}
+
+					RemoveStatus(Wet);
+				}
+			}
+		
 			status = NewObject<UWetStatus>();
 			
 			break;
@@ -228,7 +309,7 @@ void AEnemyBase::AddStatusEffect_Implementation(FStatusEffect statusEffect)
 		return;
 	}
 	
-	status->Init(this, statusEffect.duration, GetWorld()->GetTimeSeconds());
+	status->Init(this, statusEffect.effectAmount, statusEffect.duration, statusEffect.dotInterval);
 	newStatusEffects.Add(status);
 }
 
@@ -246,6 +327,7 @@ void AEnemyBase::RemoveStatus_Implementation(EStatusEffectType statusEffect)
 	{
 		if (status->GetEffectType() == statusEffect)
 		{
+			status->SetIsExpired(true);
 			removedStatusEffects.Add(status);
 		}
 	}
@@ -261,7 +343,30 @@ void AEnemyBase::RemoveStatusEffect_Implementation(UStatusEffectBase* statusEffe
 		return;
 	}
 
+	statusEffect->SetIsExpired(true);
 	removedStatusEffects.Add(statusEffect);
+}
+
+/**
+* Returns the first found non-expired object for the inputted status effect type
+* If the status effect does not exist, it will return nullptr
+*/
+UStatusEffectBase* AEnemyBase::GetStatusEffect(EStatusEffectType effectType)
+{
+	if (statusEffects.Num() <= 0)
+	{
+		return nullptr;
+	}
+
+	for (UStatusEffectBase* status : statusEffects)
+	{
+		if (status->GetEffectType() == effectType && !status->GetIsExpired())
+		{
+			return status;
+		}
+	}
+
+	return nullptr;
 }
 
 /**
@@ -271,7 +376,7 @@ bool AEnemyBase::GetHasStatusEffect_Implementation(EStatusEffectType statusEffec
 {
 	for (UStatusEffectBase* status : statusEffects)
 	{
-		if (status->GetEffectType() == statusEffect)
+		if (status->GetEffectType() == statusEffect && !status->GetIsExpired())
 		{
 			return true;
 		}

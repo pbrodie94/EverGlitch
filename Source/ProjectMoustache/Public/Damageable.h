@@ -45,6 +45,20 @@ struct FStatusEffect
 	UPROPERTY(BlueprintReadWrite)
 	float statusInflictChance;
 
+	/**
+	 * Amount of effect the status has
+	 * Amount of damage DOT causes
+	 * Percentage of damage increase for damage multipliers (Static + Wet Status)
+	 */
+	UPROPERTY(BlueprintReadWrite)
+	float effectAmount;
+
+	/**
+	 * Interval of DOT
+	 */
+	UPROPERTY(BlueprintReadWrite)
+	float dotInterval;
+
 	FStatusEffect()
 	{
 		duration = 0;
@@ -57,6 +71,15 @@ struct FStatusEffect
 		statusEffectType = effectType;
 		duration = effectDuration;
 		statusInflictChance = inflictChance;
+	}
+
+	FStatusEffect(EStatusEffectType effectType, float amount, float interval, float effectDuration = 0, float inflictChance = 0)
+	{
+		statusEffectType = effectType;
+		duration = effectDuration;
+		statusInflictChance = inflictChance;
+		dotInterval = interval;
+		effectAmount = amount;
 	}
 };
 
@@ -153,6 +176,12 @@ public:
 	 */
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	bool GetHasStatusEffect(EStatusEffectType statusEffect);
+
+	/**
+	* Returns the first found non-expired object for the inputted status effect type
+	* If the status effect does not exist, it will return nullptr
+	*/
+	class UStatusEffectBase* GetStatusEffect(EStatusEffectType effectType);
 
 	/**
 	 * Returns the current amount of health

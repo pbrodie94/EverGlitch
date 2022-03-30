@@ -55,9 +55,9 @@ protected:
 	// Element resistances
 	/**
 	 * Entity's resistance to fire type damage
-	 * Resistance is clamped between -100% - 100%
+	 * Resistance is clamped between -100% - 200%
 	 * 0% negates all damage
-	 * 100% deals double damage
+	 * 200% deals double damage
 	 * -100% adds all damage back to health
 	 */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Combat)
@@ -65,9 +65,9 @@ protected:
 
 	/**
 	* Entity's resistance to ice type damage
-	* Resistance is clamped between -100% - 100%
+	* Resistance is clamped between -100% - 200%
 	* 0% negates all damage
-	* 100% deals double damage
+	* 200% deals double damage
 	* -100% adds all damage back to health
 	*/
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Combat)
@@ -75,9 +75,9 @@ protected:
 
 	/**
 	* Entity's resistance to lightning type damage
-	* Resistance is clamped between -100% - 100%
+	* Resistance is clamped between -100% - 200%
 	* 0% negates all damage
-	* 100% deals double damage
+	* 200% deals double damage
 	* -100% adds all damage back to health
 	*/
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Combat)
@@ -85,9 +85,9 @@ protected:
 
 	/**
 	* Entity's resistance to water type damage
-	* Resistance is clamped between -100% - 100%
+	* Resistance is clamped between -100% - 200%
 	* 0% negates all damage
-	* 100% deals double damage
+	* 200% deals double damage
 	* -100% adds all damage back to health
 	*/
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Combat)
@@ -150,6 +150,12 @@ public:
 	void RemoveStatusEffect(class UStatusEffectBase* statusEffect);
 	virtual void RemoveStatusEffect_Implementation(class UStatusEffectBase* statusEffect) override;
 
+	/**
+	 * Returns the first found non-expired object for the inputted status effect type
+	 * If the status effect does not exist, it will return nullptr
+	 */
+	class UStatusEffectBase* GetStatusEffect(EStatusEffectType effectType);
+	
 	/**
 	* Returns character's resistance to fire
 	*/
