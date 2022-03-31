@@ -70,7 +70,7 @@ void UMagicComponent::CastSupportSpell()
 	}
 }
 
-void UMagicComponent::SetPowerMagicSpell_Implementation(AMagicSpellBase* newMagicSpell)
+void UMagicComponent::SetDestructionMagicSpell_Implementation(AMagicSpellBase* newMagicSpell)
 {
 	if (newMagicSpell != nullptr)
 	{

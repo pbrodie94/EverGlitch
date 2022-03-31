@@ -57,8 +57,11 @@ APlayerBase::APlayerBase()
 	// Magic component
 	magicComponent = CreateDefaultSubobject<UMagicComponent>(TEXT("MagicComponent"));
 
-	// Create inventory component
-	//inventoryComponent = CreateDefaultSubobject<UInventoryComponentBase>(TEXT("InventoryComponent"));
+	// Combat manager
+	combatManager = CreateDefaultSubobject<UCombatManagerComponent>(TEXT("CombatManager"));
+
+	/*// Create inventory component
+	inventoryComponent = CreateDefaultSubobject<UInventoryComponentBase>(TEXT("InventoryComponent"));*/
 
 	godMode = false;
 }
@@ -228,6 +231,10 @@ void APlayerBase::Dash()
 	
 	timeNextDash = GetWorld()->GetTimeSeconds() + dashDelayInterval;
 
+}
+
+void APlayerBase::HandleDashEffects_Implementation()
+{
 }
 
 /**
