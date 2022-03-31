@@ -8,6 +8,12 @@
  ************************************************************************************************************/
 UStatusEffectBase::UStatusEffectBase()
 {
+	duration = 0;
+	timeEnded = 0;
+	effectAmount = 0;
+	effectedActor = nullptr;
+	damageCauser = nullptr;
+	eventInstigator = nullptr;
 	isExpired = false;
 }
 

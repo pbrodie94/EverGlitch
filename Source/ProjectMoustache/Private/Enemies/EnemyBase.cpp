@@ -186,7 +186,7 @@ float AEnemyBase::TakeIncomingDamage_Implementation(float damageAmount, AActor* 
 */
 void AEnemyBase::AddStatusEffect_Implementation(FStatusEffect statusEffect)
 {
-	UStatusEffectBase* status = nullptr;
+	/*UStatusEffectBase* status = nullptr;
 	
 	switch (statusEffect.statusEffectType)
 	{
@@ -310,7 +310,7 @@ void AEnemyBase::AddStatusEffect_Implementation(FStatusEffect statusEffect)
 	}
 	
 	status->Init(this, statusEffect.effectAmount, statusEffect.duration, statusEffect.dotInterval);
-	newStatusEffects.Add(status);
+	newStatusEffects.Add(status);*/
 }
 
 /**
