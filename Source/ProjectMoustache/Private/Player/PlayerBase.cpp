@@ -57,8 +57,11 @@ APlayerBase::APlayerBase()
 	// Magic component
 	magicComponent = CreateDefaultSubobject<UMagicComponent>(TEXT("MagicComponent"));
 
-	// Create inventory component
-	//inventoryComponent = CreateDefaultSubobject<UInventoryComponentBase>(TEXT("InventoryComponent"));
+	// Combat manager
+	combatManager = CreateDefaultSubobject<UCombatManagerComponent>(TEXT("CombatManager"));
+
+	/*// Create inventory component
+	inventoryComponent = CreateDefaultSubobject<UInventoryComponentBase>(TEXT("InventoryComponent"));*/
 
 	godMode = false;
 }
@@ -230,6 +233,10 @@ void APlayerBase::Dash()
 
 }
 
+void APlayerBase::HandleDashEffects_Implementation()
+{
+}
+
 /**
 * Fire projectiles on main fire button.
 * Will be changed to call a fire function on a weapon when created
@@ -367,10 +374,6 @@ void APlayerBase::EndMeleeAttackDamage()
 {
 	isMeleeAttacking = false;
 	hitActors.Empty();
-}
-
-void APlayerBase::HandleDashEffects_Implementation()
-{
 }
 
 void APlayerBase::BeginAiming_Implementation()
