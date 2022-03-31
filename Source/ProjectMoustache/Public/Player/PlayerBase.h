@@ -109,7 +109,7 @@ class PROJECTMOUSTACHE_API APlayerBase : public ACharacter, public IPlayerCharac
 	 * then applies a dash force, as well as a slight upwards force to keep from getting stuck on floor
 	 */
 	void Dash();
-	
+
 	/**
 	 * Hit detection for melee hits
 	 * Will be moved to weapon class when created
@@ -206,7 +206,7 @@ protected:
 	UFUNCTION(BlueprintNativeEvent) // Expects that the function is defined in Blueprint
 	void HandleDashEffects(); // Put whatever parameters you need
 	void HandleDashEffects_Implentaion() { }
-	
+
 	//Function for spawning projectiles in blueprint
 	UFUNCTION(BlueprintImplementableEvent)
 	void SpawnProjectile(FTransform spawnTransform);
