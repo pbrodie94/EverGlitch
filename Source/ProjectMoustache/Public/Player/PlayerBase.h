@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "CombatManagerComponent.h"
 #include "MagicComponent.h"
 #include "MagicSpellBase.h"
 #include "PlayerCharacter.h"
@@ -31,6 +32,9 @@ class PROJECTMOUSTACHE_API APlayerBase : public ACharacter, public IPlayerCharac
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = true))
 	UMagicComponent* magicComponent;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = true))
+	UCombatManagerComponent* combatManager;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = true))
 	float aimSensitivityX;
@@ -105,7 +109,7 @@ class PROJECTMOUSTACHE_API APlayerBase : public ACharacter, public IPlayerCharac
 	 * then applies a dash force, as well as a slight upwards force to keep from getting stuck on floor
 	 */
 	void Dash();
-	
+
 	/**
 	 * Hit detection for melee hits
 	 * Will be moved to weapon class when created
@@ -200,9 +204,9 @@ protected:
 	void EndMeleeAttackDamage();
 
 	UFUNCTION(BlueprintNativeEvent) // Expects that the function is defined in Blueprint
-	void HandleDashEffects(); // Put whatever parametres you need
-	void HandleDashEffects_Implentaion();
-	
+	void HandleDashEffects(); // Put whatever parameters you need
+	void HandleDashEffects_Implentaion() { }
+
 	//Function for spawning projectiles in blueprint
 	UFUNCTION(BlueprintImplementableEvent)
 	void SpawnProjectile(FTransform spawnTransform);
@@ -247,6 +251,12 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	bool GetIsPlayerDead();
 	bool GetIsPlayerDead_Implementation() { return isDead; }
+
+	/**
+	 * Returns pointer reference to combat manager
+	 */
+	UFUNCTION(BlueprintCallable)
+	UCombatManagerComponent* GetCombatManager() { return combatManager; }
 
 	//Player Character interface functions
 	/**
