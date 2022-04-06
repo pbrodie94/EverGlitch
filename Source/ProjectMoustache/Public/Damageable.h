@@ -63,6 +63,8 @@ struct FStatusEffect
 	{
 		duration = 0;
 		statusInflictChance = 0;
+		effectAmount = 0;
+		dotInterval = 0;
 		statusEffectType = None;
 	}
 
@@ -71,6 +73,8 @@ struct FStatusEffect
 		statusEffectType = effectType;
 		duration = effectDuration;
 		statusInflictChance = inflictChance;
+		effectAmount = 0;
+		dotInterval = 0;
 	}
 
 	FStatusEffect(EStatusEffectType effectType, float amount, float interval, float effectDuration = 0, float inflictChance = 0)

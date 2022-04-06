@@ -376,10 +376,6 @@ void APlayerBase::EndMeleeAttackDamage()
 	hitActors.Empty();
 }
 
-void APlayerBase::HandleDashEffects_Implementation()
-{
-}
-
 void APlayerBase::BeginAiming_Implementation()
 {
 	if (isDead)
