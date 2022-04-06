@@ -81,12 +81,16 @@ void ATurretAI::OnSensed(const TArray<AActor*>& UpdatedActors)
 
 		if (Info.LastSensedStimuli[0].WasSuccessfullySensed())
 		{
-			FVector dir = UpdatedActors[i]->GetActorLocation() - GetActorLocation();
-			dir.Z = 0.0f;
+			if (UpdatedActors[i]->ActorHasTag("Player")) 
+			{
+				FVector dir = UpdatedActors[i]->GetActorLocation() - GetActorLocation();
+				dir.Z = 0.0f;
 
-			SetNewRotation(UpdatedActors[i]->GetActorLocation(), GetActorLocation());
+				SetNewRotation(UpdatedActors[i]->GetActorLocation(), GetActorLocation());
 
-			Fire();
+				Fire();
+			}
+
 
 		}
 	}
