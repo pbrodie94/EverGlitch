@@ -13,6 +13,8 @@ AEntityBase::AEntityBase()
 	PrimaryActorTick.bCanEverTick = true;
 
 	maxHealth = 100;
+	startingHealth = 100;
+	currentHealth = 100;
 
 	fireEffectiveness = 0;
 	iceEffectiveness = 0;
@@ -25,12 +27,14 @@ void AEntityBase::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (maxHealth <= 1)
+	if (maxHealth <= 0)
 	{
 		maxHealth = 100;
 	}
 
 	currentHealth = startingHealth > 0 ? startingHealth : maxHealth;
+
+	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Cyan, TEXT("Entity"));
 
 	fireEffectiveness = FMath::Clamp(fireEffectiveness, -100.0f, 200.0f);
 	iceEffectiveness = FMath::Clamp(iceEffectiveness, -100.0f, 200.0f);
@@ -151,7 +155,7 @@ void AEntityBase::AddStatusEffect_Implementation(FStatusEffect statusEffect)
 	
 	switch (statusEffect.statusEffectType)
 	{
-		case Burn:
+		/*case Burn:
 
 			if (GetHasStatusEffect(Wet))
 			{
@@ -258,7 +262,7 @@ void AEntityBase::AddStatusEffect_Implementation(FStatusEffect statusEffect)
 		
 			status = NewObject<UWetStatus>();
 			
-			break;
+			break;*/
 		case Frozen:
 			break;
 		default:

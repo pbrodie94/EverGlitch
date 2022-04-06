@@ -5,16 +5,16 @@
 #include "CoreMinimal.h"
 #include "CombatManagerComponent.h"
 #include "MagicComponent.h"
-#include "MagicSpellBase.h"
+//#include "MagicSpellBase.h"
 #include "PlayerCharacter.h"
 #include "PlayerObserver.h"
-#include "GameFramework/Character.h"
-#include "Interactables/InventoryComponentBase.h"
+#include "EntityBase.h"
+//#include "Interactables/InventoryComponentBase.h"
 #include "Weapons/WeaponBase.h"
 #include "PlayerBase.generated.h"
 
 UCLASS()
-class PROJECTMOUSTACHE_API APlayerBase : public ACharacter, public IPlayerCharacter
+class PROJECTMOUSTACHE_API APlayerBase : public AEntityBase, public IPlayerCharacter
 {
 	GENERATED_BODY()
 
@@ -65,14 +65,6 @@ class PROJECTMOUSTACHE_API APlayerBase : public ACharacter, public IPlayerCharac
 	//Time in between dashes
 	UPROPERTY(EditDefaultsOnly, Category = Stats, meta = (AllowPrivateAccess = true))
 	float dashDelayInterval;
-
-	//Current health
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Stats, meta = (AllowPrivateAccess = true))
-	float health;
-
-	//Max health
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Stats, meta = (AllowPrivateAccess = true))
-	float maxHealth;
 
 	//Duration player is facing direction of camera after performing ranged attack
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Combat, meta = (AllowPrivateAccess = true))
@@ -210,11 +202,8 @@ protected:
 	//Function for spawning projectiles in blueprint
 	UFUNCTION(BlueprintImplementableEvent)
 	void SpawnProjectile(FTransform spawnTransform);
-
-	//Partially implemented in cpp, remainder in blueprint
-	UFUNCTION(BlueprintNativeEvent)
-	void Die();
-	void Die_Implementation();
+	
+	virtual void Die_Implementation() override;
 
 	UFUNCTION(BlueprintCallable)
 	bool GetIsMeleeAttacking() { return isMeleeAttacking; }
@@ -239,14 +228,6 @@ public:
 
 	//Takes in damage, and returns the actual damage
 	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
-
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
-	float GetCurrentHealth();
-	float GetCurrentHealth_Implementation() { return health; }
-
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
-	float GetMaxHealth();
-	float GetMaxHealth_Implementation() { return maxHealth; }
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	bool GetIsPlayerDead();

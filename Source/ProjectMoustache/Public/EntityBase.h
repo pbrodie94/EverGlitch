@@ -164,14 +164,14 @@ public:
 	*/
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	float GetCurrentHealth() const;
-	virtual FORCEINLINE float GetCurrentHealth_Implementation() const override { return currentHealth; }
+	float FORCEINLINE GetCurrentHealth_Implementation() const override { return currentHealth; }
 
 	/**
 	* Returns the max health the character can have
 	*/
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	float GetMaxHealth() const;
-	virtual FORCEINLINE float GetMaxHealth_Implementation() const override { return maxHealth; }
+	float FORCEINLINE GetMaxHealth_Implementation() const override { return maxHealth; }
 
 	/**
 	* Returns true if the character is dead
