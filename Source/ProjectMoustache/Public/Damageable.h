@@ -54,7 +54,7 @@ struct FStatusEffect
 	float effectAmount;
 
 	/**
-	 * Interval of DOT
+	 * Interval of Damage Over Time
 	 */
 	UPROPERTY(BlueprintReadWrite)
 	float dotInterval;

@@ -229,6 +229,8 @@ public:
 	//Takes in damage, and returns the actual damage
 	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 
+	virtual float TakeIncomingDamage_Implementation(float damageAmount, AActor* damageCauser, AController* eventInstigator, FDamageData damageData) override;
+	
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	bool GetIsPlayerDead();
 	bool GetIsPlayerDead_Implementation() { return isDead; }

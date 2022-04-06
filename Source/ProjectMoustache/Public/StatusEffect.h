@@ -37,9 +37,9 @@ public:
 
 	UStatusEffectBase();
 
-	virtual void Init(AActor* actor, float amount, float effectDuration, float interval);
+	virtual void Init(AActor* actor, float amount, float effectDuration, float interval, float worldTime);
 
-	virtual void UpdateStatus();
+	virtual void UpdateStatus(float worldTime);
 
 	FORCEINLINE float GetTimeRemaining() const;
 
@@ -68,9 +68,9 @@ public:
 
 	UBurnStatus();
 
-	virtual void Init(AActor* actor, float amount, float effectDuration, float interval) override;
+	virtual void Init(AActor* actor, float amount, float effectDuration, float interval, float worldTime) override;
 	
-	virtual void UpdateStatus() override;
+	virtual void UpdateStatus(float worldTime) override;
 
 	virtual FORCEINLINE EStatusEffectType GetEffectType() override { return Burn; }
 };
@@ -98,7 +98,7 @@ class UWetStatus : public UStatusEffectBase
 	GENERATED_BODY()
 public:
 
-	virtual void Init(AActor* actor, float amount, float effectDuration, float interval) override;
+	virtual void Init(AActor* actor, float amount, float effectDuration, float interval, float worldTime) override;
 
 	virtual FORCEINLINE EStatusEffectType GetEffectType() override { return Wet; }
 };

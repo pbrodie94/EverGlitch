@@ -63,6 +63,11 @@ APlayerBase::APlayerBase()
 	/*// Create inventory component
 	inventoryComponent = CreateDefaultSubobject<UInventoryComponentBase>(TEXT("InventoryComponent"));*/
 
+	fireEffectiveness = 100;
+	iceEffectiveness = 100;
+	lightningEffectiveness = 100;
+	waterEffectiveness = 100;
+
 	godMode = false;
 }
 
@@ -338,6 +343,19 @@ float APlayerBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEven
 
 	return DamageAmount;
 }
+
+float APlayerBase::TakeIncomingDamage_Implementation(float damageAmount, AActor* damageCauser, AController* eventInstigator, FDamageData damageData)
+{
+	const float damage = Super::TakeIncomingDamage_Implementation(damageAmount, damageCauser, eventInstigator, damageData);
+
+	if (damage > 0)
+	{
+		GetWorld()->GetFirstPlayerController()->PlayerCameraManager->StartCameraShake(cameraShake, 1);
+	}
+
+	return damage;
+}
+
 
 //Begins melee hit detection
 void APlayerBase::BeginMeleeAttackDamage()

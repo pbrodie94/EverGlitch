@@ -74,7 +74,7 @@ void AEntityBase::Tick(float DeltaTime)
 	{
 		for (UStatusEffectBase* statusEffect : statusEffects)
 		{
-			statusEffect->UpdateStatus();
+			statusEffect->UpdateStatus(GetWorld()->GetTimeSeconds());
 		}
 	}
 }
@@ -155,7 +155,7 @@ void AEntityBase::AddStatusEffect_Implementation(FStatusEffect statusEffect)
 	
 	switch (statusEffect.statusEffectType)
 	{
-		/*case Burn:
+		case Burn:
 
 			if (GetHasStatusEffect(Wet))
 			{
@@ -262,7 +262,7 @@ void AEntityBase::AddStatusEffect_Implementation(FStatusEffect statusEffect)
 		
 			status = NewObject<UWetStatus>();
 			
-			break;*/
+			break;
 		case Frozen:
 			break;
 		default:
@@ -274,7 +274,7 @@ void AEntityBase::AddStatusEffect_Implementation(FStatusEffect statusEffect)
 		return;
 	}
 	
-	status->Init(this, statusEffect.effectAmount, statusEffect.duration, statusEffect.dotInterval);
+	status->Init(this, statusEffect.effectAmount, statusEffect.duration, statusEffect.dotInterval, GetWorld()->GetTimeSeconds());
 	newStatusEffects.Add(status);
 }
 
