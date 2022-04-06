@@ -148,8 +148,8 @@ public:
 	/**
 	 * Returns a list of status effects active on the character
 	 */
-	/*UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	TArray<FStatusEffect> GetStatusEffects();*/
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	TArray<UStatusEffectBase*> GetAllStatusEffects();
 
 	/**
 	 * Returns character's resistance to fire

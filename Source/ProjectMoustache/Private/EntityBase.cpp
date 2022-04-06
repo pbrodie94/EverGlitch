@@ -34,8 +34,6 @@ void AEntityBase::BeginPlay()
 
 	currentHealth = startingHealth > 0 ? startingHealth : maxHealth;
 
-	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Cyan, TEXT("Entity"));
-
 	fireEffectiveness = FMath::Clamp(fireEffectiveness, -100.0f, 200.0f);
 	iceEffectiveness = FMath::Clamp(iceEffectiveness, -100.0f, 200.0f);
 	lightningEffectiveness = FMath::Clamp(lightningEffectiveness, -100.0f, 200.0f);
@@ -310,6 +308,21 @@ void AEntityBase::RemoveStatusEffect_Implementation(UStatusEffectBase* statusEff
 
 	statusEffect->SetIsExpired(true);
 	removedStatusEffects.Add(statusEffect);
+}
+
+/**
+* Returns a list of status effects active on the character
+*/
+TArray<UStatusEffectBase*> AEntityBase::GetAllStatusEffects_Implementation()
+{
+	TArray<UStatusEffectBase*> effects;
+
+	for (UStatusEffectBase* status : statusEffects)
+	{
+		effects.Add(status);
+	}
+
+	return effects;
 }
 
 /**

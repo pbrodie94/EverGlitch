@@ -10,7 +10,7 @@
 /*************************************************************
 * Status Effect
 *************************************************************/
-UCLASS()
+UCLASS(BlueprintType, Blueprintable)
 class PROJECTMOUSTACHE_API UStatusEffectBase : public UObject
 {
 	GENERATED_BODY()
@@ -32,6 +32,7 @@ protected:
 	
 	float duration;
 	float timeEnded;
+	float timeRemaining;
 	
 public:
 
@@ -41,14 +42,20 @@ public:
 
 	virtual void UpdateStatus(float worldTime);
 
-	FORCEINLINE float GetTimeRemaining() const;
+	UFUNCTION(BlueprintCallable)
+	FORCEINLINE float GetTimeRemaining() const { return timeRemaining; }
+
+	UFUNCTION(BlueprintCallable)
+	FORCEINLINE float GetDuration() const { return duration; }
 
 	FORCEINLINE void SetIsExpired(bool expired) { isExpired = expired; }
 
+	UFUNCTION(BlueprintCallable)
 	virtual FORCEINLINE EStatusEffectType GetEffectType() { return None; }
 
 	FORCEINLINE float GetEffectAmount() const { return effectAmount; }
 
+	UFUNCTION(BlueprintCallable)
 	FORCEINLINE bool GetIsExpired() const { return isExpired; }
 };
 

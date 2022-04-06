@@ -23,6 +23,8 @@ void UStatusEffectBase::Init(AActor* actor, float amount, float effectDuration, 
 	duration = effectDuration;
 	timeEnded = worldTime + duration;
 	effectAmount = amount;
+
+	timeRemaining = duration;
 }
 
 void UStatusEffectBase::UpdateStatus(float worldTime)
@@ -32,11 +34,8 @@ void UStatusEffectBase::UpdateStatus(float worldTime)
 		isExpired = true;
 		IDamageable::Execute_RemoveStatusEffect(effectedActor, this);
 	}
-}
 
-float UStatusEffectBase::GetTimeRemaining() const
-{
-	return timeEnded - GetWorld()->GetTimeSeconds();
+	timeRemaining = timeEnded - worldTime;
 }
 
 /*************************************************************************************************************

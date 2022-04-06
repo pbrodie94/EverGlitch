@@ -119,6 +119,13 @@ public:
 	virtual void RemoveStatusEffect_Implementation(class UStatusEffectBase* statusEffect) override;
 
 	/**
+	* Returns a list of status effects active on the character
+	*/
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	TArray<UStatusEffectBase*> GetAllStatusEffects();
+	TArray<UStatusEffectBase*> GetAllStatusEffects_Implementation();
+	
+	/**
 	 * Returns the first found non-expired object for the inputted status effect type
 	 * If the status effect does not exist, it will return nullptr
 	 */
