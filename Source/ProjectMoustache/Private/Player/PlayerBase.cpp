@@ -6,8 +6,8 @@
 #include "Debug/ReporterBase.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
-#include "Kismet/KismetMathLibrary.h"
 #include "Kismet/KismetSystemLibrary.h"
+
 
 // Sets default values
 APlayerBase::APlayerBase()
@@ -63,6 +63,11 @@ APlayerBase::APlayerBase()
 	/*// Create inventory component
 	inventoryComponent = CreateDefaultSubobject<UInventoryComponentBase>(TEXT("InventoryComponent"));*/
 
+	fireEffectiveness = 100;
+	iceEffectiveness = 100;
+	lightningEffectiveness = 100;
+	waterEffectiveness = 100;
+
 	godMode = false;
 }
 
@@ -99,19 +104,6 @@ void APlayerBase::BeginPlay()
 	if (dashPower <= 0)
 	{
 		dashPower = 1500;
-	}
-
-	if (maxHealth <= 0)
-	{
-		maxHealth = 100;
-	}
-
-	if (health <= 0)
-	{
-		health = maxHealth;
-	} else if (health > maxHealth)
-	{
-		health = maxHealth;
 	}
 
 	if (combatStanceTime <= 0)
@@ -230,7 +222,6 @@ void APlayerBase::Dash()
 	HandleDashEffects(); 
 	
 	timeNextDash = GetWorld()->GetTimeSeconds() + dashDelayInterval;
-
 }
 
 void APlayerBase::HandleDashEffects_Implementation()
@@ -253,15 +244,6 @@ void APlayerBase::Fire()
 	{
 		return;
 	}
-
-	/*
-	//Create transform, and call to blueprint to spawn projectile
-	FVector firePosition = GetActorLocation() + (followCamera->GetForwardVector() * 100);
-	firePosition += FVector(0, 0, 50);
-	FRotator direction = UKismetMathLibrary::MakeRotFromX(followCamera->GetForwardVector());
-	SpawnProjectile(FTransform(direction, firePosition, FVector(1, 1, 1)));
-
-	timeNextShot = GetWorld()->GetTimeSeconds() + fireDelay;*/
 
 	if (currentWeapon != nullptr)
 	{
@@ -309,7 +291,7 @@ void APlayerBase::DetectMeleeHits()
 
 	TArray<FHitResult> hitResults;
 
-	bool sphereTraceHit = UKismetSystemLibrary::SphereTraceMulti(GetWorld(),
+	const bool sphereTraceHit = UKismetSystemLibrary::SphereTraceMulti(GetWorld(),
 		detectionPoint, detectionPoint, 100, UEngineTypes::ConvertToTraceType(ECC_Camera),
 		false, hitActors, EDrawDebugTrace::None, hitResults, true);
 
@@ -348,19 +330,32 @@ float APlayerBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEven
 		return 0;
 	}
 
-	health -= DamageAmount;
+	currentHealth -= DamageAmount;
 
 	GetWorld()->GetFirstPlayerController()->PlayerCameraManager->StartCameraShake(cameraShake, 1);
 
-	if (health <= 0)
+	if (currentHealth <= 0)
 	{
 		//Dead
-		health = 0;
+		currentHealth = 0;
 		Die();
 	}
 
 	return DamageAmount;
 }
+
+float APlayerBase::TakeIncomingDamage_Implementation(float damageAmount, AActor* damageCauser, AController* eventInstigator, FDamageData damageData)
+{
+	const float damage = Super::TakeIncomingDamage_Implementation(damageAmount, damageCauser, eventInstigator, damageData);
+
+	if (damage > 0)
+	{
+		GetWorld()->GetFirstPlayerController()->PlayerCameraManager->StartCameraShake(cameraShake, 1);
+	}
+
+	return damage;
+}
+
 
 //Begins melee hit detection
 void APlayerBase::BeginMeleeAttackDamage()
@@ -469,15 +464,15 @@ void APlayerBase::InteractWithObject()
 */
 bool APlayerBase::ApplyHealth_Implementation(float amount)
 {
-	if (health >= maxHealth)
+	if (currentHealth >= maxHealth)
 	{
 		return false;
 	}
 
-	health += FMath::Abs(amount);
-	if (health > maxHealth)
+	currentHealth += FMath::Abs(amount);
+	if (currentHealth > maxHealth)
 	{
-		health = maxHealth;
+		currentHealth = maxHealth;
 	}
 
 	return true;

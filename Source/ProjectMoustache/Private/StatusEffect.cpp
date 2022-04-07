@@ -17,26 +17,25 @@ UStatusEffectBase::UStatusEffectBase()
 	isExpired = false;
 }
 
-void UStatusEffectBase::Init(AActor* actor, float amount, float effectDuration, float interval)
+void UStatusEffectBase::Init(AActor* actor, float amount, float effectDuration, float interval, float worldTime)
 {
 	effectedActor = actor;
 	duration = effectDuration;
-	timeEnded = GetWorld()->GetTimeSeconds() + duration;
+	timeEnded = worldTime + duration;
 	effectAmount = amount;
+
+	timeRemaining = duration;
 }
 
-void UStatusEffectBase::UpdateStatus()
+void UStatusEffectBase::UpdateStatus(float worldTime)
 {	
-	if (GetWorld()->GetTimeSeconds() > timeEnded)
+	if (worldTime > timeEnded)
 	{
 		isExpired = true;
 		IDamageable::Execute_RemoveStatusEffect(effectedActor, this);
 	}
-}
 
-float UStatusEffectBase::GetTimeRemaining() const
-{
-	return timeEnded - GetWorld()->GetTimeSeconds();
+	timeRemaining = timeEnded - worldTime;
 }
 
 /*************************************************************************************************************
@@ -47,19 +46,17 @@ UBurnStatus::UBurnStatus()
 	
 }
 
-void UBurnStatus::Init(AActor* actor, float amount, float effectDuration, float interval)
+void UBurnStatus::Init(AActor* actor, float amount, float effectDuration, float interval, float worldTime)
 {
-	Super::Init(actor, amount, effectDuration, interval);
+	Super::Init(actor, amount, effectDuration, interval, worldTime);
 	damageInterval = interval > 0 ? interval : 1;
 	
-	timeNextDamage = GetWorld()->GetTimeSeconds() + damageInterval;
+	timeNextDamage = worldTime + damageInterval;
 }
 
-void UBurnStatus::UpdateStatus()
+void UBurnStatus::UpdateStatus(float worldTime)
 {
-	Super::UpdateStatus();
-
-	const float worldTime = GetWorld()->GetTimeSeconds();
+	Super::UpdateStatus(worldTime);
 	
 	// Deal damage on tick interval
 	if (worldTime > timeNextDamage)
@@ -79,10 +76,10 @@ void UBurnStatus::UpdateStatus()
 * Wet Effect
 *************************************************************************************************************/
 
-void UWetStatus::Init(AActor* actor, float amount, float effectDuration, float interval)
+void UWetStatus::Init(AActor* actor, float amount, float effectDuration, float interval, float worldTime)
 {
 	const float effectPercentage = FMath::Clamp(amount, 0.0f, 100.0f);
-	Super::Init(actor, effectPercentage, effectDuration, interval);
+	Super::Init(actor, effectPercentage, effectDuration, interval, worldTime);
 }
 
 /*************************************************************************************************************
