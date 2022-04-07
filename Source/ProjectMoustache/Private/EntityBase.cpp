@@ -51,6 +51,7 @@ void AEntityBase::Tick(float DeltaTime)
 		for (UStatusEffectBase* removedEffect : removedStatusEffects)
 		{
 			statusEffects.Remove(removedEffect);
+			OnStatusEffectRemoved.Broadcast(removedEffect);
 		}
 
 		removedStatusEffects.Empty();
@@ -62,6 +63,7 @@ void AEntityBase::Tick(float DeltaTime)
 		for (UStatusEffectBase* newEffect : newStatusEffects)
 		{
 			statusEffects.Add(newEffect);
+			OnStatusEffectAdded.Broadcast(newEffect);
 		}
 
 		newStatusEffects.Empty();

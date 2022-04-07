@@ -11,8 +11,6 @@
 #include "Weapons/WeaponBase.h"
 #include "PlayerBase.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnStatusEffectsChanged);
-
 UCLASS()
 class PROJECTMOUSTACHE_API APlayerBase : public AEntityBase, public IPlayerCharacter
 {
@@ -226,11 +224,6 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	UPROPERTY(BlueprintAssignable)
-	FOnStatusEffectsChanged OnStatusEffectAdded;
-	UPROPERTY(BlueprintAssignable)
-	FOnStatusEffectsChanged OnStatusEffectRemoved;
-
 	//Takes in damage, and returns the actual damage
 	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 
@@ -364,20 +357,4 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void UnSubscribePlayerObserver(const TScriptInterface<IPlayerObserver>& oldObserver);
 	void UnSubscribePlayerObserver_Implementation(const TScriptInterface<IPlayerObserver>& oldObserver);
-
-	/**
-	* Takes in a status effect struct and adds it to the character
-	* If the resistance to the element is <= 0, the effect will not be added
-	*/
-	virtual void AddStatusEffect_Implementation(FStatusEffect) override;
-
-	/**
-	* Removes all status effects of a type
-	*/
-	virtual void RemoveStatus_Implementation(EStatusEffectType StatusEffect) override;
-
-	/**
-	* Called by a status effect to remove themselves
-	*/
-	virtual void RemoveStatusEffect_Implementation(class UStatusEffectBase* statusEffect) override;
 };

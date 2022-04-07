@@ -670,28 +670,3 @@ void APlayerBase::UnSubscribePlayerObserver_Implementation(const TScriptInterfac
 
 	observers.Remove(oldObserver);
 }
-
-/**
- * Broadcast player status effect status has changed
- */
-void APlayerBase::AddStatusEffect_Implementation(FStatusEffect statusEffect)
-{
-	Super::AddStatusEffect_Implementation(statusEffect);
-
-	OnStatusEffectAdded.Broadcast();
-}
-
-void APlayerBase::RemoveStatus_Implementation(EStatusEffectType StatusEffect)
-{
-	Super::RemoveStatus_Implementation(StatusEffect);
-
-	OnStatusEffectRemoved.Broadcast();
-}
-
-void APlayerBase::RemoveStatusEffect_Implementation(UStatusEffectBase* statusEffect)
-{
-	Super::RemoveStatusEffect_Implementation(statusEffect);
-
-	OnStatusEffectRemoved.Broadcast();
-}
-

@@ -7,6 +7,8 @@
 #include "GameFramework/Character.h"
 #include "EntityBase.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnStatusEffectsChanged, UStatusEffectBase*, statusEffect);
+
 UCLASS()
 class PROJECTMOUSTACHE_API AEntityBase : public ACharacter, public IDamageable
 {
@@ -86,6 +88,12 @@ protected:
 	virtual void Die_Implementation() { }
 
 public:
+
+	UPROPERTY(BlueprintAssignable)
+	FOnStatusEffectsChanged OnStatusEffectAdded;
+	UPROPERTY(BlueprintAssignable)
+	FOnStatusEffectsChanged OnStatusEffectRemoved;
+	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
