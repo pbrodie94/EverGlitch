@@ -12,7 +12,7 @@ AEnemyBase::AEnemyBase()
 {
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-	
+
 	maxHealth = 100;
 }
 
@@ -20,14 +20,14 @@ AEnemyBase::AEnemyBase()
 void AEnemyBase::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
 }
 
 // Called every frame
 void AEnemyBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	
+
 }
 
 float AEnemyBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
@@ -43,17 +43,17 @@ float AEnemyBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent
 	if (currentHealth <= 0)
 	{
 		currentHealth = 0;
-		OnDied.Broadcast(this); 
+		OnDied.Broadcast(this);
 		Die();
 	}
-	
+
 	return DamageAmount;
 }
 
 void AEnemyBase::Die_Implementation()
 {
 	Super::Die();
-	
+
 	OnDied.Broadcast(this);
 }
 
