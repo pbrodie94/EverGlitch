@@ -3,7 +3,7 @@
 
 #include "Player/MagicComponent.h"
 #include "Kismet/GameplayStatics.h"
-#include "Player/PlayerCharacter.h"
+#include "Damageable.h"
 
 // Sets default values for this component's properties
 UMagicComponent::UMagicComponent()
@@ -42,8 +42,12 @@ void UMagicComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 
 void UMagicComponent::CastDestructionSpell()
 {
-	IPlayerCharacter* player = Cast<IPlayerCharacter>(GetOwner());
-	if (player != nullptr && player->Execute_GetIsPlayerDead(GetOwner()))
+	if (!GetOwner()->Implements<UDamageable>())
+	{
+		return;
+	}
+
+	if (IDamageable::Execute_GetIsDead(GetOwner()))
 	{
 		return;
 	}
@@ -57,8 +61,12 @@ void UMagicComponent::CastDestructionSpell()
 
 void UMagicComponent::CastSupportSpell()
 {
-	IPlayerCharacter* player = Cast<IPlayerCharacter>(GetOwner());
-	if (player != nullptr && player->Execute_GetIsPlayerDead(GetOwner()))
+	if (!GetOwner()->Implements<UDamageable>())
+	{
+		return;
+	}
+
+	if (IDamageable::Execute_GetIsDead(GetOwner()))
 	{
 		return;
 	}
@@ -70,7 +78,7 @@ void UMagicComponent::CastSupportSpell()
 	}
 }
 
-void UMagicComponent::SetPowerMagicSpell_Implementation(AMagicSpellBase* newMagicSpell)
+void UMagicComponent::SetDestructionMagicSpell_Implementation(AMagicSpellBase* newMagicSpell)
 {
 	if (newMagicSpell != nullptr)
 	{
