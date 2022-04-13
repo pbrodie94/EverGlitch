@@ -64,6 +64,11 @@ APlayerBase::APlayerBase()
 	inventoryComponent = CreateDefaultSubobject<UInventoryComponentBase>(TEXT("InventoryComponent"));*/
 
 	godMode = false;
+
+	fireEffectiveness = 100;
+	iceEffectiveness = 100;
+	lightningEffectiveness = 100;
+	waterEffectiveness = 100;
 }
 
 // Called when the game starts or when spawned
@@ -223,14 +228,6 @@ void APlayerBase::HandleDashEffects_Implementation()
 {
 }
 
-void APlayerBase::HandleDashEffects_Implementation()
-{
-}
-
-void APlayerBase::HandleDashEffects_Implementation()
-{
-}
-
 /**
 * Fire projectiles on main fire button.
 * Will be changed to call a fire function on a weapon when created
@@ -242,7 +239,7 @@ void APlayerBase::Fire()
 		return;
 	}
 
-	UWorld* world = GetWorld();
+	const UWorld* world = GetWorld();
 	if (world->GetTimeSeconds() < timeNextShot)
 	{
 		return;
@@ -349,6 +346,12 @@ float APlayerBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEven
 
 float APlayerBase::TakeIncomingDamage_Implementation(float damageAmount, AActor* damageCauser, AController* eventInstigator, FDamageData damageData)
 {
+	//Take no damage if god mode is enabled
+	if (godMode)
+	{
+		return 0;
+	}
+	
 	const float damage = Super::TakeIncomingDamage_Implementation(damageAmount, damageCauser, eventInstigator, damageData);
 
 	if (damage > 0)
