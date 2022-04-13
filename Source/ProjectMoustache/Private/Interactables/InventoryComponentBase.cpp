@@ -3,8 +3,6 @@
 
 #include "Interactables/InventoryComponentBase.h"
 
-#include <set>
-
 // Sets default values for this component's properties
 UInventoryComponentBase::UInventoryComponentBase()
 {
@@ -12,8 +10,9 @@ UInventoryComponentBase::UInventoryComponentBase()
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = false;
 
-	selectedItem = -1;
+	numberOfSlots = 36;
 	
+	selectedItem = -1;
 }
 
 
