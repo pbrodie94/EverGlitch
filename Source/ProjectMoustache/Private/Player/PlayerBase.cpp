@@ -218,10 +218,14 @@ void APlayerBase::Dash()
 	moveDirection.Z = 200;
 
 	GetCharacterMovement()->Launch(moveDirection);
-	
-	HandleDashEffects(); 
-	
+
+	HandleDashEffects();
+
 	timeNextDash = GetWorld()->GetTimeSeconds() + dashDelayInterval;
+}
+
+void APlayerBase::HandleDashEffects_Implementation()
+{
 }
 
 void APlayerBase::HandleDashEffects_Implementation()
