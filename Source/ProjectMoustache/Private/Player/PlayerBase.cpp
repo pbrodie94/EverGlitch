@@ -63,11 +63,6 @@ APlayerBase::APlayerBase()
 	/*// Create inventory component
 	inventoryComponent = CreateDefaultSubobject<UInventoryComponentBase>(TEXT("InventoryComponent"));*/
 
-	fireEffectiveness = 100;
-	iceEffectiveness = 100;
-	lightningEffectiveness = 100;
-	waterEffectiveness = 100;
-
 	godMode = false;
 }
 
@@ -218,10 +213,18 @@ void APlayerBase::Dash()
 	moveDirection.Z = 200;
 
 	GetCharacterMovement()->Launch(moveDirection);
-	
-	HandleDashEffects(); 
-	
+
+	HandleDashEffects();
+
 	timeNextDash = GetWorld()->GetTimeSeconds() + dashDelayInterval;
+}
+
+void APlayerBase::HandleDashEffects_Implementation()
+{
+}
+
+void APlayerBase::HandleDashEffects_Implementation()
+{
 }
 
 void APlayerBase::HandleDashEffects_Implementation()
