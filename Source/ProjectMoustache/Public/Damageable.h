@@ -31,7 +31,7 @@ struct FStatusEffect
 	// Enum for status effect
 	UPROPERTY(BlueprintReadWrite)
 	TEnumAsByte<EStatusEffectType> statusEffectType;
-	
+
 	// Duration the status lasts
 	UPROPERTY(BlueprintReadWrite)
 	float duration;
@@ -54,7 +54,7 @@ struct FStatusEffect
 	float effectAmount;
 
 	/**
-	 * Interval of DOT
+	 * Interval of Damage Over Time
 	 */
 	UPROPERTY(BlueprintReadWrite)
 	float dotInterval;
@@ -114,7 +114,7 @@ class UDamageable : public UInterface
 };
 
 /**
- * 
+ *
  */
 class PROJECTMOUSTACHE_API IDamageable
 {
@@ -148,8 +148,8 @@ public:
 	/**
 	 * Returns a list of status effects active on the character
 	 */
-	/*UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	TArray<FStatusEffect> GetStatusEffects();*/
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	TArray<UStatusEffectBase*> GetAllStatusEffects();
 
 	/**
 	 * Returns character's resistance to fire
@@ -174,7 +174,7 @@ public:
 	*/
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	float GetLightningResistance() const;
-	
+
 	/**
 	 * Returns true if the character has the status effect
 	 */
