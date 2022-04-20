@@ -75,6 +75,9 @@ class PROJECTMOUSTACHE_API APlayerBase : public AEntityBase, public IPlayerChara
 
 	//Next time able to dash
 	float timeNextDash;
+	
+	// Controls when player has control of the character
+	bool hasControl;
 
 	//Timer handles
 	FTimerHandle rangedCombatTimerHandle;
@@ -82,6 +85,18 @@ class PROJECTMOUSTACHE_API APlayerBase : public AEntityBase, public IPlayerChara
 	FTimerHandle damageTimerHandle;
 	FTimerHandle speedTimerHandle;
 	FTimerHandle jumpTimerHandle;
+
+	//Handles movement
+	void MoveForward(float value);
+	void MoveRight(float value);
+
+	// Handles looking
+	void LookX(float value);
+	void LookY(float value);
+
+	// Handles jumping
+	void BeginJump();
+	void EndJump();
 
 	/**
 	 * Fire projectiles on main fire button.
@@ -106,9 +121,9 @@ class PROJECTMOUSTACHE_API APlayerBase : public AEntityBase, public IPlayerChara
 	 */
 	void DetectMeleeHits();
 
-	void CastMagicSpell();
+	/*void CastMagicSpell();
 
-	void CastSupportSpell();
+	void CastSupportSpell();*/
 
 	/**
 	 * If player has a current interactable object reference, interact with it
@@ -180,10 +195,6 @@ protected:
 	//List of objects observing the player
 	UPROPERTY(BlueprintReadOnly)
 	TArray<TScriptInterface<IPlayerObserver>> observers;
-
-	//Handles movement
-	void MoveForward(float value);
-	void MoveRight(float value);
 
 	//Begins melee hit detection
 	UFUNCTION(BlueprintCallable)
@@ -357,4 +368,18 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void UnSubscribePlayerObserver(const TScriptInterface<IPlayerObserver>& oldObserver);
 	void UnSubscribePlayerObserver_Implementation(const TScriptInterface<IPlayerObserver>& oldObserver);
+
+	/**
+	* Sets whether or not the player character can be controlled
+	*/
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void SetHasControl(bool control);
+	FORCEINLINE void SetHasControl_Implementation(bool control) { hasControl = control; }
+
+	/**
+	* Returns whether or not the player character is accepting player input
+	*/
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	bool GetHasControl() const;
+	FORCEINLINE bool GetHasControl_Implementation() const { return hasControl; }
 };
