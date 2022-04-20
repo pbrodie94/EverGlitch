@@ -4,6 +4,7 @@
 #include "Player/MagicComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Damageable.h"
+#include "Player/PlayerCharacter.h"
 
 // Sets default values for this component's properties
 UMagicComponent::UMagicComponent()
@@ -42,6 +43,14 @@ void UMagicComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 
 void UMagicComponent::CastDestructionSpell()
 {
+	if (GetOwner()->Implements<UPlayerCharacter>())
+	{
+		if (!IPlayerCharacter::Execute_GetHasControl(GetOwner()))
+		{
+			return;
+		}
+	}
+	
 	if (!GetOwner()->Implements<UDamageable>())
 	{
 		return;
@@ -61,6 +70,14 @@ void UMagicComponent::CastDestructionSpell()
 
 void UMagicComponent::CastSupportSpell()
 {
+	if (GetOwner()->Implements<UPlayerCharacter>())
+	{
+		if (!IPlayerCharacter::Execute_GetHasControl(GetOwner()))
+		{
+			return;
+		}
+	}
+	
 	if (!GetOwner()->Implements<UDamageable>())
 	{
 		return;
