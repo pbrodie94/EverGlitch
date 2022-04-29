@@ -291,10 +291,9 @@ void APlayerBase::Fire()
 	{
 		if (currentWeapon->OnFireDown())
 		{
-			//Switch to combat stance and set timer to end combat stance
+			//Switch to combat stance
 			GetCharacterMovement()->bOrientRotationToMovement = false;
 			world->GetTimerManager().ClearTimer(rangedCombatTimerHandle);
-			world->GetTimerManager().SetTimer(rangedCombatTimerHandle, this, &APlayerBase::OnCombatStanceEnd, combatStanceTime);
 		}
 	}
 }
@@ -309,6 +308,14 @@ void APlayerBase::FireUp()
 	if (currentWeapon != nullptr)
 	{
 		currentWeapon->OnFireUp();
+	}
+
+	// Set timer to end combat stance
+	if (!GetCharacterMovement()->bOrientRotationToMovement)
+	{
+		const UWorld* world = GetWorld();
+		world->GetTimerManager().ClearTimer(rangedCombatTimerHandle);
+		world->GetTimerManager().SetTimer(rangedCombatTimerHandle, this, &APlayerBase::OnCombatStanceEnd, combatStanceTime);
 	}
 }
 
