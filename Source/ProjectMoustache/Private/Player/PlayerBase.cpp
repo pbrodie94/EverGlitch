@@ -160,7 +160,7 @@ void APlayerBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 
 void APlayerBase::MoveForward(float value)
 {
-	if (isDead || !hasControl)
+	if (GetIsDead() || !hasControl)
 	{
 		return;
 	}
@@ -179,7 +179,7 @@ void APlayerBase::MoveForward(float value)
 
 void APlayerBase::MoveRight(float value)
 {
-	if (isDead || !hasControl)
+	if (GetIsDead() || !hasControl)
 	{
 		return;
 	}
@@ -218,7 +218,7 @@ void APlayerBase::LookY(float value)
 
 void APlayerBase::BeginJump()
 {
-	if (isDead || !hasControl)
+	if (GetIsDead() || !hasControl)
 	{
 		return;
 	}
@@ -228,7 +228,7 @@ void APlayerBase::BeginJump()
 
 void APlayerBase::EndJump()
 {
-	if (isDead || !hasControl)
+	if (GetIsDead() || !hasControl)
 	{
 		return;
 	}
@@ -242,7 +242,7 @@ void APlayerBase::EndJump()
 */
 void APlayerBase::Dash()
 {
-	if (isDead || !hasControl)
+	if (GetIsDead() || !hasControl)
 	{
 		return;
 	}
@@ -276,7 +276,7 @@ void APlayerBase::HandleDashEffects_Implementation()
 */
 void APlayerBase::Fire()
 {
-	if (isDead || !hasControl)
+	if (GetIsDead() || !hasControl)
 	{
 		return;
 	}
@@ -300,7 +300,7 @@ void APlayerBase::Fire()
 
 void APlayerBase::FireUp()
 {
-	if (isDead || !hasControl)
+	if (GetIsDead() || !hasControl)
 	{
 		return;
 	}
@@ -379,7 +379,7 @@ float APlayerBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEven
 		return 0;
 	}
 
-	if (isDead)
+	if (GetIsDead())
 	{
 		return 0;
 	}
@@ -433,7 +433,7 @@ void APlayerBase::EndMeleeAttackDamage()
 
 void APlayerBase::BeginAiming_Implementation()
 {
-	if (isDead)
+	if (GetIsDead())
 	{
 		return;
 	}
@@ -493,8 +493,6 @@ void APlayerBase::Die_Implementation()
 	{
 		RemoveSelfAsInteractable(currentInteractableObject);
 	}
-
-	isDead = true;
 }
 
 void APlayerBase::ToggleInventory_Implementation()
