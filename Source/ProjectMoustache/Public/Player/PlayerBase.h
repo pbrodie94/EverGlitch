@@ -183,9 +183,6 @@ protected:
 	float meleeDamage;
 
 	UPROPERTY(BlueprintReadWrite)
-	bool isDead;
-
-	UPROPERTY(BlueprintReadWrite)
 	bool godMode;
 
 	//Interactable reference container, gets set and allows player to call the interact function
@@ -239,10 +236,6 @@ public:
 	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 
 	virtual float TakeIncomingDamage_Implementation(float damageAmount, AActor* damageCauser, AController* eventInstigator, FDamageData damageData) override;
-	
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
-	bool GetIsPlayerDead();
-	bool GetIsPlayerDead_Implementation() { return isDead; }
 
 	/**
 	 * Returns pointer reference to combat manager
