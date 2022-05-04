@@ -53,17 +53,46 @@ class PROJECTMOUSTACHE_API APlayerBase : public AEntityBase, public IPlayerChara
 	float jumpHeight;
 
 	//Default air control
-	UPROPERTY(EditDefaultsOnly, Category = Stats, meta = (AllowPrivateAccess = true))
+	UPROPERTY(EditDefaultsOnly, Category = Abilities, meta = (AllowPrivateAccess = true))
 	float airControl;
 
+	// Amount of energy player has to perform abilities like dash
+	float abilityEnergy;
+
+	// The max amount of ability energy
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Abilities, meta = (AllowPrivateAccess = true))
+	float maxAbilityEnergy;
+
+	// Delay while not in use before energy begins recharging
+	UPROPERTY(EditDefaultsOnly, Category = Abilities, meta = (AllowPrivateAccess = true))
+	float energyRechargeDelay;
+
+	// The time in world time ability energy will begin to recharge
+	float timeBeginRecharge;
+
+	// The rate at which energy is recharged
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Abilities, meta = (AllowPrivateAccess = true))
+	float energyRechargeRate;
+
 	//Amount of force/distance in a dash
-	UPROPERTY(EditDefaultsOnly, Category = Stats, meta = (AllowPrivateAccess = true))
+	UPROPERTY(EditDefaultsOnly, Category = Abilities, meta = (AllowPrivateAccess = true))
 	float dashPower;
 
+	// Energy cost to dash
+	UPROPERTY(EditDefaultsOnly, Category = Abilities, meta = (AllowPrivateAccess = true))
+	float dashEnergyCost;
+
 	//Time in between dashes
-	UPROPERTY(EditDefaultsOnly, Category = Stats, meta = (AllowPrivateAccess = true))
+	UPROPERTY(EditDefaultsOnly, Category = Abilities, meta = (AllowPrivateAccess = true))
 	float dashDelayInterval;
 
+	// Number of times player can dash in the air. Values less than 0 allow infinite air dashes
+	UPROPERTY(EditDefaultsOnly, Category = Abilities, meta = (AllowPrivateAccess = true))
+	int numAirDashes;
+
+	// Counter for times dashed in the air. Resets when player is on the ground
+	int timesDashedInAir;
+	
 	//Duration player is facing direction of camera after performing ranged attack
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Combat, meta = (AllowPrivateAccess = true))
 	float combatStanceTime;
@@ -144,10 +173,6 @@ class PROJECTMOUSTACHE_API APlayerBase : public AEntityBase, public IPlayerChara
 	void OnSpeedChangeExpired();
 	void OnJumChangeExpired();
 
-public:
-	// Sets default values for this character's properties
-	APlayerBase();
-
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -226,6 +251,10 @@ protected:
 	void ToggleInventory();
 
 public:
+
+	// Sets default values for this character's properties
+	APlayerBase();
+
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
@@ -282,6 +311,20 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void ApplyJumpChange(float percentage, float duration);
 	void ApplyJumpChange_Implementation(float percentage, float duration);
+
+	/**
+	* Returns player's ability energy level
+	*/
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	float GetAbilityEnergyLevel() const;
+	float GetAbilityEnergyLevel_Implementation() const { return abilityEnergy; }
+
+	/**
+	* Returns player's max ability energy level
+	*/
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	float GetMaxAbilityEnergyLevel() const;
+	float GetMaxAbilityEnergyLevel_Implementation() const { return maxAbilityEnergy; }
 
 	/**
 	* Takes in an interactable object, and sets it as the current interactable object
