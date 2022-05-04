@@ -21,8 +21,17 @@ APlayerBase::APlayerBase()
 
 	jumpHeight = 600.0f;
 	airControl = 0.2f;
+
+	abilityEnergy = 100.0f;
+	maxAbilityEnergy = 100.0f;
+	energyRechargeDelay = 3.0f;
+	energyRechargeRate = 30.0f;
+	
 	dashPower = 1500;
-	dashDelayInterval = 0.5f;
+	dashEnergyCost = 25.0f;
+	dashDelayInterval = 0.7f;
+	numAirDashes = 1;
+	timesDashedInAir = 0;
 
 	combatStanceTime = 3;
 	fireDelay = 0.5f;
@@ -103,9 +112,31 @@ void APlayerBase::BeginPlay()
 		jumpHeight = 600;
 	}
 
+	if (maxAbilityEnergy <= 0)
+	{
+		maxAbilityEnergy = 100.0f;
+	}
+
+	abilityEnergy = maxAbilityEnergy;
+
+	if (energyRechargeDelay <= 0)
+	{
+		energyRechargeDelay = 3.0f;
+	}
+
+	if (energyRechargeRate < 1)
+	{
+		energyRechargeRate = 30.0f;
+	}
+
 	if (dashPower <= 0)
 	{
 		dashPower = 1500;
+	}
+
+	if (dashEnergyCost < 0)
+	{
+		dashEnergyCost = 25.0f;
 	}
 
 	if (combatStanceTime <= 0)
@@ -128,6 +159,22 @@ void APlayerBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	// Reset air dash counter when on the ground
+	if (timesDashedInAir > 0)
+	{
+		if (!GetCharacterMovement()->IsFalling())
+		{
+			timesDashedInAir = 0;
+		}
+	}
+
+	// Recharge energy
+	if (abilityEnergy < maxAbilityEnergy && GetWorld()->GetTimeSeconds() > timeBeginRecharge)
+	{
+		abilityEnergy += (DeltaTime * energyRechargeRate);
+	}
+
+	// Detect melee hits when attacking
 	if (isMeleeAttacking)
 	{
 		DetectMeleeHits();
@@ -160,7 +207,7 @@ void APlayerBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 
 void APlayerBase::MoveForward(float value)
 {
-	if (isDead || !hasControl)
+	if (GetIsDead() || !hasControl)
 	{
 		return;
 	}
@@ -179,7 +226,7 @@ void APlayerBase::MoveForward(float value)
 
 void APlayerBase::MoveRight(float value)
 {
-	if (isDead || !hasControl)
+	if (GetIsDead() || !hasControl)
 	{
 		return;
 	}
@@ -218,7 +265,7 @@ void APlayerBase::LookY(float value)
 
 void APlayerBase::BeginJump()
 {
-	if (isDead || !hasControl)
+	if (GetIsDead() || !hasControl)
 	{
 		return;
 	}
@@ -228,7 +275,7 @@ void APlayerBase::BeginJump()
 
 void APlayerBase::EndJump()
 {
-	if (isDead || !hasControl)
+	if (GetIsDead() || !hasControl)
 	{
 		return;
 	}
@@ -242,7 +289,17 @@ void APlayerBase::EndJump()
 */
 void APlayerBase::Dash()
 {
-	if (isDead || !hasControl)
+	if (GetIsDead() || !hasControl)
+	{
+		return;
+	}
+
+	if (abilityEnergy < dashEnergyCost)
+	{
+		return;
+	}
+
+	if (numAirDashes > -1 && GetCharacterMovement()->IsFalling() && timesDashedInAir >= numAirDashes)
 	{
 		return;
 	}
@@ -250,6 +307,13 @@ void APlayerBase::Dash()
 	if (GetWorld()->GetTimeSeconds() < timeNextDash || isAiming)
 	{
 		return;
+	}
+
+	abilityEnergy -= dashEnergyCost;
+
+	if (numAirDashes > -1 && GetCharacterMovement()->IsFalling())
+	{
+		++timesDashedInAir;
 	}
 
 	//Get direction to dash in, excluding upwards velocity
@@ -263,7 +327,10 @@ void APlayerBase::Dash()
 
 	HandleDashEffects();
 
-	timeNextDash = GetWorld()->GetTimeSeconds() + dashDelayInterval;
+	const float worldTime = GetWorld()->GetTimeSeconds();
+
+	timeNextDash = worldTime + dashDelayInterval;
+	timeBeginRecharge = worldTime + energyRechargeDelay;
 }
 
 void APlayerBase::HandleDashEffects_Implementation()
@@ -276,7 +343,7 @@ void APlayerBase::HandleDashEffects_Implementation()
 */
 void APlayerBase::Fire()
 {
-	if (isDead || !hasControl)
+	if (GetIsDead() || !hasControl)
 	{
 		return;
 	}
@@ -300,7 +367,7 @@ void APlayerBase::Fire()
 
 void APlayerBase::FireUp()
 {
-	if (isDead || !hasControl)
+	if (GetIsDead() || !hasControl)
 	{
 		return;
 	}
@@ -379,7 +446,7 @@ float APlayerBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEven
 		return 0;
 	}
 
-	if (isDead)
+	if (GetIsDead())
 	{
 		return 0;
 	}
@@ -433,7 +500,7 @@ void APlayerBase::EndMeleeAttackDamage()
 
 void APlayerBase::BeginAiming_Implementation()
 {
-	if (isDead)
+	if (GetIsDead())
 	{
 		return;
 	}
@@ -493,8 +560,6 @@ void APlayerBase::Die_Implementation()
 	{
 		RemoveSelfAsInteractable(currentInteractableObject);
 	}
-
-	isDead = true;
 }
 
 void APlayerBase::ToggleInventory_Implementation()
