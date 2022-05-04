@@ -31,7 +31,7 @@ struct FStatusEffect
 	// Enum for status effect
 	UPROPERTY(BlueprintReadWrite)
 	TEnumAsByte<EStatusEffectType> statusEffectType;
-	
+
 	// Duration the status lasts
 	UPROPERTY(BlueprintReadWrite)
 	float duration;
@@ -114,7 +114,7 @@ class UDamageable : public UInterface
 };
 
 /**
- * 
+ *
  */
 class PROJECTMOUSTACHE_API IDamageable
 {
@@ -174,7 +174,7 @@ public:
 	*/
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	float GetLightningResistance() const;
-	
+
 	/**
 	 * Returns true if the character has the status effect
 	 */

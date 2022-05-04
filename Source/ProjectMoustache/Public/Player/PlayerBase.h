@@ -53,17 +53,46 @@ class PROJECTMOUSTACHE_API APlayerBase : public AEntityBase, public IPlayerChara
 	float jumpHeight;
 
 	//Default air control
-	UPROPERTY(EditDefaultsOnly, Category = Stats, meta = (AllowPrivateAccess = true))
+	UPROPERTY(EditDefaultsOnly, Category = Abilities, meta = (AllowPrivateAccess = true))
 	float airControl;
 
+	// Amount of energy player has to perform abilities like dash
+	float abilityEnergy;
+
+	// The max amount of ability energy
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Abilities, meta = (AllowPrivateAccess = true))
+	float maxAbilityEnergy;
+
+	// Delay while not in use before energy begins recharging
+	UPROPERTY(EditDefaultsOnly, Category = Abilities, meta = (AllowPrivateAccess = true))
+	float energyRechargeDelay;
+
+	// The time in world time ability energy will begin to recharge
+	float timeBeginRecharge;
+
+	// The rate at which energy is recharged
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Abilities, meta = (AllowPrivateAccess = true))
+	float energyRechargeRate;
+
 	//Amount of force/distance in a dash
-	UPROPERTY(EditDefaultsOnly, Category = Stats, meta = (AllowPrivateAccess = true))
+	UPROPERTY(EditDefaultsOnly, Category = Abilities, meta = (AllowPrivateAccess = true))
 	float dashPower;
 
+	// Energy cost to dash
+	UPROPERTY(EditDefaultsOnly, Category = Abilities, meta = (AllowPrivateAccess = true))
+	float dashEnergyCost;
+
 	//Time in between dashes
-	UPROPERTY(EditDefaultsOnly, Category = Stats, meta = (AllowPrivateAccess = true))
+	UPROPERTY(EditDefaultsOnly, Category = Abilities, meta = (AllowPrivateAccess = true))
 	float dashDelayInterval;
 
+	// Number of times player can dash in the air. Values less than 0 allow infinite air dashes
+	UPROPERTY(EditDefaultsOnly, Category = Abilities, meta = (AllowPrivateAccess = true))
+	int numAirDashes;
+
+	// Counter for times dashed in the air. Resets when player is on the ground
+	int timesDashedInAir;
+	
 	//Duration player is facing direction of camera after performing ranged attack
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Combat, meta = (AllowPrivateAccess = true))
 	float combatStanceTime;
@@ -75,6 +104,9 @@ class PROJECTMOUSTACHE_API APlayerBase : public AEntityBase, public IPlayerChara
 
 	//Next time able to dash
 	float timeNextDash;
+	
+	// Controls when player has control of the character
+	bool hasControl;
 
 	//Timer handles
 	FTimerHandle rangedCombatTimerHandle;
@@ -82,6 +114,18 @@ class PROJECTMOUSTACHE_API APlayerBase : public AEntityBase, public IPlayerChara
 	FTimerHandle damageTimerHandle;
 	FTimerHandle speedTimerHandle;
 	FTimerHandle jumpTimerHandle;
+
+	//Handles movement
+	void MoveForward(float value);
+	void MoveRight(float value);
+
+	// Handles looking
+	void LookX(float value);
+	void LookY(float value);
+
+	// Handles jumping
+	void BeginJump();
+	void EndJump();
 
 	/**
 	 * Fire projectiles on main fire button.
@@ -106,9 +150,9 @@ class PROJECTMOUSTACHE_API APlayerBase : public AEntityBase, public IPlayerChara
 	 */
 	void DetectMeleeHits();
 
-	void CastMagicSpell();
+	/*void CastMagicSpell();
 
-	void CastSupportSpell();
+	void CastSupportSpell();*/
 
 	/**
 	 * If player has a current interactable object reference, interact with it
@@ -128,10 +172,6 @@ class PROJECTMOUSTACHE_API APlayerBase : public AEntityBase, public IPlayerChara
 	void OnDamageChangeExpired();
 	void OnSpeedChangeExpired();
 	void OnJumChangeExpired();
-
-public:
-	// Sets default values for this character's properties
-	APlayerBase();
 
 protected:
 	// Called when the game starts or when spawned
@@ -168,9 +208,6 @@ protected:
 	float meleeDamage;
 
 	UPROPERTY(BlueprintReadWrite)
-	bool isDead;
-
-	UPROPERTY(BlueprintReadWrite)
 	bool godMode;
 
 	//Interactable reference container, gets set and allows player to call the interact function
@@ -180,10 +217,6 @@ protected:
 	//List of objects observing the player
 	UPROPERTY(BlueprintReadOnly)
 	TArray<TScriptInterface<IPlayerObserver>> observers;
-
-	//Handles movement
-	void MoveForward(float value);
-	void MoveRight(float value);
 
 	//Begins melee hit detection
 	UFUNCTION(BlueprintCallable)
@@ -218,6 +251,10 @@ protected:
 	void ToggleInventory();
 
 public:
+
+	// Sets default values for this character's properties
+	APlayerBase();
+
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
@@ -228,10 +265,6 @@ public:
 	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 
 	virtual float TakeIncomingDamage_Implementation(float damageAmount, AActor* damageCauser, AController* eventInstigator, FDamageData damageData) override;
-	
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
-	bool GetIsPlayerDead();
-	bool GetIsPlayerDead_Implementation() { return isDead; }
 
 	/**
 	 * Returns pointer reference to combat manager
@@ -278,6 +311,20 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void ApplyJumpChange(float percentage, float duration);
 	void ApplyJumpChange_Implementation(float percentage, float duration);
+
+	/**
+	* Returns player's ability energy level
+	*/
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	float GetAbilityEnergyLevel() const;
+	float GetAbilityEnergyLevel_Implementation() const { return abilityEnergy; }
+
+	/**
+	* Returns player's max ability energy level
+	*/
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	float GetMaxAbilityEnergyLevel() const;
+	float GetMaxAbilityEnergyLevel_Implementation() const { return maxAbilityEnergy; }
 
 	/**
 	* Takes in an interactable object, and sets it as the current interactable object
@@ -357,4 +404,18 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void UnSubscribePlayerObserver(const TScriptInterface<IPlayerObserver>& oldObserver);
 	void UnSubscribePlayerObserver_Implementation(const TScriptInterface<IPlayerObserver>& oldObserver);
+
+	/**
+	* Sets whether or not the player character can be controlled
+	*/
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void SetHasControl(bool control);
+	FORCEINLINE void SetHasControl_Implementation(bool control) { hasControl = control; }
+
+	/**
+	* Returns whether or not the player character is accepting player input
+	*/
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	bool GetHasControl() const;
+	FORCEINLINE bool GetHasControl_Implementation() const { return hasControl; }
 };

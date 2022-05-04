@@ -18,7 +18,7 @@ class PROJECTMOUSTACHE_API UStatusEffectBase : public UObject
 	bool isExpired;
 
 protected:
-	
+
 	UPROPERTY()
 	AActor* effectedActor;
 
@@ -29,11 +29,11 @@ protected:
 	AController* eventInstigator;
 
 	float effectAmount;
-	
+
 	float duration;
 	float timeEnded;
 	float timeRemaining;
-	
+
 public:
 
 	UStatusEffectBase();
@@ -66,7 +66,7 @@ UCLASS()
 class PROJECTMOUSTACHE_API UBurnStatus : public UStatusEffectBase
 {
 	GENERATED_BODY()
-	
+
 	float damageInterval;
 
 	float timeNextDamage;
@@ -76,7 +76,7 @@ public:
 	UBurnStatus();
 
 	virtual void Init(AActor* actor, float amount, float effectDuration, float interval, float worldTime) override;
-	
+
 	virtual void UpdateStatus(float worldTime) override;
 
 	virtual FORCEINLINE EStatusEffectType GetEffectType() override { return Burn; }

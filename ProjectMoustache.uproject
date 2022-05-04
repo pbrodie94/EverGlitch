@@ -22,10 +22,6 @@
 		{
 			"Name": "Landmass",
 			"Enabled": true
-		},
-		{
-			"Name": "CascadeToNiagaraConverter",
-			"Enabled": true
 		}
 	]
 }

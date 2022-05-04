@@ -32,26 +32,18 @@ protected:
 	// Base attack damage
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Combat)
 	float baseDamage;
-	
+
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-	
-	virtual void Die_Implementation() override;
 
 public:
-
-	// Delegate for enemy dying
-	UPROPERTY(BlueprintAssignable)
-	FCombatManagerResponses OnDied;
 
 	// Delegate for enemy transitioning from alerted state
 	UPROPERTY(BlueprintAssignable)
 	FCombatManagerResponses OnSwitchedState;
-	
+
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-
-	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 
 	UFUNCTION(BlueprintCallable)
 	virtual void SetMoveSpeed(bool running);
