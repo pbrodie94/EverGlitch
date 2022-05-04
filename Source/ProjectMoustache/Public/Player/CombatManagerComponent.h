@@ -95,6 +95,6 @@ public:
 	 * Removes an enemy from the combat manager
 	 */
 	UFUNCTION(BlueprintCallable)
-	void UnsubscribeFromCombatManager(class AEnemyBase* enemyRef);
+	void UnsubscribeFromCombatManager(class AEntityBase* enemyRef);
 		
 };
