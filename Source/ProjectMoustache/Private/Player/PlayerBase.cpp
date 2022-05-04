@@ -451,24 +451,25 @@ float APlayerBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEven
 		return 0;
 	}
 
-	currentHealth -= DamageAmount;
-
-	GetWorld()->GetFirstPlayerController()->PlayerCameraManager->StartCameraShake(cameraShake, 1);
-
-	if (currentHealth <= 0)
+	const float damage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+	
+	if (damage > 0)
 	{
-		//Dead
-		currentHealth = 0;
-		Die();
+		GetWorld()->GetFirstPlayerController()->PlayerCameraManager->StartCameraShake(cameraShake, 1);
 	}
 
-	return DamageAmount;
+	return damage;
 }
 
 float APlayerBase::TakeIncomingDamage_Implementation(float damageAmount, AActor* damageCauser, AController* eventInstigator, FDamageData damageData)
 {
 	//Take no damage if god mode is enabled
 	if (godMode)
+	{
+		return 0;
+	}
+
+	if (GetIsDead())
 	{
 		return 0;
 	}
