@@ -2,6 +2,7 @@
 
 
 #include "Player/CombatManagerComponent.h"
+#include "EntityBase.h"
 #include "Enemies/EnemyBase.h"
 
 // Sets default values for this component's properties
@@ -177,23 +178,29 @@ void UCombatManagerComponent::SubscribeSelfToCombatManager(AEnemyBase* enemyRef)
 /**
 * Removes an enemy from the combat manager
 */
-void UCombatManagerComponent::UnsubscribeFromCombatManager(AEnemyBase* enemyRef)
+void UCombatManagerComponent::UnsubscribeFromCombatManager(AEntityBase* enemyRef)
 {
 	if (enemyRef == nullptr || !activeEnemies.Contains(enemyRef))
 	{
 		return;
 	}
 
-	activeEnemies.Remove(enemyRef);
+	AEnemyBase* enemy = Cast<AEnemyBase>(enemyRef);
+	if (enemy == nullptr)
+	{
+		return;
+	}
+
+	activeEnemies.Remove(enemy);
 
 	if (engagingEnemies.Contains(enemyRef))
 	{
-		engagingEnemies.Remove(enemyRef);
+		engagingEnemies.Remove(enemy);
 	}
 
 	if (attackingEnemies.Contains(enemyRef))
 	{
-		attackingEnemies.Remove(enemyRef);
+		attackingEnemies.Remove(enemy);
 	}
 }
 

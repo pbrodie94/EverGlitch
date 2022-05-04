@@ -8,6 +8,7 @@
 #include "EntityBase.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnStatusEffectsChanged, UStatusEffectBase*, statusEffect);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnDied, class AEntityBase*, killedEntity);
 
 UCLASS()
 class PROJECTMOUSTACHE_API AEntityBase : public ACharacter, public IDamageable
@@ -85,7 +86,7 @@ protected:
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void Die();
-	virtual void Die_Implementation() { }
+	virtual void Die_Implementation();
 
 public:
 
@@ -93,9 +94,14 @@ public:
 	FOnStatusEffectsChanged OnStatusEffectAdded;
 	UPROPERTY(BlueprintAssignable)
 	FOnStatusEffectsChanged OnStatusEffectRemoved;
+
+	UPROPERTY(BlueprintAssignable)
+	FOnDied OnDied;
 	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 
 	/*********************************************************************
 	 * IDamageable

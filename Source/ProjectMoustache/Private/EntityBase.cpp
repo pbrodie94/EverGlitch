@@ -16,10 +16,10 @@ AEntityBase::AEntityBase()
 	startingHealth = 100;
 	currentHealth = 100;
 
-	fireEffectiveness = 0;
-	iceEffectiveness = 0;
-	lightningEffectiveness = 0;
-	waterEffectiveness = 0;
+	fireEffectiveness = 100;
+	iceEffectiveness = 100;
+	lightningEffectiveness = 100;
+	waterEffectiveness = 100;
 }
 
 // Called when the game starts or when spawned
@@ -276,6 +276,33 @@ void AEntityBase::AddStatusEffect_Implementation(FStatusEffect statusEffect)
 	
 	status->Init(this, statusEffect.effectAmount, statusEffect.duration, statusEffect.dotInterval, GetWorld()->GetTimeSeconds());
 	newStatusEffects.Add(status);
+}
+
+float AEntityBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+	Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+
+	if (DamageAmount <= 0 || currentHealth <= 0)
+	{
+		return 0;
+	}
+
+	currentHealth -= DamageAmount;
+	if (currentHealth <= 0)
+	{
+		currentHealth = 0;
+		Die();
+	}
+
+	return DamageAmount;
+}
+
+void AEntityBase::Die_Implementation()
+{
+	if (OnDied.IsBound())
+	{
+		OnDied.Broadcast(this);
+	}
 }
 
 /**
