@@ -127,4 +127,16 @@ public:
 	 */
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void UnSubscribePlayerObserver(const TScriptInterface<IPlayerObserver>& oldObserver);
+
+	/**
+	 * Sets whether or not the player character can be controlled
+	 */
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void SetHasControl(bool control);
+
+	/**
+	 * Returns whether or not the player character is accepting player input
+	 */
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	bool GetHasControl() const;
 };

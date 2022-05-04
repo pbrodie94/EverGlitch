@@ -63,7 +63,14 @@ APlayerBase::APlayerBase()
 	/*// Create inventory component
 	inventoryComponent = CreateDefaultSubobject<UInventoryComponentBase>(TEXT("InventoryComponent"));*/
 
+	hasControl = true;
+	
 	godMode = false;
+
+	fireEffectiveness = 100;
+	iceEffectiveness = 100;
+	lightningEffectiveness = 100;
+	waterEffectiveness = 100;
 }
 
 // Called when the game starts or when spawned
@@ -136,12 +143,12 @@ void APlayerBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	//Add controller axis bindings
 	PlayerInputComponent->BindAxis("MoveForward", this, &APlayerBase::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &APlayerBase::MoveRight);
-	PlayerInputComponent->BindAxis("Turn", this, &APawn::AddControllerYawInput);
-	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
+	PlayerInputComponent->BindAxis("Turn", this, &APlayerBase::LookX);
+	PlayerInputComponent->BindAxis("LookUp", this, &APlayerBase::LookY);
 
 	//Add controller action bindings
-	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
-	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
+	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &APlayerBase::BeginJump);
+	PlayerInputComponent->BindAction("Jump", IE_Released, this, &APlayerBase::EndJump);
 	PlayerInputComponent->BindAction("Dash", IE_Pressed, this, &APlayerBase::Dash);
 	PlayerInputComponent->BindAction("Action", IE_Pressed, this, &APlayerBase::InteractWithObject);
 	PlayerInputComponent->BindAction("Inventory", IE_Pressed, this, &APlayerBase::ToggleInventory);
@@ -153,7 +160,7 @@ void APlayerBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 
 void APlayerBase::MoveForward(float value)
 {
-	if (isDead)
+	if (isDead || !hasControl)
 	{
 		return;
 	}
@@ -172,7 +179,7 @@ void APlayerBase::MoveForward(float value)
 
 void APlayerBase::MoveRight(float value)
 {
-	if (isDead)
+	if (isDead || !hasControl)
 	{
 		return;
 	}
@@ -189,13 +196,53 @@ void APlayerBase::MoveRight(float value)
 	}
 }
 
+void APlayerBase::LookX(float value)
+{
+	if (!hasControl)
+	{
+		return;
+	}
+
+	AddControllerYawInput(value);
+}
+
+void APlayerBase::LookY(float value)
+{
+	if (!hasControl)
+	{
+		return;
+	}
+
+	AddControllerPitchInput(value);
+}
+
+void APlayerBase::BeginJump()
+{
+	if (isDead || !hasControl)
+	{
+		return;
+	}
+
+	Jump();
+}
+
+void APlayerBase::EndJump()
+{
+	if (isDead || !hasControl)
+	{
+		return;
+	}
+
+	StopJumping();
+}
+
 /**
 * Takes the movement direction of the player, excludes the vertical direction
 * then applies a dash force, as well as a slight upwards force to keep from getting stuck on floor
 */
 void APlayerBase::Dash()
 {
-	if (isDead)
+	if (isDead || !hasControl)
 	{
 		return;
 	}
@@ -223,26 +270,18 @@ void APlayerBase::HandleDashEffects_Implementation()
 {
 }
 
-void APlayerBase::HandleDashEffects_Implementation()
-{
-}
-
-void APlayerBase::HandleDashEffects_Implementation()
-{
-}
-
 /**
 * Fire projectiles on main fire button.
 * Will be changed to call a fire function on a weapon when created
 */
 void APlayerBase::Fire()
 {
-	if (isDead)
+	if (isDead || !hasControl)
 	{
 		return;
 	}
 
-	UWorld* world = GetWorld();
+	const UWorld* world = GetWorld();
 	if (world->GetTimeSeconds() < timeNextShot)
 	{
 		return;
@@ -262,6 +301,11 @@ void APlayerBase::Fire()
 
 void APlayerBase::FireUp()
 {
+	if (isDead || !hasControl)
+	{
+		return;
+	}
+	
 	if (currentWeapon != nullptr)
 	{
 		currentWeapon->OnFireUp();
@@ -349,6 +393,12 @@ float APlayerBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEven
 
 float APlayerBase::TakeIncomingDamage_Implementation(float damageAmount, AActor* damageCauser, AController* eventInstigator, FDamageData damageData)
 {
+	//Take no damage if god mode is enabled
+	if (godMode)
+	{
+		return 0;
+	}
+	
 	const float damage = Super::TakeIncomingDamage_Implementation(damageAmount, damageCauser, eventInstigator, damageData);
 
 	if (damage > 0)
