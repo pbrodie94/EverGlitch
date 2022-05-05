@@ -141,14 +141,13 @@ FVector AEnemySpawner::GetRandomLocationInBounds() const
 		FVector end = start + (FVector::DownVector * height);
 		FHitResult hitResult;
 		FCollisionQueryParams collisionParams(FName(groundTag), false, this);
-		//collisionParams.AddIgnoredActor(this);
 		if (GetWorld()->LineTraceSingleByChannel(
 			hitResult, start, end, ECC_Visibility, collisionParams))
 		{
 			spawnLocation = hitResult.ImpactPoint + FVector(0.0f, 0.0f, 50.0f);
 		}
 
-		++checkIteration;;
+		++checkIteration;
 		
 	} while (CheckIsPointOverlapping(spawnLocation));
 
