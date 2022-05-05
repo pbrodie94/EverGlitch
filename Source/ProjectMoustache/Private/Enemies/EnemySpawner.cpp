@@ -136,7 +136,7 @@ FVector AEnemySpawner::GetRandomLocationInBounds() const
 		spawnLocation = UKismetMathLibrary::RandomPointInBoundingBox(GetActorLocation(), spawnZone->GetScaledBoxExtent());
 
 		// Put point on the ground
-		float height = spawnZone->GetScaledBoxExtent().Z + 1000;
+		float height = spawnZone->GetScaledBoxExtent().Z * 2;
 		FVector start = spawnLocation;
 		FVector end = start + (FVector::DownVector * height);
 		FHitResult hitResult;
