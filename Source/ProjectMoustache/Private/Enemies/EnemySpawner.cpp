@@ -160,7 +160,7 @@ bool AEnemySpawner::CheckIsPointOverlapping(FVector checkLocation) const
 	
 	const bool boxTraceHit = UKismetSystemLibrary::BoxTraceMultiForObjects(GetWorld(), checkLocation, checkLocation,
 		spawnOverlapCheckBounds, FRotator(0.0f, 0.0f, 0.0f), queryObjects, false,
-		ignoreActors, EDrawDebugTrace::ForDuration, hitResults, true);
+		ignoreActors, EDrawDebugTrace::None, hitResults, true);
 
 	if (boxTraceHit)
 	{
