@@ -83,23 +83,34 @@ void AEnemySpawner::SpawnNumberOfEnemies(int numberOfEnemies)
 
 	for (int i = 0; i < numberOfEnemies; ++i)
 	{
+		// Tries to get a spawn location, stops spawning if no free location is found
 		const FVector spawnLocation = GetRandomLocationInBounds();
 		if (spawnLocation == FVector::ZeroVector)
 		{
 			return;
 		}
 
+		// Tries to get an enemy to spawn, stops spawning if null pointer is returned
 		const TSubclassOf<AEnemyBase> spawnEnemy = GetEnemyToSpawn();
 		if (spawnEnemy == nullptr)
 		{
 			return;
 		}
 
+		// Spawns enemy at the location with a random yaw rotation
 		const FRotator randomRotation = FRotator(0, FMath::RandRange(0.0f, 360.0f), 0);
 		GetWorld()->SpawnActor<AEnemyBase>(spawnEnemy, spawnLocation, randomRotation);
 	}
 }
 
+/**
+ * Gets a random enemy using importance
+ * Enemies are sorted in the list by importance with the highest importance being at the front
+ * A random tier is selected from the available tiers, then a random index is chosen from the
+ * available indexes.
+ * A higher index can only select higher importance indexes, but lower tiers have a random chance
+ * of selecting a higher tier index as well.
+ */
 TSubclassOf<AEnemyBase> AEnemySpawner::GetEnemyToSpawn() const
 {
 	if (spawnEnemies.Num() <= 0)
@@ -112,18 +123,26 @@ TSubclassOf<AEnemyBase> AEnemySpawner::GetEnemyToSpawn() const
 		return spawnEnemies[0].enemyObject;
 	}
 
+	// First get a random tier
 	const int tier = FMath::RandRange(0, importanceTiers.Num() - 1);
+	// Then get a random index from the available indexes
 	const int index = FMath::RandRange(0, importanceTiers[tier]);
 
 	return spawnEnemies[index].enemyObject;
 }
 
+/**
+* Returns a random location within the bounds of the spawnZone box volume
+* Checks for overlaps using the spawn overlap check bounds
+* Returns ZeroVector if no non obstructed location could be found
+*/
 FVector AEnemySpawner::GetRandomLocationInBounds() const
 {
 	FVector spawnLocation = FVector::ZeroVector;
 
 	int checkIteration = 0;
-	
+
+	// Iterate getting random location, until free from obstructions
 	do
 	{
 		// Infinite loop guard
@@ -141,8 +160,7 @@ FVector AEnemySpawner::GetRandomLocationInBounds() const
 		FVector end = start + (FVector::DownVector * height);
 		FHitResult hitResult;
 		FCollisionQueryParams collisionParams(FName(groundTag), false, this);
-		if (GetWorld()->LineTraceSingleByChannel(
-			hitResult, start, end, ECC_Visibility, collisionParams))
+		if (GetWorld()->LineTraceSingleByChannel(hitResult, start, end, ECC_Visibility, collisionParams))
 		{
 			spawnLocation = hitResult.ImpactPoint + FVector(0.0f, 0.0f, 50.0f);
 		}
@@ -154,14 +172,28 @@ FVector AEnemySpawner::GetRandomLocationInBounds() const
 	return spawnLocation;
 }
 
+/**
+* Overlap check for choosing random points
+* Uses spawnOverlapCheckBounds for the dimensions of the check
+*/
 bool AEnemySpawner::CheckIsPointOverlapping(FVector checkLocation) const
 {
+	// Box trace at location using overlap bounds size
 	TArray<FHitResult> hitResults;
-	
-	const bool boxTraceHit = UKismetSystemLibrary::BoxTraceMultiForObjects(GetWorld(), checkLocation, checkLocation,
-		spawnOverlapCheckBounds, FRotator(0.0f, 0.0f, 0.0f), queryObjects, false,
-		ignoreActors, EDrawDebugTrace::None, hitResults, true);
+	const bool boxTraceHit = UKismetSystemLibrary::BoxTraceMultiForObjects(
+		GetWorld(),
+		checkLocation,
+		checkLocation,
+		spawnOverlapCheckBounds,
+		FRotator(0.0f, 0.0f, 0.0f),
+		queryObjects,
+		false,
+		ignoreActors,
+		EDrawDebugTrace::None,
+		hitResults,
+		true);
 
+	// If trace hits object that is not the ground, then the location is obstructed
 	if (boxTraceHit)
 	{
 		for (const FHitResult result : hitResults)
@@ -192,16 +224,35 @@ void AEnemySpawner::InitializeEnemyList()
 	{
 		return;
 	}
-	
+
+	// Sort enemies by importance, with highest in front
 	SortSpawnEnemies();
 
 	int tier = 1;
 	for (int i = 0; i < spawnEnemies.Num(); ++i)
 	{
+		// Checks if the tier of the enemy is different from the current tier
 		if (spawnEnemies[i].spawnPriority != tier)
 		{
+			/**
+			 * Adds blank tiers in case there is a split between importance
+			 * e.g. enemy importance of 1 and of 3. Importance 2 will pick from
+			 * importance 3 and 2, but sice importance 2 is empty, it will only pick from 3
+			 */
+			if (spawnEnemies[i].spawnPriority > (tier + 1))
+			{
+				// Foreach tier between the last and current, add the highest index as last enemy
+				const int difference = (spawnEnemies[i].spawnPriority - tier) + 1;
+				for (int j = 0; j < difference; ++j)
+				{
+					importanceTiers.Add(i - 1);
+				}
+			}
+
+			// Adds last index of the tier
 			importanceTiers.Add(i);
-			++tier;
+			// Sets current tier for rest of check
+			tier = spawnEnemies[i].spawnPriority;
 		}
 	}
 
@@ -214,6 +265,7 @@ void AEnemySpawner::InitializeEnemyList()
 /**
 * Sorts enemies in enemy list by priority
 * Uses bubble sort method
+* Sorts higher priority to the front of the list 
 */
 void AEnemySpawner::SortSpawnEnemies()
 {

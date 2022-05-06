@@ -44,6 +44,7 @@ class PROJECTMOUSTACHE_API AEnemySpawner : public AActor
 	/**
 	 * Returns a random location within the bounds of the spawnZone box volume
 	 * Checks for overlaps using the spawn overlap check bounds
+	 * Returns ZeroVector if no non obstructed location could be found
 	 */
 	FVector GetRandomLocationInBounds() const;
 
@@ -54,9 +55,13 @@ class PROJECTMOUSTACHE_API AEnemySpawner : public AActor
 	bool CheckIsPointOverlapping(FVector checkLocation) const;
 
 	/**
-	 * Returns a random enemy to spawn
-	 * accounting for spawn priorities
-	 */
+	* Gets a random enemy using importance
+	* Enemies are sorted in the list by importance with the highest importance being at the front
+	* A random tier is selected from the available tiers, then a random index is chosen from the
+	* available indexes.
+	* A higher index can only select higher importance indexes, but lower tiers have a random chance
+	* of selecting a higher tier index as well.
+	*/
 	TSubclassOf<class AEnemyBase> GetEnemyToSpawn() const;
 
 	/**
