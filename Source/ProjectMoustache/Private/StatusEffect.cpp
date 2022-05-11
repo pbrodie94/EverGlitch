@@ -28,7 +28,7 @@ void UStatusEffectBase::Init(AActor* actor, float amount, float effectDuration, 
 }
 
 void UStatusEffectBase::UpdateStatus(float worldTime)
-{	
+{
 	if (worldTime > timeEnded)
 	{
 		isExpired = true;
@@ -43,27 +43,27 @@ void UStatusEffectBase::UpdateStatus(float worldTime)
 *************************************************************************************************************/
 UBurnStatus::UBurnStatus()
 {
-	
+
 }
 
 void UBurnStatus::Init(AActor* actor, float amount, float effectDuration, float interval, float worldTime)
 {
 	Super::Init(actor, amount, effectDuration, interval, worldTime);
 	damageInterval = interval > 0 ? interval : 1;
-	
+
 	timeNextDamage = worldTime + damageInterval;
 }
 
 void UBurnStatus::UpdateStatus(float worldTime)
 {
 	Super::UpdateStatus(worldTime);
-	
+
 	// Deal damage on tick interval
 	if (worldTime > timeNextDamage)
 	{
 		const FStatusEffect effect(Burn);
 		IDamageable::Execute_TakeIncomingDamage(effectedActor, effectAmount, damageCauser, eventInstigator, FDamageData(effect));
-		
+
 		timeNextDamage = worldTime + damageInterval;
 	}
 }

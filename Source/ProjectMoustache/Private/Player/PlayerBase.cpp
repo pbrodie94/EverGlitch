@@ -21,8 +21,17 @@ APlayerBase::APlayerBase()
 
 	jumpHeight = 600.0f;
 	airControl = 0.2f;
+
+	abilityEnergy = 100.0f;
+	maxAbilityEnergy = 100.0f;
+	energyRechargeDelay = 3.0f;
+	energyRechargeRate = 30.0f;
+	
 	dashPower = 1500;
-	dashDelayInterval = 0.5f;
+	dashEnergyCost = 25.0f;
+	dashDelayInterval = 0.7f;
+	numAirDashes = 1;
+	timesDashedInAir = 0;
 
 	combatStanceTime = 3;
 	fireDelay = 0.5f;
@@ -63,12 +72,14 @@ APlayerBase::APlayerBase()
 	/*// Create inventory component
 	inventoryComponent = CreateDefaultSubobject<UInventoryComponentBase>(TEXT("InventoryComponent"));*/
 
+	hasControl = true;
+	
+	godMode = false;
+
 	fireEffectiveness = 100;
 	iceEffectiveness = 100;
 	lightningEffectiveness = 100;
 	waterEffectiveness = 100;
-
-	godMode = false;
 }
 
 // Called when the game starts or when spawned
@@ -101,9 +112,31 @@ void APlayerBase::BeginPlay()
 		jumpHeight = 600;
 	}
 
+	if (maxAbilityEnergy <= 0)
+	{
+		maxAbilityEnergy = 100.0f;
+	}
+
+	abilityEnergy = maxAbilityEnergy;
+
+	if (energyRechargeDelay <= 0)
+	{
+		energyRechargeDelay = 3.0f;
+	}
+
+	if (energyRechargeRate < 1)
+	{
+		energyRechargeRate = 30.0f;
+	}
+
 	if (dashPower <= 0)
 	{
 		dashPower = 1500;
+	}
+
+	if (dashEnergyCost < 0)
+	{
+		dashEnergyCost = 25.0f;
 	}
 
 	if (combatStanceTime <= 0)
@@ -126,6 +159,22 @@ void APlayerBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	// Reset air dash counter when on the ground
+	if (timesDashedInAir > 0)
+	{
+		if (!GetCharacterMovement()->IsFalling())
+		{
+			timesDashedInAir = 0;
+		}
+	}
+
+	// Recharge energy
+	if (abilityEnergy < maxAbilityEnergy && GetWorld()->GetTimeSeconds() > timeBeginRecharge)
+	{
+		abilityEnergy += (DeltaTime * energyRechargeRate);
+	}
+
+	// Detect melee hits when attacking
 	if (isMeleeAttacking)
 	{
 		DetectMeleeHits();
@@ -141,12 +190,12 @@ void APlayerBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	//Add controller axis bindings
 	PlayerInputComponent->BindAxis("MoveForward", this, &APlayerBase::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &APlayerBase::MoveRight);
-	PlayerInputComponent->BindAxis("Turn", this, &APawn::AddControllerYawInput);
-	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
+	PlayerInputComponent->BindAxis("Turn", this, &APlayerBase::LookX);
+	PlayerInputComponent->BindAxis("LookUp", this, &APlayerBase::LookY);
 
 	//Add controller action bindings
-	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
-	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
+	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &APlayerBase::BeginJump);
+	PlayerInputComponent->BindAction("Jump", IE_Released, this, &APlayerBase::EndJump);
 	PlayerInputComponent->BindAction("Dash", IE_Pressed, this, &APlayerBase::Dash);
 	PlayerInputComponent->BindAction("Action", IE_Pressed, this, &APlayerBase::InteractWithObject);
 	PlayerInputComponent->BindAction("Inventory", IE_Pressed, this, &APlayerBase::ToggleInventory);
@@ -158,7 +207,7 @@ void APlayerBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 
 void APlayerBase::MoveForward(float value)
 {
-	if (isDead)
+	if (GetIsDead() || !hasControl)
 	{
 		return;
 	}
@@ -177,7 +226,7 @@ void APlayerBase::MoveForward(float value)
 
 void APlayerBase::MoveRight(float value)
 {
-	if (isDead)
+	if (GetIsDead() || !hasControl)
 	{
 		return;
 	}
@@ -194,13 +243,63 @@ void APlayerBase::MoveRight(float value)
 	}
 }
 
+void APlayerBase::LookX(float value)
+{
+	if (!hasControl)
+	{
+		return;
+	}
+
+	AddControllerYawInput(value);
+}
+
+void APlayerBase::LookY(float value)
+{
+	if (!hasControl)
+	{
+		return;
+	}
+
+	AddControllerPitchInput(value);
+}
+
+void APlayerBase::BeginJump()
+{
+	if (GetIsDead() || !hasControl)
+	{
+		return;
+	}
+
+	Jump();
+}
+
+void APlayerBase::EndJump()
+{
+	if (GetIsDead() || !hasControl)
+	{
+		return;
+	}
+
+	StopJumping();
+}
+
 /**
 * Takes the movement direction of the player, excludes the vertical direction
 * then applies a dash force, as well as a slight upwards force to keep from getting stuck on floor
 */
 void APlayerBase::Dash()
 {
-	if (isDead)
+	if (GetIsDead() || !hasControl)
+	{
+		return;
+	}
+
+	if (abilityEnergy < dashEnergyCost)
+	{
+		return;
+	}
+
+	if (numAirDashes > -1 && GetCharacterMovement()->IsFalling() && timesDashedInAir >= numAirDashes)
 	{
 		return;
 	}
@@ -208,6 +307,13 @@ void APlayerBase::Dash()
 	if (GetWorld()->GetTimeSeconds() < timeNextDash || isAiming)
 	{
 		return;
+	}
+
+	abilityEnergy -= dashEnergyCost;
+
+	if (numAirDashes > -1 && GetCharacterMovement()->IsFalling())
+	{
+		++timesDashedInAir;
 	}
 
 	//Get direction to dash in, excluding upwards velocity
@@ -218,10 +324,13 @@ void APlayerBase::Dash()
 	moveDirection.Z = 200;
 
 	GetCharacterMovement()->Launch(moveDirection);
-	
-	HandleDashEffects(); 
-	
-	timeNextDash = GetWorld()->GetTimeSeconds() + dashDelayInterval;
+
+	HandleDashEffects();
+
+	const float worldTime = GetWorld()->GetTimeSeconds();
+
+	timeNextDash = worldTime + dashDelayInterval;
+	timeBeginRecharge = worldTime + energyRechargeDelay;
 }
 
 void APlayerBase::HandleDashEffects_Implementation()
@@ -234,12 +343,12 @@ void APlayerBase::HandleDashEffects_Implementation()
 */
 void APlayerBase::Fire()
 {
-	if (isDead)
+	if (GetIsDead() || !hasControl)
 	{
 		return;
 	}
 
-	UWorld* world = GetWorld();
+	const UWorld* world = GetWorld();
 	if (world->GetTimeSeconds() < timeNextShot)
 	{
 		return;
@@ -249,19 +358,31 @@ void APlayerBase::Fire()
 	{
 		if (currentWeapon->OnFireDown())
 		{
-			//Switch to combat stance and set timer to end combat stance
+			//Switch to combat stance
 			GetCharacterMovement()->bOrientRotationToMovement = false;
 			world->GetTimerManager().ClearTimer(rangedCombatTimerHandle);
-			world->GetTimerManager().SetTimer(rangedCombatTimerHandle, this, &APlayerBase::OnCombatStanceEnd, combatStanceTime);
 		}
 	}
 }
 
 void APlayerBase::FireUp()
 {
+	if (GetIsDead() || !hasControl)
+	{
+		return;
+	}
+	
 	if (currentWeapon != nullptr)
 	{
 		currentWeapon->OnFireUp();
+	}
+
+	// Set timer to end combat stance
+	if (!GetCharacterMovement()->bOrientRotationToMovement)
+	{
+		const UWorld* world = GetWorld();
+		world->GetTimerManager().ClearTimer(rangedCombatTimerHandle);
+		world->GetTimerManager().SetTimer(rangedCombatTimerHandle, this, &APlayerBase::OnCombatStanceEnd, combatStanceTime);
 	}
 }
 
@@ -325,27 +446,34 @@ float APlayerBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEven
 		return 0;
 	}
 
-	if (isDead)
+	if (GetIsDead())
 	{
 		return 0;
 	}
 
-	currentHealth -= DamageAmount;
-
-	GetWorld()->GetFirstPlayerController()->PlayerCameraManager->StartCameraShake(cameraShake, 1);
-
-	if (currentHealth <= 0)
+	const float damage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+	
+	if (damage > 0)
 	{
-		//Dead
-		currentHealth = 0;
-		Die();
+		GetWorld()->GetFirstPlayerController()->PlayerCameraManager->StartCameraShake(cameraShake, 1);
 	}
 
-	return DamageAmount;
+	return damage;
 }
 
 float APlayerBase::TakeIncomingDamage_Implementation(float damageAmount, AActor* damageCauser, AController* eventInstigator, FDamageData damageData)
 {
+	//Take no damage if god mode is enabled
+	if (godMode)
+	{
+		return 0;
+	}
+
+	if (GetIsDead())
+	{
+		return 0;
+	}
+	
 	const float damage = Super::TakeIncomingDamage_Implementation(damageAmount, damageCauser, eventInstigator, damageData);
 
 	if (damage > 0)
@@ -373,7 +501,7 @@ void APlayerBase::EndMeleeAttackDamage()
 
 void APlayerBase::BeginAiming_Implementation()
 {
-	if (isDead)
+	if (GetIsDead())
 	{
 		return;
 	}
@@ -433,8 +561,6 @@ void APlayerBase::Die_Implementation()
 	{
 		RemoveSelfAsInteractable(currentInteractableObject);
 	}
-
-	isDead = true;
 }
 
 void APlayerBase::ToggleInventory_Implementation()
