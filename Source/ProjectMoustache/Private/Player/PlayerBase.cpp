@@ -69,9 +69,6 @@ APlayerBase::APlayerBase()
 	// Combat manager
 	combatManager = CreateDefaultSubobject<UCombatManagerComponent>(TEXT("CombatManager"));
 
-	/*// Create inventory component
-	inventoryComponent = CreateDefaultSubobject<UInventoryComponentBase>(TEXT("InventoryComponent"));*/
-
 	hasControl = true;
 	
 	godMode = false;
@@ -203,6 +200,9 @@ void APlayerBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	PlayerInputComponent->BindAction("Aim", IE_Released, this, &APlayerBase::EndAiming);
 	PlayerInputComponent->BindAction("Shoot", IE_Pressed, this, &APlayerBase::Fire);
 	PlayerInputComponent->BindAction("Shoot", IE_Released, this, &APlayerBase::FireUp);
+
+	PlayerInputComponent->BindAction("Ability1", IE_Pressed, this, &APlayerBase::UseAbility1);
+	PlayerInputComponent->BindAction("Ability2", IE_Pressed, this, &APlayerBase::UseAbility2);
 }
 
 void APlayerBase::MoveForward(float value)
@@ -382,16 +382,58 @@ void APlayerBase::FireUp()
 	{
 		const UWorld* world = GetWorld();
 		world->GetTimerManager().ClearTimer(rangedCombatTimerHandle);
-		world->GetTimerManager().SetTimer(rangedCombatTimerHandle, this, &APlayerBase::OnCombatStanceEnd, combatStanceTime);
+		world->GetTimerManager().SetTimer(rangedCombatTimerHandle, this,
+			&APlayerBase::OnCombatStanceEnd, combatStanceTime);
 	}
 }
 
+/**
+* Used to cast magic support spell
+*/
+void APlayerBase::UseAbility1()
+{
+	if (magicComponent == nullptr)
+	{
+		return;
+	}
+
+	//Switch to combat stance
+	GetCharacterMovement()->bOrientRotationToMovement = false;
+	const UWorld* world = GetWorld();
+	world->GetTimerManager().ClearTimer(rangedCombatTimerHandle);
+	world->GetTimerManager().SetTimer(rangedCombatTimerHandle, this,
+		&APlayerBase::OnCombatStanceEnd, combatStanceTime);
+
+	// Cast Spell
+	magicComponent->CastSupportSpell();
+}
+
+/**
+* Used to cast magic destruction spell
+*/
+void APlayerBase::UseAbility2()
+{
+	if (magicComponent == nullptr)
+	{
+		return;
+	}
+
+	//Switch to combat stance
+	GetCharacterMovement()->bOrientRotationToMovement = false;
+	const UWorld* world = GetWorld();
+	world->GetTimerManager().ClearTimer(rangedCombatTimerHandle);
+	world->GetTimerManager().SetTimer(rangedCombatTimerHandle, this,
+		&APlayerBase::OnCombatStanceEnd, combatStanceTime);
+
+	// Cast Spell
+	magicComponent->CastDestructionSpell();
+}
 
 /**
 * Expiry function for the combat stance timer
 * Resets player to turn in direction of movement a set time after doing ranged attacks
 */
-void APlayerBase::OnCombatStanceEnd()
+void APlayerBase::OnCombatStanceEnd() const
 {
 	if (isAiming)
 	{
@@ -413,7 +455,8 @@ void APlayerBase::DetectMeleeHits()
 	TArray<FHitResult> hitResults;
 
 	const bool sphereTraceHit = UKismetSystemLibrary::SphereTraceMulti(GetWorld(),
-		detectionPoint, detectionPoint, 100, UEngineTypes::ConvertToTraceType(ECC_Camera),
+		detectionPoint, detectionPoint, 100,
+		UEngineTypes::ConvertToTraceType(ECC_Camera),
 		false, hitActors, EDrawDebugTrace::None, hitResults, true);
 
 	if (sphereTraceHit)
@@ -438,7 +481,8 @@ void APlayerBase::DetectMeleeHits()
 
 
 //Takes in damage, and returns the actual damage
-float APlayerBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+float APlayerBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent,
+	AController* EventInstigator, AActor* DamageCauser)
 {
 	//Take no damage if god mode is enabled
 	if (godMode)
@@ -461,7 +505,8 @@ float APlayerBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEven
 	return damage;
 }
 
-float APlayerBase::TakeIncomingDamage_Implementation(float damageAmount, AActor* damageCauser, AController* eventInstigator, FDamageData damageData)
+float APlayerBase::TakeIncomingDamage_Implementation(float damageAmount, AActor* damageCauser,
+	AController* eventInstigator, FDamageData damageData)
 {
 	//Take no damage if god mode is enabled
 	if (godMode)
@@ -474,7 +519,8 @@ float APlayerBase::TakeIncomingDamage_Implementation(float damageAmount, AActor*
 		return 0;
 	}
 	
-	const float damage = Super::TakeIncomingDamage_Implementation(damageAmount, damageCauser, eventInstigator, damageData);
+	const float damage = Super::TakeIncomingDamage_Implementation(damageAmount, damageCauser,
+		eventInstigator, damageData);
 
 	if (damage > 0)
 	{
@@ -563,15 +609,6 @@ void APlayerBase::Die_Implementation()
 	}
 }
 
-void APlayerBase::ToggleInventory_Implementation()
-{
-	/*if (inventoryComponent != nullptr)
-	{
-		inventoryComponent->ToggleInventory();
-	}*/
-}
-
-
 /**
 * If player has a current interactable object reference, interact with it
 */
@@ -616,7 +653,7 @@ void APlayerBase::ApplyDamageChange_Implementation(float percentage, float durat
 	percentageDamageChange = (FMath::Clamp(percentage, -99.0f, 200.0f) / 100) + 1;
 
 	//Handle duration
-	UWorld* world = GetWorld();
+	const UWorld* world = GetWorld();
 
 	if (duration <= 0)
 	{
@@ -624,7 +661,8 @@ void APlayerBase::ApplyDamageChange_Implementation(float percentage, float durat
 		return;
 	}
 
-	world->GetTimerManager().SetTimer(damageTimerHandle, this, &APlayerBase::OnDamageChangeExpired, duration);
+	world->GetTimerManager().SetTimer(damageTimerHandle, this,
+		&APlayerBase::OnDamageChangeExpired, duration);
 }
 
 /**
@@ -639,7 +677,7 @@ void APlayerBase::ApplySpeedChange_Implementation(float percentage, float durati
 	GetCharacterMovement()->MaxWalkSpeed = runSpeed * changePercentage;
 
 	//Handle duration
-	UWorld* world = GetWorld();
+	const UWorld* world = GetWorld();
 
 	if (duration <= 0)
 	{
@@ -647,7 +685,8 @@ void APlayerBase::ApplySpeedChange_Implementation(float percentage, float durati
 		return;
 	}
 
-	world->GetTimerManager().SetTimer(speedTimerHandle, this, &APlayerBase::OnSpeedChangeExpired, duration);
+	world->GetTimerManager().SetTimer(speedTimerHandle, this,
+		&APlayerBase::OnSpeedChangeExpired, duration);
 }
 
 /**
@@ -658,7 +697,7 @@ void APlayerBase::ApplySpeedChange_Implementation(float percentage, float durati
 */
 void APlayerBase::ApplyJumpChange_Implementation(float percentage, float duration)
 {
-	float changePercentage = (FMath::Clamp(percentage, -99.0f, 200.0f) / 100) + 1;
+	const float changePercentage = (FMath::Clamp(percentage, -99.0f, 200.0f) / 100) + 1;
 	GetCharacterMovement()->JumpZVelocity = jumpHeight * changePercentage;
 
 	//Handle duration
@@ -670,7 +709,8 @@ void APlayerBase::ApplyJumpChange_Implementation(float percentage, float duratio
 		return;
 	}
 
-	world->GetTimerManager().SetTimer(jumpTimerHandle, this, &APlayerBase::OnJumChangeExpired, duration);
+	world->GetTimerManager().SetTimer(jumpTimerHandle, this,
+		&APlayerBase::OnJumChangeExpired, duration);
 }
 
 /**
