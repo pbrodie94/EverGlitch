@@ -150,9 +150,15 @@ class PROJECTMOUSTACHE_API APlayerBase : public AEntityBase, public IPlayerChara
 	 */
 	void DetectMeleeHits();
 
-	/*void CastMagicSpell();
+	/**
+	 * Used to cast magic support spell
+	 */
+	void UseAbility1();
 
-	void CastSupportSpell();*/
+	/**
+	* Used to cast magic destruction spell
+	*/
+	void UseAbility2();
 
 	/**
 	 * If player has a current interactable object reference, interact with it
@@ -163,7 +169,7 @@ class PROJECTMOUSTACHE_API APlayerBase : public AEntityBase, public IPlayerChara
 	 * Expiry function for the combat stance timer
 	 * Resets player to turn in direction of movement a set time after doing ranged attacks
 	 */
-	void OnCombatStanceEnd();
+	void OnCombatStanceEnd() const;
 
 	/**
 	 * Expiry functions for stat change timers
@@ -176,9 +182,6 @@ class PROJECTMOUSTACHE_API APlayerBase : public AEntityBase, public IPlayerChara
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-
-	/*UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	UInventoryComponentBase* inventoryComponent;*/
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TSubclassOf<AWeaponBase> startingWeapon;
@@ -249,6 +252,7 @@ protected:
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void ToggleInventory();
+	void ToggleInventory_Implementation() {}
 
 public:
 
