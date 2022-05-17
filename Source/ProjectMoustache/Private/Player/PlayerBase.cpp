@@ -3,11 +3,12 @@
 
 #include "Player/PlayerBase.h"
 #include "Camera/CameraComponent.h"
+#include "Components/BoxComponent.h"
 #include "Debug/ReporterBase.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/KismetSystemLibrary.h"
-
+#include "Interactables/Telekinesisable.h"
 
 // Sets default values
 APlayerBase::APlayerBase()
@@ -68,6 +69,18 @@ APlayerBase::APlayerBase()
 
 	// Combat manager
 	combatManager = CreateDefaultSubobject<UCombatManagerComponent>(TEXT("CombatManager"));
+
+	// Init TK vars
+	isUsingTK = false;
+	isTKPushing = false;
+	isTKPulling = false;
+	pushPullSpeed = 500.0f;
+	tkEnergyCost = 30.0f;
+	tkAccuracy = 3.0f;
+	tkViewAngle = 20.0f;
+	minTKRange = 750.0f;
+	maxTKRange = 3000.0f;
+	tkPushForce = 100000000.0f;
 
 	hasControl = true;
 	
@@ -156,6 +169,25 @@ void APlayerBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	if (!isUsingTK)
+	{
+		DetectTKObjects();
+	} else
+	{
+		// Adjust distance
+		if (isTKPushing && targetDistance < maxTKRange)
+		{
+			targetDistance += (pushPullSpeed * DeltaTime);
+		}
+
+		if (isTKPulling && targetDistance > minTKRange)
+		{
+			targetDistance -= (pushPullSpeed * DeltaTime);
+		}
+		
+		ManipulateTKObject(DeltaTime);
+	}
+
 	// Reset air dash counter when on the ground
 	if (timesDashedInAir > 0)
 	{
@@ -166,7 +198,7 @@ void APlayerBase::Tick(float DeltaTime)
 	}
 
 	// Recharge energy
-	if (abilityEnergy < maxAbilityEnergy && GetWorld()->GetTimeSeconds() > timeBeginRecharge)
+	if (abilityEnergy < maxAbilityEnergy && GetWorld()->GetTimeSeconds() > timeBeginRecharge && !isUsingTK)
 	{
 		abilityEnergy += (DeltaTime * energyRechargeRate);
 	}
@@ -176,7 +208,6 @@ void APlayerBase::Tick(float DeltaTime)
 	{
 		DetectMeleeHits();
 	}
-
 }
 
 // Called to bind functionality to input
@@ -202,7 +233,9 @@ void APlayerBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	PlayerInputComponent->BindAction("Shoot", IE_Released, this, &APlayerBase::FireUp);
 
 	PlayerInputComponent->BindAction("Ability1", IE_Pressed, this, &APlayerBase::UseAbility1);
+	PlayerInputComponent->BindAction("Ability1", IE_Released, this, &APlayerBase::StopPullingTKObject);
 	PlayerInputComponent->BindAction("Ability2", IE_Pressed, this, &APlayerBase::UseAbility2);
+	PlayerInputComponent->BindAction("Ability2", IE_Released, this, &APlayerBase::StopPushingTKObject);
 }
 
 void APlayerBase::MoveForward(float value)
@@ -219,7 +252,7 @@ void APlayerBase::MoveForward(float value)
 		rotation = FRotator(0, rotation.Yaw, 0);
 
 		//Get movement direction
-		FVector direction = FRotationMatrix(rotation).GetUnitAxis(EAxis::X);
+		const FVector direction = FRotationMatrix(rotation).GetUnitAxis(EAxis::X);
 		AddMovementInput(direction, value);
 	}
 }
@@ -238,7 +271,7 @@ void APlayerBase::MoveRight(float value)
 		rotation = FRotator(0, rotation.Yaw, 0);
 
 		//Get movement direction
-		FVector direction = FRotationMatrix(rotation).GetUnitAxis(EAxis::Y);
+		const FVector direction = FRotationMatrix(rotation).GetUnitAxis(EAxis::Y);
 		AddMovementInput(direction, value);
 	}
 }
@@ -343,6 +376,14 @@ void APlayerBase::HandleDashEffects_Implementation()
 */
 void APlayerBase::Fire()
 {
+	if (isUsingTK)
+	{
+		// Push the object
+		PushTKObject();
+
+		return;
+	}
+	
 	if (GetIsDead() || !hasControl)
 	{
 		return;
@@ -358,9 +399,7 @@ void APlayerBase::Fire()
 	{
 		if (currentWeapon->OnFireDown())
 		{
-			//Switch to combat stance
-			GetCharacterMovement()->bOrientRotationToMovement = false;
-			world->GetTimerManager().ClearTimer(rangedCombatTimerHandle);
+			BeginCombatStance();
 		}
 	}
 }
@@ -380,11 +419,306 @@ void APlayerBase::FireUp()
 	// Set timer to end combat stance
 	if (!GetCharacterMovement()->bOrientRotationToMovement)
 	{
-		const UWorld* world = GetWorld();
-		world->GetTimerManager().ClearTimer(rangedCombatTimerHandle);
-		world->GetTimerManager().SetTimer(rangedCombatTimerHandle, this,
-			&APlayerBase::OnCombatStanceEnd, combatStanceTime);
+		BeginEndCombatStanceTimer();
 	}
+}
+
+/**
+* Used to detect nearby objects that can be picked up with the TK ability
+* Gets a list of objects then highlights one that is within the tkViewAngle.
+* If more than one object is within the tkViewAngle the one that is closest
+* to the center will be chosen.
+*/
+void APlayerBase::DetectTKObjects()
+{
+	if (isUsingTK)
+	{
+		return;
+	}
+
+	const UWorld* world = GetWorld();
+	TArray<AActor*> nearbyTKObjects;
+
+	// Get TK objects in proximity
+	// TODO: Find more efficient way of detecting TK objects - Sphere Collider or trace for custom context?
+	TArray<FHitResult> hitResults;
+
+	const bool sphereHit = UKismetSystemLibrary::SphereTraceMulti(world, GetActorLocation(),
+		GetActorLocation(), maxTKRange,
+		UEngineTypes::ConvertToTraceType(ECC_Visibility),
+		false, nonTKObjects, EDrawDebugTrace::None, hitResults, true);
+
+	if (sphereHit)
+	{
+		for (FHitResult result : hitResults)
+		{
+			if (result.GetActor() == nullptr)
+			{
+				continue;
+			}
+			
+			// If not a TK object, add to ignore list so it is not detected again
+			if (!result.GetActor()->GetClass()->ImplementsInterface(UTelekinesisable::StaticClass()))
+			{
+				nonTKObjects.Add(result.GetActor());
+				continue;
+			}
+
+			nearbyTKObjects.Add(result.GetActor());
+		}
+	}
+
+	if (nearbyTKObjects.Num() <= 0)
+	{
+		RemoveTKObject();
+		return;
+	}
+
+	TArray<AActor*> tkObjectsInAngle;
+	const FVector camPosition = followCamera->GetComponentLocation();
+	const FVector camForward = followCamera->GetForwardVector();
+
+	// Find the objects within angle of the forward direction of the camera
+	for (AActor* obj : nearbyTKObjects)
+	{
+		FVector dir = obj->GetActorLocation() - camPosition;
+		dir.Normalize();
+
+		float angle = FMath::Acos(FVector::DotProduct(camForward, dir));
+		angle = FMath::RadiansToDegrees(angle);
+
+		if (angle <= tkViewAngle)
+		{
+			tkObjectsInAngle.Add(obj);
+		}
+	}
+
+	if (tkObjectsInAngle.Num() <= 0)
+	{
+		RemoveTKObject();
+		return;
+	}
+
+	// Check if objects are obstructed from view
+	TArray<AActor*> objectsInView;
+
+	for (AActor* obj : tkObjectsInAngle)
+	{
+		const FVector dir = obj->GetActorLocation() - camPosition;
+		TArray<AActor*> ignoreActors;
+		TArray<TEnumAsByte<EObjectTypeQuery>> queryObjects;
+		queryObjects.Add(UEngineTypes::ConvertToObjectType(ECC_Visibility));
+
+		FHitResult result;
+		bool traceHit = UKismetSystemLibrary::LineTraceSingleForObjects(world, camPosition,
+			obj->GetActorLocation(), queryObjects, false, ignoreActors,
+			EDrawDebugTrace::None, result, true);
+
+		if (traceHit)
+		{
+			if (result.GetActor() == obj)
+			{
+				objectsInView.Add(obj);
+			}
+		}
+	}
+
+	if (objectsInView.Num() <= 0)
+	{
+		RemoveTKObject();
+		return;
+	}
+
+	// If only one object, set it and outline
+	if (objectsInView.Num() == 1)
+	{
+		if (tkObject != tkObjectsInAngle[0])
+		{
+			RemoveTKObject();
+		}
+		
+		tkObject = tkObjectsInAngle[0];
+		ITelekinesisable::Execute_SetHighlightOutline(tkObject);
+		return;
+	}
+
+	// Find the object closest to the center of the camera
+	float smallestAngle = FLT_MAX;
+	AActor* closestObject = nullptr;
+	
+	for (AActor* obj : objectsInView)
+	{
+		FVector dir = obj->GetActorLocation() - camPosition;
+		dir.Normalize();
+
+		float angle = FMath::Acos(FVector::DotProduct(camForward, dir));
+		angle = FMath::RadiansToDegrees(angle);
+
+		if (angle < smallestAngle)
+		{
+			smallestAngle = angle;
+			closestObject = obj;
+		}
+	}
+
+	if (closestObject == nullptr)
+	{
+		RemoveTKObject();
+		return;
+	}
+
+	if (tkObject != closestObject)
+	{
+		RemoveTKObject();
+	}
+	
+	tkObject = closestObject;
+	ITelekinesisable::Execute_SetHighlightOutline(tkObject);
+}
+
+void APlayerBase::RemoveTKObject()
+{
+	if (tkObject == nullptr)
+	{
+		return;
+	}
+
+	if (!tkObject->GetClass()->ImplementsInterface(UTelekinesisable::StaticClass()))
+	{
+		tkObject = nullptr;
+		return;
+	}
+
+	ITelekinesisable::Execute_RemoveHighlightOutline(tkObject);
+	tkObject = nullptr;
+}
+
+void APlayerBase::ManipulateTKObject(float deltaTime)
+{
+	if (tkObject == nullptr)
+	{
+		return;
+	}
+	
+	// Update the target position
+	targetPoint = followCamera->GetComponentLocation() + (followCamera->GetForwardVector() * targetDistance);
+	
+	// Update the object's position
+	const FVector smoothPosition = FMath::VInterpTo(tkObject->GetActorLocation(),
+		targetPoint, deltaTime, tkAccuracy);
+	tkObject->SetActorLocation(smoothPosition);
+}
+
+void APlayerBase::PickupTKObject()
+{
+	// Error check the object isn't null
+	if (tkObject == nullptr)
+	{
+		return;
+	}
+
+	// Double check the object uses interface
+	if (!tkObject->GetClass()->ImplementsInterface(UTelekinesisable::StaticClass()))
+	{
+		return;
+	}
+
+	if (abilityEnergy < tkEnergyCost)
+	{
+		return;
+	}
+	
+	// Stop firing
+	FireUp();
+
+	BeginCombatStance();
+	
+	// Turn off the highlight on the object
+	ITelekinesisable::Execute_RemoveHighlightOutline(tkObject);
+
+	// Set the wanted target point to be the distance of the object, in a line from the front of the camera and the player
+	targetDistance = FVector::Dist(GetActorLocation(), tkObject->GetActorLocation());
+	if (targetDistance < minTKRange)
+	{
+		targetDistance = minTKRange;
+	}
+
+	ITelekinesisable::Execute_SetPickedUp(tkObject);
+
+	isUsingTK = true;
+
+	abilityEnergy -= tkEnergyCost;
+}
+
+void APlayerBase::DropTKObject()
+{
+	if (!isUsingTK)
+	{
+		return;
+	}
+
+	if (tkObject == nullptr)
+	{
+		return;
+	}
+
+	if (!tkObject->GetClass()->ImplementsInterface(UTelekinesisable::StaticClass()))
+	{
+		return;
+	}
+
+	ITelekinesisable::Execute_SetDropped(tkObject);
+
+	timeBeginRecharge = GetWorld()->GetTimeSeconds() + energyRechargeDelay;
+	isUsingTK = false;
+	
+	EndCombatStance();
+}
+
+void APlayerBase::PushTKObject()
+{
+	if (!isUsingTK)
+	{
+		return;
+	}
+
+	if (tkObject == nullptr)
+	{
+		return;
+	}
+
+	if (!tkObject->GetClass()->ImplementsInterface(UTelekinesisable::StaticClass()))
+	{
+		return;
+	}
+	
+	DropTKObject();
+
+	if (abilityEnergy < tkEnergyCost)
+	{
+		return;
+	}
+
+	// Apply force in the forward direction of the camera
+	
+	UShapeComponent* collider = Cast<UShapeComponent>
+	(tkObject->GetComponentByClass(UShapeComponent::StaticClass()));
+	if (collider != nullptr)
+	{
+		collider->AddForce(followCamera->GetForwardVector() * tkPushForce);
+	}
+
+	abilityEnergy -= tkEnergyCost;
+}
+
+void APlayerBase::StopPushingTKObject()
+{
+	isTKPushing = false;
+}
+
+void APlayerBase::StopPullingTKObject()
+{
+	isTKPulling = false;	
 }
 
 /**
@@ -392,17 +726,23 @@ void APlayerBase::FireUp()
 */
 void APlayerBase::UseAbility1()
 {
+	if (isUsingTK)
+	{
+		isTKPushing = false;
+		
+		// Pull TK object in
+		isTKPulling = true;
+		return;
+	}
+	
 	if (magicComponent == nullptr)
 	{
 		return;
 	}
 
 	//Switch to combat stance
-	GetCharacterMovement()->bOrientRotationToMovement = false;
-	const UWorld* world = GetWorld();
-	world->GetTimerManager().ClearTimer(rangedCombatTimerHandle);
-	world->GetTimerManager().SetTimer(rangedCombatTimerHandle, this,
-		&APlayerBase::OnCombatStanceEnd, combatStanceTime);
+	BeginCombatStance();
+	BeginEndCombatStanceTimer();
 
 	// Cast Spell
 	magicComponent->CastSupportSpell();
@@ -413,27 +753,46 @@ void APlayerBase::UseAbility1()
 */
 void APlayerBase::UseAbility2()
 {
+	if (isUsingTK)
+	{
+		isTKPulling = false;
+		
+		// Push TK object out
+		isTKPushing = true;
+
+		return;
+	}
+	
 	if (magicComponent == nullptr)
 	{
 		return;
 	}
 
 	//Switch to combat stance
-	GetCharacterMovement()->bOrientRotationToMovement = false;
-	const UWorld* world = GetWorld();
-	world->GetTimerManager().ClearTimer(rangedCombatTimerHandle);
-	world->GetTimerManager().SetTimer(rangedCombatTimerHandle, this,
-		&APlayerBase::OnCombatStanceEnd, combatStanceTime);
+	BeginCombatStance();
+	BeginEndCombatStanceTimer();
 
 	// Cast Spell
 	magicComponent->CastDestructionSpell();
+}
+
+void APlayerBase::BeginCombatStance()
+{
+	GetCharacterMovement()->bOrientRotationToMovement = false;
+	GetWorld()->GetTimerManager().ClearTimer(rangedCombatTimerHandle);
+}
+
+void APlayerBase::BeginEndCombatStanceTimer()
+{
+	GetWorld()->GetTimerManager().SetTimer(rangedCombatTimerHandle, this,
+	&APlayerBase::EndCombatStance, combatStanceTime);
 }
 
 /**
 * Expiry function for the combat stance timer
 * Resets player to turn in direction of movement a set time after doing ranged attacks
 */
-void APlayerBase::OnCombatStanceEnd() const
+void APlayerBase::EndCombatStance() const
 {
 	if (isAiming)
 	{
@@ -450,7 +809,7 @@ void APlayerBase::OnCombatStanceEnd() const
 void APlayerBase::DetectMeleeHits()
 {
 	//Temporarily use a point just in front of the player
-	FVector detectionPoint = GetActorLocation() + (GetActorForwardVector() * 150);
+	const FVector detectionPoint = GetActorLocation() + (GetActorForwardVector() * 150);
 
 	TArray<FHitResult> hitResults;
 
@@ -553,8 +912,10 @@ void APlayerBase::BeginAiming_Implementation()
 	}
 
 	isAiming = true;
-	GetCharacterMovement()->bOrientRotationToMovement = false;
 	GetCharacterMovement()->MaxWalkSpeed = aimSpeed;
+
+	//GetCharacterMovement()->bOrientRotationToMovement = false;
+	BeginCombatStance();
 
 	// Call to observers if any exist
 	if (observers.Num() > 0)
@@ -574,6 +935,8 @@ void APlayerBase::EndAiming_Implementation()
 	isAiming = false;
     GetCharacterMovement()->bOrientRotationToMovement = true;
     GetCharacterMovement()->MaxWalkSpeed = runSpeed;
+
+	EndCombatStance();
 
 	// Call to observers if any exist
 	if (observers.Num() > 0)
@@ -617,6 +980,16 @@ void APlayerBase::InteractWithObject()
 	if (currentInteractableObject != nullptr)
 	{
 		currentInteractableObject->Execute_Interact(currentInteractableObject.GetObject());
+		return;
+	}
+
+	// Pickup and drop TK objects if no interactable
+	if (tkObject != nullptr && !isUsingTK)
+	{
+		PickupTKObject();
+	} else if (tkObject != nullptr && isUsingTK)
+	{
+		DropTKObject();
 	}
 }
 
@@ -710,7 +1083,7 @@ void APlayerBase::ApplyJumpChange_Implementation(float percentage, float duratio
 	}
 
 	world->GetTimerManager().SetTimer(jumpTimerHandle, this,
-		&APlayerBase::OnJumChangeExpired, duration);
+		&APlayerBase::OnJumpChangeExpired, duration);
 }
 
 /**
@@ -777,7 +1150,7 @@ void APlayerBase::OnSpeedChangeExpired()
 	GetWorld()->GetTimerManager().ClearTimer(speedTimerHandle);
 }
 
-void APlayerBase::OnJumChangeExpired()
+void APlayerBase::OnJumpChangeExpired()
 {
 	GetCharacterMovement()->JumpZVelocity = jumpHeight;
 	GetWorld()->GetTimerManager().ClearTimer(jumpTimerHandle);
@@ -835,4 +1208,9 @@ void APlayerBase::UnSubscribePlayerObserver_Implementation(const TScriptInterfac
 	}
 
 	observers.Remove(oldObserver);
+}
+
+void APlayerBase::ScreenDebugMessage(FString message, FColor displayColor, float displayTime)
+{
+	GEngine->AddOnScreenDebugMessage(-1, displayTime, displayColor, message);
 }
