@@ -11,37 +11,28 @@ UMagicComponent::UMagicComponent()
 {
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
-	PrimaryComponentTick.bCanEverTick = true;
-
-	// ...
+	PrimaryComponentTick.bCanEverTick = false;
+	
 }
-
 
 // Called when the game starts
 void UMagicComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// ...
-	UInputComponent* inputComponent = GetOwner()->FindComponentByClass<UInputComponent>();
-	if (inputComponent != nullptr)
+	// Set default spells if they are set
+	if (startingDestructionSpell != nullptr)
 	{
-		inputComponent->BindAction("Ability1", IE_Pressed, this, &UMagicComponent::CastSupportSpell);
-		inputComponent->BindAction("Ability2", IE_Pressed, this, &UMagicComponent::CastDestructionSpell);
+		SetDestructionMagicSpell(startingDestructionSpell);
 	}
-	
+
+	if (startingSupportSpell != nullptr)
+	{
+		SetSupportMagicSpell(startingSupportSpell);
+	}
 }
 
-
-// Called every frame
-void UMagicComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
-{
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
-	// ...
-}
-
-void UMagicComponent::CastDestructionSpell()
+void UMagicComponent::CastDestructionSpell() const
 {
 	if (GetOwner()->Implements<UPlayerCharacter>())
 	{
@@ -68,7 +59,7 @@ void UMagicComponent::CastDestructionSpell()
 	}
 }
 
-void UMagicComponent::CastSupportSpell()
+void UMagicComponent::CastSupportSpell() const
 {
 	if (GetOwner()->Implements<UPlayerCharacter>())
 	{
@@ -95,28 +86,62 @@ void UMagicComponent::CastSupportSpell()
 	}
 }
 
-void UMagicComponent::SetDestructionMagicSpell_Implementation(AMagicSpellBase* newMagicSpell)
+/**
+* Creates and Equips a new destruction spell
+*/
+void UMagicComponent::SetDestructionMagicSpell(TSubclassOf<UMagicSpellBase> newMagicSpell)
 {
+	if (newMagicSpell == nullptr)
+	{
+		return;
+	}
+
+	// Destroy old spell
+	if (destructionSpell != nullptr)
+	{
+		destructionSpell->ConditionalBeginDestroy();
+		destructionSpell = nullptr;
+	}
+
+	// Create and equip new spell
 	if (newMagicSpell != nullptr)
 	{
-		destructionSpell = newMagicSpell;
+		UMagicSpellBase* spell = NewObject<UMagicSpellBase>(GetOwner(), newMagicSpell);
+		destructionSpell = spell;
 	}
 }
 
-void UMagicComponent::SetSupportMagicSpell_Implementation(AMagicSpellBase* newSupportSpell)
+/**
+* Creates and Equips a new support spell
+*/
+void UMagicComponent::SetSupportMagicSpell(TSubclassOf<UMagicSpellBase> newSupportSpell)
 {
+	if (newSupportSpell == nullptr)
+	{
+		return;
+	}
+
+	// Destroy old spell
+	if (supportSpell != nullptr)
+	{
+		supportSpell->ConditionalBeginDestroy();
+		supportSpell = nullptr;
+	}
+
+	// Create and equip new support spell
 	if (newSupportSpell != nullptr)
 	{
-		supportSpell = newSupportSpell;
+		UMagicSpellBase* spell = NewObject<UMagicSpellBase>(GetOwner(), newSupportSpell);
+		supportSpell = spell;
 	}
 }
 
-AMagicSpellBase* UMagicComponent::GetCurrentDestructionSpell()
+UMagicSpellBase* UMagicComponent::GetCurrentDestructionSpell()
 {
 	return destructionSpell;
 }
 
-AMagicSpellBase* UMagicComponent::GetCurrentSupportSpell()
+UMagicSpellBase* UMagicComponent::GetCurrentSupportSpell()
 {
 	return supportSpell;
 }

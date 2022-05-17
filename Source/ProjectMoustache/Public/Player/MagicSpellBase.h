@@ -3,14 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Actor.h"
+#include "UObject/Object.h"
 #include "MagicSpellBase.generated.h"
 
 /**
  * 
  */
-UCLASS()
-class PROJECTMOUSTACHE_API AMagicSpellBase : public AActor
+UCLASS(Blueprintable, BlueprintType)
+class PROJECTMOUSTACHE_API UMagicSpellBase : public UObject
 {
 	GENERATED_BODY()
 
@@ -24,8 +24,6 @@ class PROJECTMOUSTACHE_API AMagicSpellBase : public AActor
 
 protected:
 
-	virtual void BeginPlay() override;
-
 	// Name of the spell
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = MagicSpell)
 	FText spellName;
@@ -37,6 +35,10 @@ protected:
 	// Spell icon
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = MagicSpell)
 	UTexture2D* spellIcon;
+
+	// Spell projectile
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = MagicSpell)
+	TSubclassOf<AActor> spellProjectile;
 
 	// Amount of damage done
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = MagicSpell)
@@ -50,14 +52,12 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = MagicSpell)
 	float coolDownTime;
 
-	// Implementation of the casting of the spell
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
-	void CastSpell(APawn* userActor);
-	void CastSpell_Implementation(APawn* userActor) { }
+	UFUNCTION(BlueprintCallable)
+	virtual UWorld* GetWorld() const;
 
 public:
 
-	AMagicSpellBase();
+	UMagicSpellBase();
 
 	/**
 	 * Universal call function to cast the spell
