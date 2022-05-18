@@ -53,9 +53,9 @@ public:
 	void SetSupportMagicSpell(TSubclassOf<UMagicSpellBase> newSupportSpell);
 
 	UFUNCTION(BlueprintCallable)
-	FORCEINLINE UMagicSpellBase* GetCurrentDestructionSpell();
+	UMagicSpellBase* GetCurrentDestructionSpell();
 
 	UFUNCTION(BlueprintCallable)
-	FORCEINLINE UMagicSpellBase* GetCurrentSupportSpell();
+	UMagicSpellBase* GetCurrentSupportSpell();
 	
 };

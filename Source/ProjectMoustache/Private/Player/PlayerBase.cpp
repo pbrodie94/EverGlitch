@@ -437,6 +437,16 @@ void APlayerBase::DetectTKObjects()
 	}
 
 	const UWorld* world = GetWorld();
+
+	// Add a delay in between checks
+	const float worldTime = world->GetTimeSeconds();
+	if (worldTime < timeNextDetectTK)
+	{
+		return;
+	}
+
+	timeNextDetectTK = worldTime + 0.2f;
+	
 	TArray<AActor*> nearbyTKObjects;
 
 	// Get TK objects in proximity
@@ -953,6 +963,8 @@ void APlayerBase::EndAiming_Implementation()
 
 void APlayerBase::Die_Implementation()
 {
+	Super::Die_Implementation();
+	
 	//Reset all temporary values
 	ApplyDamageChange(0, 0);
 	ApplySpeedChange(0, 0);
