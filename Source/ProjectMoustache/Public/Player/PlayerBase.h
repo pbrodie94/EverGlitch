@@ -136,6 +136,8 @@ class PROJECTMOUSTACHE_API APlayerBase : public AEntityBase, public IPlayerChara
 
 	bool isTKPushing;
 	bool isTKPulling;
+	
+	float timeNextDetectTK;
 
 	// The speed the player can push or pull a TK object in the air
 	UPROPERTY(EditDefaultsOnly, Category = Abilities, meta = (AllowPrivateAccess = true))
