@@ -16,6 +16,7 @@ class PROJECTMOUSTACHE_API APlayerBase : public AEntityBase, public IPlayerChara
 {
 	GENERATED_BODY()
 
+	// COMPONENTS ***********************************************************************
 	//Camera boom arm
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Camera, meta = (AllowPrivateAccess = true))
 	class USpringArmComponent* cameraBoom;
@@ -34,12 +35,15 @@ class PROJECTMOUSTACHE_API APlayerBase : public AEntityBase, public IPlayerChara
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = true))
 	UCombatManagerComponent* combatManager;
 
+	//************************************************************************************
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = true))
 	float aimSensitivityX;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = true))
 	float aimSensitivityY;
 
+	// MOVEMENT ***********************************************************************
 	//Default move speed
 	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = true))
 	float runSpeed;
@@ -56,6 +60,8 @@ class PROJECTMOUSTACHE_API APlayerBase : public AEntityBase, public IPlayerChara
 	UPROPERTY(EditDefaultsOnly, Category = Abilities, meta = (AllowPrivateAccess = true))
 	float airControl;
 
+	// ENERGY VARIABLES ****************************************************************
+	
 	// Amount of energy player has to perform abilities like dash
 	float abilityEnergy;
 
@@ -74,6 +80,9 @@ class PROJECTMOUSTACHE_API APlayerBase : public AEntityBase, public IPlayerChara
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Abilities, meta = (AllowPrivateAccess = true))
 	float energyRechargeRate;
 
+	//*********************************************************************************
+	// DASH VARIABLES *****************************************************************
+	
 	//Amount of force/distance in a dash
 	UPROPERTY(EditDefaultsOnly, Category = Abilities, meta = (AllowPrivateAccess = true))
 	float dashPower;
@@ -92,7 +101,9 @@ class PROJECTMOUSTACHE_API APlayerBase : public AEntityBase, public IPlayerChara
 
 	// Counter for times dashed in the air. Resets when player is on the ground
 	int timesDashedInAir;
-	
+
+	//**********************************************************************************
+	// COMBAT VARIABLES ****************************************************************
 	//Duration player is facing direction of camera after performing ranged attack
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Combat, meta = (AllowPrivateAccess = true))
 	float combatStanceTime;
@@ -102,28 +113,80 @@ class PROJECTMOUSTACHE_API APlayerBase : public AEntityBase, public IPlayerChara
 	//Time able to fire again, time plus delay set every shot
 	float timeNextShot;
 
+	//*********************************************************************************
+
 	//Next time able to dash
 	float timeNextDash;
 	
 	// Controls when player has control of the character
 	bool hasControl;
 
-	//Timer handles
+	// TELEKINESIS VARIABLES *******************************************************
+
+	bool isUsingTK;
+	
+	// The object currently being manipulated by TK
+	UPROPERTY()
+	AActor* tkObject; 
+	
+	// The target point in space the object will be brought to
+	FVector targetPoint;
+
+	float targetDistance;
+
+	bool isTKPushing;
+	bool isTKPulling;
+	
+	float timeNextDetectTK;
+
+	// The speed the player can push or pull a TK object in the air
+	UPROPERTY(EditDefaultsOnly, Category = Abilities, meta = (AllowPrivateAccess = true))
+	float pushPullSpeed;
+
+	// The ability energy cost to use telekinesis
+	UPROPERTY(EditDefaultsOnly, Category = Abilities, meta = (AllowPrivateAccess = true))
+	float tkEnergyCost;
+	
+	// The accuracy of how close the object gets to the target point
+	UPROPERTY(EditDefaultsOnly, Category = Abilities, meta = (AllowPrivateAccess = true))
+	float tkAccuracy;
+
+	// The detection angle in degrees for highlighting objects to interact with TK
+	float tkViewAngle;
+
+	// The minimum distance the object can be brought in
+	float minTKRange;
+	
+	// Max range of the telekinesis ability
+	UPROPERTY(EditDefaultsOnly, Category = Abilities, meta = (AllowPrivateAccess = true))
+	float maxTKRange;
+
+	// The amount of force the TK push has
+	UPROPERTY(EditDefaultsOnly, Category = Abilities, meta = (AllowPrivateAccess = true))
+	float tkPushForce;
+
+	// List of objects that are not tk objects
+	UPROPERTY()
+	TArray<AActor*> nonTKObjects;
+
+	//****************************************************************************
+	// Timer handles *************************************************************
 	FTimerHandle rangedCombatTimerHandle;
 
 	FTimerHandle damageTimerHandle;
 	FTimerHandle speedTimerHandle;
 	FTimerHandle jumpTimerHandle;
 
-	//Handles movement
+	// *****************************************************************************
+	// Handles movement ************************************************************
 	void MoveForward(float value);
 	void MoveRight(float value);
 
-	// Handles looking
+	// Handles looking *************************************************************
 	void LookX(float value);
 	void LookY(float value);
 
-	// Handles jumping
+	// Handles jumping *************************************************************
 	void BeginJump();
 	void EndJump();
 
@@ -165,11 +228,14 @@ class PROJECTMOUSTACHE_API APlayerBase : public AEntityBase, public IPlayerChara
 	 */
 	void InteractWithObject();
 
+	void BeginCombatStance();
+	void BeginEndCombatStanceTimer();
+
 	/**
 	 * Expiry function for the combat stance timer
 	 * Resets player to turn in direction of movement a set time after doing ranged attacks
 	 */
-	void OnCombatStanceEnd() const;
+	void EndCombatStance() const;
 
 	/**
 	 * Expiry functions for stat change timers
@@ -177,8 +243,36 @@ class PROJECTMOUSTACHE_API APlayerBase : public AEntityBase, public IPlayerChara
 	 */
 	void OnDamageChangeExpired();
 	void OnSpeedChangeExpired();
-	void OnJumChangeExpired();
+	void OnJumpChangeExpired();
 
+	// Telekinesis functions ***********************************************************
+
+	/**
+	 * Used to detect nearby objects that can be picked up with the TK ability
+	 * Gets a list of objects then highlights one that is within the tkViewAngle.
+	 * If more than one object is within the tkViewAngle the one that is closest
+	 * to the center will be chosen.
+	 */
+	void DetectTKObjects();
+
+	void RemoveTKObject();
+
+	void PickupTKObject();
+
+	void PushTKObject();
+
+	void DropTKObject();
+	
+	void ManipulateTKObject(float deltaTime);
+
+	void StopPushingTKObject();
+
+	void StopPullingTKObject();
+	
+	//**********************************************************************************
+
+	void ScreenDebugMessage(FString message, FColor displayColor, float displayTime);
+	
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
