@@ -13,42 +13,49 @@ class PROJECTMOUSTACHE_API UMagicComponent : public UActorComponent
 	GENERATED_BODY()
 
 	UPROPERTY()
-	AMagicSpellBase* destructionSpell;
+	UMagicSpellBase* destructionSpell;
 
 	UPROPERTY()
-	AMagicSpellBase* supportSpell;
-
-	void CastDestructionSpell();
-	void CastSupportSpell();
+	UMagicSpellBase* supportSpell;
 	
 public:	
 	// Sets default values for this component's properties
 	UMagicComponent();
 
 protected:
+
+	// Default destruction to be equipped when game starts
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<UMagicSpellBase> startingDestructionSpell;
+
+	// Default support to be equipped when game starts
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<UMagicSpellBase> startingSupportSpell;
+	
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
-public:	
-	// Called every frame
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+public:
+	
+	void CastDestructionSpell() const;
+	void CastSupportSpell() const;
+	
+	/**
+	* Creates and Equips a new destruction spell
+	*/
+	UFUNCTION(BlueprintCallable)
+	void SetDestructionMagicSpell(TSubclassOf<UMagicSpellBase> newMagicSpell);
 
 	/**
-	* Equips a new magic spell
+	* Creates and Equips a new support spell
 	*/
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	void SetDestructionMagicSpell(AMagicSpellBase* newMagicSpell);
-
-	/**
-	* Equips a new support spell
-	*/
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	void SetSupportMagicSpell(AMagicSpellBase* newSupportSpell);
+	UFUNCTION(BlueprintCallable)
+	void SetSupportMagicSpell(TSubclassOf<UMagicSpellBase> newSupportSpell);
 
 	UFUNCTION(BlueprintCallable)
-	AMagicSpellBase* GetCurrentDestructionSpell();
+	UMagicSpellBase* GetCurrentDestructionSpell();
 
 	UFUNCTION(BlueprintCallable)
-	AMagicSpellBase* GetCurrentSupportSpell();
+	UMagicSpellBase* GetCurrentSupportSpell();
 	
 };
