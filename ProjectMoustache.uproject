@@ -23,5 +23,8 @@
 			"Name": "Landmass",
 			"Enabled": true
 		}
+	],
+	"TargetPlatforms": [
+		"WindowsNoEditor"
 	]
 }
