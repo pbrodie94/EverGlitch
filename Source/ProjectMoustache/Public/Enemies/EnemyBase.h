@@ -45,6 +45,6 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	UFUNCTION(BlueprintCallable)
-	virtual void SetMoveSpeed(bool running);
+	/*UFUNCTION(BlueprintCallable)
+	virtual void SetMoveSpeed(bool running);*/
 };

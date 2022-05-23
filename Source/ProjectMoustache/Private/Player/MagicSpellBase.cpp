@@ -3,6 +3,8 @@
 
 #include "Player/MagicSpellBase.h"
 
+#include <vector>
+
 #include "Kismet/KismetMathLibrary.h"
 
 UMagicSpellBase::UMagicSpellBase()
@@ -23,7 +25,7 @@ void UMagicSpellBase::Execute(APawn* userActor)
 	{
 		return;
 	}
-
+	
 	// TODO: Add call to get spawn point from player character when created
 	const FRotator spawnRotation = userActor->GetControlRotation();
 	const FVector spawnPosition = userActor->GetActorLocation() +

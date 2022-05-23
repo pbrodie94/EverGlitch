@@ -23,7 +23,7 @@ void UStatusEffectBase::Init(AActor* actor, float amount, float effectDuration, 
 	duration = effectDuration;
 	timeEnded = worldTime + duration;
 	effectAmount = amount;
-
+	
 	timeRemaining = duration;
 }
 
@@ -31,11 +31,17 @@ void UStatusEffectBase::UpdateStatus(float worldTime)
 {
 	if (worldTime > timeEnded)
 	{
-		isExpired = true;
+		SetExpired();
 		IDamageable::Execute_RemoveStatusEffect(effectedActor, this);
 	}
 
 	timeRemaining = timeEnded - worldTime;
+}
+
+void UStatusEffectBase::SetExpired()
+{
+	OnExpired();
+	isExpired = true;
 }
 
 /*************************************************************************************************************
@@ -71,6 +77,33 @@ void UBurnStatus::UpdateStatus(float worldTime)
 /*************************************************************************************************************
 * Chilled Effect
 *************************************************************************************************************/
+
+void UChilledStatus::Init(AActor* actor, float amount, float effectDuration, float interval, float worldTime)
+{
+	Super::Init(actor, amount, effectDuration, interval, worldTime);
+
+	IDamageable* damagableActor = Cast<IDamageable>(effectedActor);
+	if(damagableActor == nullptr)
+	{
+		return;
+	}
+
+	defaultSpeed = damagableActor->GetMoveSpeed();
+	damagableActor->SetMoveSpeed(defaultSpeed / 2);
+}
+
+void UChilledStatus::OnExpired()
+{
+	Super::OnExpired();
+	
+	IDamageable* damagableActor = Cast<IDamageable>(effectedActor);
+	if(damagableActor == nullptr)
+	{
+		return;
+	}
+	
+	damagableActor->SetMoveSpeed(defaultSpeed);
+}
 
 /*************************************************************************************************************
 * Wet Effect
