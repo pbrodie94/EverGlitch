@@ -3,8 +3,6 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "CombatManagerComponent.h"
-#include "MagicComponent.h"
 #include "PlayerCharacter.h"
 #include "PlayerObserver.h"
 #include "EntityBase.h"
@@ -30,10 +28,13 @@ class PROJECTMOUSTACHE_API APlayerBase : public AEntityBase, public IPlayerChara
 	TSubclassOf<UMatineeCameraShake> cameraShake;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = true))
-	UMagicComponent* magicComponent;
+	class UMagicComponent* magicComponent;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = true))
-	UCombatManagerComponent* combatManager;
+	class UCombatManagerComponent* combatManager;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = true))
+	class UInventoryComponentBase* inventoryComponent;
 
 	//************************************************************************************
 
@@ -368,7 +369,13 @@ public:
 	 * Returns pointer reference to combat manager
 	 */
 	UFUNCTION(BlueprintCallable)
-	UCombatManagerComponent* GetCombatManager() { return combatManager; }
+	FORCEINLINE class UCombatManagerComponent* GetCombatManager() { return combatManager; }
+
+	/**
+	 * Returns pointer to inventory component
+	 */
+	UFUNCTION(BlueprintCallable)
+	FORCEINLINE class UInventoryComponentBase* GetInventoryComponent() { return inventoryComponent; }
 
 	//Player Character interface functions
 	/**
