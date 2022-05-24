@@ -157,7 +157,7 @@ void AImpBase::UnlockTarget()
 	bodyCollider->SetRelativeRotation(FRotator(0, 0, 0));
 }
 
-void AImpBase::SetMoveSpeed(bool running)
+/*void AImpBase::SetMoveSpeed(bool running)
 {
 	GetCharacterMovement()->MaxFlySpeed = running ? runSpeed : walkSpeed;
-}
+}*/

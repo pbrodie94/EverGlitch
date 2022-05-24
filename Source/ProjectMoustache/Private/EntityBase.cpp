@@ -297,6 +297,16 @@ float AEntityBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEven
 	return DamageAmount;
 }
 
+void AEntityBase::SetMoveSpeed(float speed)
+{
+	GetCharacterMovement()->MaxWalkSpeed = speed;	
+}
+
+float AEntityBase::GetMoveSpeed() const
+{
+	return GetCharacterMovement()->MaxWalkSpeed;	
+}
+
 void AEntityBase::Die_Implementation()
 {
 	if (OnDied.IsBound())
@@ -319,7 +329,7 @@ void AEntityBase::RemoveStatus_Implementation(EStatusEffectType statusEffect)
 	{
 		if (status->GetEffectType() == statusEffect)
 		{
-			status->SetIsExpired(true);
+			status->SetExpired();
 			removedStatusEffects.Add(status);
 		}
 	}
@@ -335,7 +345,7 @@ void AEntityBase::RemoveStatusEffect_Implementation(UStatusEffectBase* statusEff
 		return;
 	}
 
-	statusEffect->SetIsExpired(true);
+	statusEffect->SetExpired();
 	removedStatusEffects.Add(statusEffect);
 }
 
