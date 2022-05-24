@@ -4,11 +4,13 @@
 #include "Player/PlayerBase.h"
 #include "Camera/CameraComponent.h"
 #include "Components/BoxComponent.h"
-#include "Debug/ReporterBase.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Interactables/Telekinesisable.h"
+#include "Player/CombatManagerComponent.h"
+#include "Player/MagicComponent.h"
+#include "Interactables/InventoryComponentBase.h"
 
 // Sets default values
 APlayerBase::APlayerBase()
@@ -69,6 +71,9 @@ APlayerBase::APlayerBase()
 
 	// Combat manager
 	combatManager = CreateDefaultSubobject<UCombatManagerComponent>(TEXT("CombatManager"));
+
+	// Inventory Component
+	inventoryComponent = CreateDefaultSubobject<UInventoryComponentBase>(TEXT("InventoryComponent"));
 
 	// Init TK vars
 	isUsingTK = false;

@@ -13,6 +13,8 @@ UInventoryComponentBase::UInventoryComponentBase()
 	numberOfSlots = 36;
 	
 	selectedItem = -1;
+
+	maxSlotSize = 99;
 }
 
 
@@ -23,7 +25,7 @@ void UInventoryComponentBase::BeginPlay()
 
 	// ...
 
-	InputComponent = GetOwner()->FindComponentByClass<UInputComponent>();
+	UInputComponent* InputComponent = GetOwner()->FindComponentByClass<UInputComponent>();
 	if (InputComponent)
 	{
 		InputComponent->BindAction("QuickSlot1", IE_Pressed, this, &UInventoryComponentBase::UseQuickSlot1);
@@ -36,20 +38,31 @@ void UInventoryComponentBase::BeginPlay()
 
 	inventory.SetNum(numberOfSlots);
 	SetSelectedItem(-1);
-}
 
+	if (slot1Item != nullptr)
+	{
+		AItemBase* item = GetWorld()->SpawnActor<AItemBase>(slot1Item);
+		if (item != nullptr)
+		{
+			slot1.item = FInventoryItem(item->GetItemName(), item->GetItemType(), item->GetItemIcon(), slot1Item);
+			item->Destroy();
+		}
+	}
 
-// Called every frame
-void UInventoryComponentBase::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
-{
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
-	// ...
+	if (slot2Item != nullptr)
+	{
+		AItemBase* item = GetWorld()->SpawnActor<AItemBase>(slot2Item);
+		if (item != nullptr)
+		{
+			slot2.item = FInventoryItem(item->GetItemName(), item->GetItemType(), item->GetItemIcon(), slot2Item);
+			item->Destroy();
+		}
+	}
 }
 
 bool UInventoryComponentBase::AddToInventory(FInventorySlot itemToAdd)
 {
-	if (!itemToAdd.item.isStackable)
+	/*if (!itemToAdd.item.isStackable)
 	{
 		return CreateStack(itemToAdd);
 	}
@@ -59,7 +72,31 @@ bool UInventoryComponentBase::AddToInventory(FInventorySlot itemToAdd)
 		return AddToStack(itemToAdd, GetPartialStackIndex(itemToAdd));
 	}
 	
-	return CreateStack(itemToAdd);
+	return CreateStack(itemToAdd);*/
+	
+	if (itemToAdd.item.itemType == slot1.item.itemType && slot1.quantity < maxSlotSize)
+	{
+		++slot1.quantity;
+		if (OnQuickslotsUpdated.IsBound())
+		{
+			OnQuickslotsUpdated.Broadcast();
+		}
+
+		return true;
+	}
+
+	if (itemToAdd.item.itemType == slot2.item.itemType && slot2.quantity < maxSlotSize)
+	{
+		++slot2.quantity;
+		if (OnQuickslotsUpdated.IsBound())
+		{
+			OnQuickslotsUpdated.Broadcast();
+		}
+
+		return true;
+	}
+
+	return false;
 }
 
 /**
@@ -70,7 +107,7 @@ bool UInventoryComponentBase::AddToInventory(FInventorySlot itemToAdd)
 */
 bool UInventoryComponentBase::CreateStack(FInventorySlot itemToAdd)
 {
-	int freeIndex = GetNextEmptySlot();
+	const int freeIndex = GetNextEmptySlot();
 	if (freeIndex == -1)
 	{
 		return false;
@@ -99,8 +136,8 @@ bool UInventoryComponentBase::AddToStack(FInventorySlot itemToAdd, int index)
 		inventory[index].quantity = inventory[index].quantity + itemToAdd.quantity;
 		return true;
 	}
-	
-	int overflow = (itemToAdd.quantity + inventory[index].quantity) - inventory[index].item.maxStackSize;
+
+	const int overflow = (itemToAdd.quantity + inventory[index].quantity) - inventory[index].item.maxStackSize;
 	inventory[index].quantity = inventory[index].item.maxStackSize;
 
 	FInventorySlot overflowItem;
@@ -109,7 +146,7 @@ bool UInventoryComponentBase::AddToStack(FInventorySlot itemToAdd, int index)
 
 	if (GetHasPartialStack(itemToAdd))
 	{
-		int partialStackIndex = GetPartialStackIndex(overflowItem);
+		const int partialStackIndex = GetPartialStackIndex(overflowItem);
 		AddToStack(overflowItem, partialStackIndex);
 		return true;
 	}
@@ -125,17 +162,63 @@ bool UInventoryComponentBase::AddToStack(FInventorySlot itemToAdd, int index)
 
 void UInventoryComponentBase::UseQuickSlot1()
 {
-	UseQuickSlot(1);
+	//UseQuickSlot(1);
+
+	if (slot1.item.itemClass == nullptr)
+	{
+		return;
+	}
+	
+	if (slot1.quantity <= 0)
+	{
+		return;
+	}
+
+	AItemBase* item = GetWorld()->SpawnActor<AItemBase>(slot1.item.itemClass);
+	if (item != nullptr)
+	{
+		item->Use(GetOwner());
+		--slot1.quantity;
+		item->Destroy();
+
+		if (OnQuickslotsUpdated.IsBound())
+		{
+			OnQuickslotsUpdated.Broadcast();
+		}
+	}
 }
 
 void UInventoryComponentBase::UseQuickSlot2()
 {
-	UseQuickSlot(2);
+	//UseQuickSlot(2);
+
+	if (slot2.item.itemClass == nullptr)
+	{
+		return;
+	}
+
+	if (slot2.quantity <= 0)
+	{
+		return;
+	}
+
+	AItemBase* item = GetWorld()->SpawnActor<AItemBase>(slot2.item.itemClass);
+	if (item != nullptr)
+	{
+		item->Use(GetOwner());
+		--slot2.quantity;
+		item->Destroy();
+
+		if (OnQuickslotsUpdated.IsBound())
+		{
+			OnQuickslotsUpdated.Broadcast();
+		}
+	}
 }
 
 void UInventoryComponentBase::UseQuickSlot3()
 {
-	UseQuickSlot(3);
+	//UseQuickSlot(3);
 }
 
 bool UInventoryComponentBase::UseQuickSlot(int slotNumber)
