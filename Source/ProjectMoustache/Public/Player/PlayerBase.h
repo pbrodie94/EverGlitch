@@ -191,12 +191,6 @@ class PROJECTMOUSTACHE_API APlayerBase : public AEntityBase, public IPlayerChara
 	void BeginJump();
 	void EndJump();
 
-	// *****************************************************************************
-	// WEAPON STUFF ****************************************************************
-	
-	// Temporarily Updating position
-	void UpdateWeaponPosition() const;
-	
 	/**
 	 * Fire projectiles on main fire button.
 	 * Will be changed to call a fire function on a weapon when created
@@ -207,8 +201,6 @@ class PROJECTMOUSTACHE_API APlayerBase : public AEntityBase, public IPlayerChara
 	 * Called when the fire button is released
 	 */
 	void FireUp();
-
-	// ****************************************************************************
 
 	/**
 	 * Takes the movement direction of the player, excludes the vertical direction
@@ -458,8 +450,8 @@ public:
 	* Returns whether or not the player currently has a reference to an interactable object
 	*/
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	bool GetHasInteractable() const;
-	bool GetHasInteractable_Implementation() const;
+	bool GetHasInteractable();
+	bool GetHasInteractable_Implementation();
 
 	/**
 	* Returns the unique interactable message for each interactable
@@ -472,55 +464,37 @@ public:
 	* Returns the camera's current location
 	*/
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	FVector GetCameraLocation() const;
-	FVector GetCameraLocation_Implementation() const;
-
-	/**
-	 * Returns the forward vector of the player's camera
-	 */
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	FVector GetCameraForwardVector() const;
-	FVector GetCameraForwardVector_Implementation() const;
+	FVector GetCameraLocation();
+	FVector GetCameraLocation_Implementation();
 
 	/**
 	* Returns player's current location
 	*/
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	FVector GetPlayerLocation() const;
-	FVector GetPlayerLocation_Implementation() const;
+	FVector GetPlayerLocation();
+	FVector GetPlayerLocation_Implementation();
 
 	/**
 	* Returns player's current forward direction
 	*/
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	FVector GetPlayerForwardDirection() const;
-	FVector GetPlayerForwardDirection_Implementation() const;
+	FVector GetPlayerForwardDirection();
+	FVector GetPlayerForwardDirection_Implementation();
 
 	/**
 	* Returns player's current rotation
 	*/
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	FRotator GetPlayerRotation() const;
-	FRotator GetPlayerRotation_Implementation() const;
+	FRotator GetPlayerRotation();
+	FRotator GetPlayerRotation_Implementation();
 
 	/**
 	* Returns player's current velocity
 	*/
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	float GetCurrentPlayerVelocity() const;
-	float GetCurrentPlayerVelocity_Implementation() const;
+	float GetCurrentPlayerVelocity();
+	float GetCurrentPlayerVelocity_Implementation();
 
-	/**
-	* Returns the currently equipped weapon
-	*/
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	AWeaponBase* GetWeapon() const;
-	FORCEINLINE AWeaponBase* GetWeapon_Implementation() const { return currentWeapon; }
-
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	bool GetHasWeapon() const;
-	FORCEINLINE bool GetHasWeapon_Implementation() const { return currentWeapon != nullptr; }
-	
 	/**
 	* Subscribes actors as a new player observer
 	* Must implement the Player Observer Interface
