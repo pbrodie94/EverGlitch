@@ -445,10 +445,10 @@ void APlayerBase::Fire()
 
 void APlayerBase::FireUp()
 {
-	if (GetIsDead() || !hasControl)
+	/*if (GetIsDead() || !hasControl)
 	{
 		return;
-	}
+	}*/
 	
 	if (currentWeapon != nullptr)
 	{
@@ -1010,6 +1010,8 @@ void APlayerBase::Die_Implementation()
 	ApplyJumpChange(0, 0);
 
 	EndMeleeAttackDamage();
+	FireUp();
+	EndCombatStance();
 
 	if (isAiming)
 	{

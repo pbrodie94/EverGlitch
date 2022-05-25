@@ -3,6 +3,8 @@
 
 #include "Weapons/ProjectileBase.h"
 
+#include "Damageable.h"
+
 // Sets default values
 AProjectileBase::AProjectileBase()
 {
@@ -55,13 +57,21 @@ void AProjectileBase::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UP
 		return;
 	}
 
-	if (OtherActor != nullptr && OtherActor->ActorHasTag("LevelBounds"))
+	/*if (OtherActor != nullptr && OtherActor->ActorHasTag("LevelBounds"))
 	{
 		return;
-	}
+	}*/
 
 	if (OtherActor != nullptr && OtherActor->ActorHasTag("Enemy"))
 	{
+		if (OtherActor->GetClass()->ImplementsInterface(UDamageable::StaticClass()))
+		{
+			if (IDamageable::Execute_GetIsDead(OtherActor))
+			{
+				return;
+			}
+		}
+		
 		OtherActor->TakeDamage(damage, FDamageEvent(), GetOwner()->GetInstigatorController(),
 			GetOwner());
 	}

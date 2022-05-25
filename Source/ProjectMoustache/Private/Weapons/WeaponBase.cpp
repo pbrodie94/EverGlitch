@@ -3,6 +3,7 @@
 
 #include "Weapons/WeaponBase.h"
 
+#include "Damageable.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Player/PlayerCharacter.h"
 
@@ -62,20 +63,43 @@ void AWeaponBase::Fire()
 
 	// Line trace to get point in space the projectile will fire towards
 	const FVector end = (cameraForward * 10000) + cameraPosition;
-	FHitResult hitResult;
+	TArray<FHitResult> hitResults;
 	TArray<AActor*> ignoreActors;
 	ignoreActors.Add(GetOwner());
 
 	FVector fireDirection = cameraForward;
 
 	// Check for impact point to fire towards
-	const bool traceHit = world->LineTraceSingleByChannel(hitResult, cameraPosition, end,
+	const bool traceHit = world->LineTraceMultiByChannel(hitResults, cameraPosition, end,
 		ECC_Visibility);
 	if (traceHit)
 	{
-		// If hit somewhere, get direction from the fire position to the impact point
-		fireDirection = hitResult.ImpactPoint - firePoint->GetComponentLocation();
-		fireDirection.Normalize();
+		int index = 0;
+		
+		do
+		{
+			if (hitResults[index].GetActor() != nullptr &&
+				hitResults[index].GetActor()->GetClass()->ImplementsInterface(UDamageable::StaticClass()))
+			{
+				if (IDamageable::Execute_GetIsDead(hitResults[index].GetActor()))
+				{
+					++index;
+					continue;
+				}
+			}
+			
+			/*if (hitResult[index].GetActor() != nullptr)
+			{
+				GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Cyan,
+					hitResult.GetActor()->GetName());
+			}*/
+		
+			// If hit somewhere, get direction from the fire position to the impact point
+			fireDirection = hitResults[index].ImpactPoint - firePoint->GetComponentLocation();
+			fireDirection.Normalize();
+			break;
+			
+		} while (index < hitResults.Num());
 	}
 
 	// Spawn projectile
