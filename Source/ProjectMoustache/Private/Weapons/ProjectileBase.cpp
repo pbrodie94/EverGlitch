@@ -12,11 +12,8 @@ AProjectileBase::AProjectileBase()
 	//Create sphere collider component and attach to root component
 	sphereCollider = CreateDefaultSubobject<USphereComponent>(TEXT("SphereCollider"));
 	sphereCollider->SetSphereRadius(25.0f);
+	sphereCollider->SetCollisionResponseToAllChannels(ECR_Block);
 	sphereCollider->SetupAttachment(RootComponent);
-
-	//Create the static mesh, and attach to the sphere collider
-	projectileMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("ProjectileMesh"));
-	projectileMesh->SetupAttachment(sphereCollider);
 
 	//Create and initialize the projectile movement component
 	projectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileMovement"));
@@ -33,18 +30,45 @@ void AProjectileBase::BeginPlay()
 {
 	Super::BeginPlay();
 
+	if (sphereCollider != nullptr)
+	{
+		sphereCollider->OnComponentHit.AddDynamic(this, &AProjectileBase::OnHit);
+	}
+
 	if (lifeSpan > 0)
 	{
 		SetLifeSpan(lifeSpan);
 	}
 }
 
-// Called every frame
-void AProjectileBase::Tick(float DeltaTime)
+/*void AProjectileBase::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
+	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	Super::Tick(DeltaTime);
+	
+}*/
 
+void AProjectileBase::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp,
+	FVector NormalImpulse, const FHitResult& Hit)
+{
+	if (OtherActor == GetOwner())
+	{
+		return;
+	}
+
+	if (OtherActor != nullptr && OtherActor->ActorHasTag("LevelBounds"))
+	{
+		return;
+	}
+
+	if (OtherActor != nullptr && OtherActor->ActorHasTag("Enemy"))
+	{
+		OtherActor->TakeDamage(damage, FDamageEvent(), GetOwner()->GetInstigatorController(),
+			GetOwner());
+	}
+
+	this->Destroy();
 }
+
 
 void AProjectileBase::SetProjectileSpeed(float speed)
 {

@@ -11,6 +11,7 @@
 #include "Player/CombatManagerComponent.h"
 #include "Player/MagicComponent.h"
 #include "Interactables/InventoryComponentBase.h"
+#include "Kismet/KismetMathLibrary.h"
 
 // Sets default values
 APlayerBase::APlayerBase()
@@ -159,6 +160,22 @@ void APlayerBase::BeginPlay()
 		combatStanceTime = 3;
 	}
 
+	// TODO: Spawn staff and attach to appropriate bone
+	if (startingWeapon != nullptr)
+	{
+		const FVector spawnLocation = (followCamera->GetForwardVector() * 100.0f) + GetActorLocation()
+		+ FVector(0.0f, 0.0f, 50.0f);
+		const FRotator spawnRotation = UKismetMathLibrary::MakeRotFromX(followCamera->GetForwardVector());
+		FActorSpawnParameters spawnParams;
+		spawnParams.Owner = this;
+		spawnParams.Instigator = this;
+		currentWeapon = GetWorld()->SpawnActor<AWeaponBase>(startingWeapon, FTransform(spawnRotation,
+			spawnLocation,FVector(1.0f, 1.0f, 1.0f)), spawnParams);
+
+		currentWeapon->AttachToComponent(GetMesh(),
+			FAttachmentTransformRules(EAttachmentRule::KeepRelative, true));
+	}
+
 	//Sets player's default values for reference
 	runSpeed = GetCharacterMovement()->MaxWalkSpeed;
 	if (aimSpeed <= 0)
@@ -200,6 +217,12 @@ void APlayerBase::Tick(float DeltaTime)
 		{
 			timesDashedInAir = 0;
 		}
+	}
+
+	// Temporary
+	if (currentWeapon != nullptr)
+	{
+		UpdateWeaponPosition();
 	}
 
 	// Recharge energy
@@ -374,6 +397,17 @@ void APlayerBase::Dash()
 void APlayerBase::HandleDashEffects_Implementation()
 {
 }
+
+// Temporary
+void APlayerBase::UpdateWeaponPosition() const
+{
+	const FVector position = (followCamera->GetForwardVector() * 100.0f) +
+		GetActorLocation() + FVector(0.0f, 0.0f, 50.0f);
+	const FRotator rotation = UKismetMathLibrary::MakeRotFromX(followCamera->GetForwardVector());
+
+	currentWeapon->SetActorTransform(FTransform(rotation, position, FVector(1.0f, 1.0f, 1.0f)));
+}
+
 
 /**
 * Fire projectiles on main fire button.
@@ -1130,7 +1164,7 @@ void APlayerBase::RemoveSelfAsInteractable_Implementation(const TScriptInterface
 /**
 * Returns whether or not the player currently has a reference to an interactable object
 */
-bool APlayerBase::GetHasInteractable_Implementation()
+bool APlayerBase::GetHasInteractable_Implementation() const
 {
 	return currentInteractableObject != nullptr;
 }
@@ -1146,9 +1180,17 @@ FText APlayerBase::GetInteractableMessage_Implementation()
 /**
 * Returns the camera's current location
 */
-FVector APlayerBase::GetCameraLocation_Implementation()
+FVector APlayerBase::GetCameraLocation_Implementation() const
 {
 	return followCamera->GetComponentLocation();
+}
+
+/**
+* Returns the forward vector of the player's camera
+*/
+FVector APlayerBase::GetCameraForwardVector_Implementation() const
+{
+	return followCamera->GetForwardVector();
 }
 
 /**
@@ -1176,7 +1218,7 @@ void APlayerBase::OnJumpChangeExpired()
 /**
 * Returns player's current location
 */
-FVector APlayerBase::GetPlayerLocation_Implementation()
+FVector APlayerBase::GetPlayerLocation_Implementation() const
 {
 	return GetActorLocation();
 }
@@ -1184,7 +1226,7 @@ FVector APlayerBase::GetPlayerLocation_Implementation()
 /**
 * Returns player's current forward direction
 */
-FVector APlayerBase::GetPlayerForwardDirection_Implementation()
+FVector APlayerBase::GetPlayerForwardDirection_Implementation() const
 {
 	return GetActorForwardVector();
 }
@@ -1192,7 +1234,7 @@ FVector APlayerBase::GetPlayerForwardDirection_Implementation()
 /**
 * Returns player's current rotation
 */
-FRotator APlayerBase::GetPlayerRotation_Implementation()
+FRotator APlayerBase::GetPlayerRotation_Implementation() const
 {
 	return GetActorRotation();
 }
@@ -1200,7 +1242,7 @@ FRotator APlayerBase::GetPlayerRotation_Implementation()
 /**
 * Returns player's current velocity
 */
-float APlayerBase::GetCurrentPlayerVelocity_Implementation()
+float APlayerBase::GetCurrentPlayerVelocity_Implementation() const
 {
 	return GetCharacterMovement()->Velocity.Size();
 }
