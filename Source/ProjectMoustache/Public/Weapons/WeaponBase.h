@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "ProjectileBase.h"
 #include "GameFramework/Actor.h"
 #include "WeaponBase.generated.h"
 
@@ -11,6 +12,14 @@ class PROJECTMOUSTACHE_API AWeaponBase : public AActor
 {
 	GENERATED_BODY()
 
+	// Staff mesh
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = true))
+	USkeletalMeshComponent* staffMesh;
+	
+	// Position in local space the projectile will fire from
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = true))
+	USceneComponent* firePoint;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = true))
 	float damage;
 
@@ -18,6 +27,10 @@ class PROJECTMOUSTACHE_API AWeaponBase : public AActor
 	float fireRate;
 
 	float timeNextFire;
+
+	bool isFiring;
+
+	void Fire();
 	
 public:	
 	// Sets default values for this actor's properties
@@ -25,8 +38,8 @@ public:
 
 protected:
 
-	UPROPERTY(BlueprintReadOnly)
-	APawn* currentUser;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TSubclassOf<AProjectileBase> projectile;
 	
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -35,9 +48,6 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	UFUNCTION(BlueprintCallable)
-	void SetUser(APawn* user) { currentUser = user; }
-
 	UFUNCTION(BlueprintNativeEvent)
 	bool OnFireDown();
 	bool OnFireDown_Implementation();
@@ -45,5 +55,7 @@ public:
 	UFUNCTION(BlueprintNativeEvent)
 	bool OnFireUp();
 	bool OnFireUp_Implementation();
+
+	FORCEINLINE USceneComponent* GetFirePoint() const { return firePoint; }
 
 };

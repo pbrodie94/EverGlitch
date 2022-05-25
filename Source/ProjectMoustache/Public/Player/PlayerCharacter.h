@@ -89,7 +89,7 @@ public:
 	 * Returns whether or not the player currently has a reference to an interactable object
 	 */
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	bool GetHasInteractable();
+	bool GetHasInteractable() const;
 	
 	/**
 	 * Returns the unique interactable message for each interactable
@@ -101,32 +101,47 @@ public:
 	 * Returns the camera's current location
 	 */
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	FVector GetCameraLocation();
+	FVector GetCameraLocation() const;
+
+	/**
+	* Returns the forward vector of the player's camera
+	*/
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	FVector GetCameraForwardVector() const;
 
 	/**
 	 * Returns player's current location
 	 */
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	FVector GetPlayerLocation();
+	FVector GetPlayerLocation() const;
 
 	/**
 	 * Returns player's current forward direction
 	 */
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	FVector GetPlayerForwardDirection();
+	FVector GetPlayerForwardDirection() const;
 
 	/**
 	* Returns player's current forward direction
 	*/
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	FRotator GetPlayerRotation();
+	FRotator GetPlayerRotation() const;
 
 	/**
 	 * Returns player's current velocity
 	 */
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	float GetCurrentPlayerVelocity();
+	float GetCurrentPlayerVelocity() const;
 
+	/**
+	 * Returns the currently equipped weapon
+	 */
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	class AWeaponBase* GetWeapon() const;
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	bool GetHasWeapon() const;
+	
 	/**
 	 * Subscribes actors as a new player observer
 	 * Must implement the Player Observer Interface
