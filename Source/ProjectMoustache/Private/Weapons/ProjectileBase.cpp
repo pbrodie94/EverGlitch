@@ -32,10 +32,10 @@ void AProjectileBase::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (sphereCollider != nullptr)
+	/*if (sphereCollider != nullptr)
 	{
 		sphereCollider->OnComponentHit.AddDynamic(this, &AProjectileBase::OnHit);
-	}
+	}*/
 
 	if (lifeSpan > 0)
 	{
