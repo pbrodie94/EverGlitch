@@ -133,6 +133,9 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void RemoveStatusEffect(class UStatusEffectBase* statusEffect);
 	virtual void RemoveStatusEffect_Implementation(class UStatusEffectBase* statusEffect) override;
+	
+	UFUNCTION(BlueprintCallable)
+	void RemoveAllStatusEffects();
 
 	/**
 	* Returns a list of status effects active on the character
