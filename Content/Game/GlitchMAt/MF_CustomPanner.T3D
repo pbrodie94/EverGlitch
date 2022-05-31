@@ -1,0 +1,229 @@
+Begin Object Class=/Script/Engine.MaterialFunction Name="MF_CustomPanner"
+   Begin Object Class=/Script/Engine.Material Name="Material_0"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionAdd Name="MaterialExpressionAdd_0"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionAdd Name="MaterialExpressionAdd_1"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionAppendVector Name="MaterialExpressionAppendVector_0"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionComponentMask Name="MaterialExpressionComponentMask_0"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionComponentMask Name="MaterialExpressionComponentMask_1"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionComponentMask Name="MaterialExpressionComponentMask_2"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionComponentMask Name="MaterialExpressionComponentMask_3"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionConstant2Vector Name="MaterialExpressionConstant2Vector_0"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionFunctionInput Name="MaterialExpressionFunctionInput_0"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionFunctionInput Name="MaterialExpressionFunctionInput_1"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionFunctionInput Name="MaterialExpressionFunctionInput_2"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionFunctionOutput Name="MaterialExpressionFunctionOutput_0"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionMaterialFunctionCall Name="MaterialExpressionMaterialFunctionCall_1"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionMultiply Name="MaterialExpressionMultiply_0"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionMultiply Name="MaterialExpressionMultiply_1"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionTextureCoordinate Name="MaterialExpressionTextureCoordinate_1"
+   End Object
+   Begin Object Class=/Script/UnrealEd.SceneThumbnailInfoWithPrimitive Name="SceneThumbnailInfoWithPrimitive_0"
+   End Object
+   Begin Object Name="Material_0"
+      EmissiveColor=(Expression=MaterialExpressionFunctionOutput'"MF_CustomPanner:MaterialExpressionFunctionOutput_0"')
+      ShadingModel=MSM_Unlit
+      ShadingModels=(ShadingModelField=1)
+      Expressions(0)=MaterialExpressionFunctionOutput'"MF_CustomPanner:MaterialExpressionFunctionOutput_0"'
+      Expressions(1)=MaterialExpressionFunctionInput'"MF_CustomPanner:MaterialExpressionFunctionInput_0"'
+      Expressions(2)=MaterialExpressionComponentMask'"MF_CustomPanner:MaterialExpressionComponentMask_0"'
+      Expressions(3)=MaterialExpressionComponentMask'"MF_CustomPanner:MaterialExpressionComponentMask_1"'
+      Expressions(4)=MaterialExpressionAdd'"MF_CustomPanner:MaterialExpressionAdd_0"'
+      Expressions(5)=MaterialExpressionAdd'"MF_CustomPanner:MaterialExpressionAdd_1"'
+      Expressions(6)=MaterialExpressionFunctionInput'"MF_CustomPanner:MaterialExpressionFunctionInput_1"'
+      Expressions(7)=MaterialExpressionConstant2Vector'"MF_CustomPanner:MaterialExpressionConstant2Vector_0"'
+      Expressions(8)=MaterialExpressionComponentMask'"MF_CustomPanner:MaterialExpressionComponentMask_2"'
+      Expressions(9)=MaterialExpressionComponentMask'"MF_CustomPanner:MaterialExpressionComponentMask_3"'
+      Expressions(10)=MaterialExpressionMultiply'"MF_CustomPanner:MaterialExpressionMultiply_0"'
+      Expressions(11)=MaterialExpressionMultiply'"MF_CustomPanner:MaterialExpressionMultiply_1"'
+      Expressions(12)=MaterialExpressionFunctionInput'"MF_CustomPanner:MaterialExpressionFunctionInput_2"'
+      Expressions(13)=MaterialExpressionMaterialFunctionCall'"MF_CustomPanner:MaterialExpressionMaterialFunctionCall_1"'
+      Expressions(14)=MaterialExpressionAppendVector'"MF_CustomPanner:MaterialExpressionAppendVector_0"'
+      Expressions(15)=MaterialExpressionTextureCoordinate'"MF_CustomPanner:MaterialExpressionTextureCoordinate_1"'
+      bCanMaskedBeAssumedOpaque=True
+      StateId=A30408334AB780D9247D07A3439F8649
+      CachedExpressionData=(FunctionInfos=((StateId=3161742E4800C603B145E1AF56D3BE63,Function=MaterialFunction'"/Engine/Functions/Engine_MaterialFunctions02/Math/TimeWithSpeedVariable.TimeWithSpeedVariable"')),QualityLevelsUsed=(False,False,False,False))
+      ThumbnailInfo=SceneThumbnailInfoWithPrimitive'"MF_CustomPanner:SceneThumbnailInfoWithPrimitive_0"'
+      LightingGuid=A367D25D44F810F81AB15AB860A40E8D
+   End Object
+   Begin Object Name="MaterialExpressionAdd_0"
+      A=(Expression=MaterialExpressionComponentMask'"MF_CustomPanner:MaterialExpressionComponentMask_0"')
+      B=(Expression=MaterialExpressionMultiply'"MF_CustomPanner:MaterialExpressionMultiply_0"')
+      MaterialExpressionEditorX=112
+      MaterialExpressionEditorY=256
+      MaterialExpressionGuid=1383452F4174EFA0A6A644AD44396F18
+      Function=MaterialFunction'"MF_CustomPanner"'
+   End Object
+   Begin Object Name="MaterialExpressionAdd_1"
+      A=(Expression=MaterialExpressionComponentMask'"MF_CustomPanner:MaterialExpressionComponentMask_1"')
+      B=(Expression=MaterialExpressionMultiply'"MF_CustomPanner:MaterialExpressionMultiply_1"')
+      MaterialExpressionEditorX=112
+      MaterialExpressionEditorY=352
+      MaterialExpressionGuid=1383452F4174EFA0A6A644AD44396F18
+      Function=MaterialFunction'"MF_CustomPanner"'
+   End Object
+   Begin Object Name="MaterialExpressionAppendVector_0"
+      A=(Expression=MaterialExpressionAdd'"MF_CustomPanner:MaterialExpressionAdd_0"')
+      B=(Expression=MaterialExpressionAdd'"MF_CustomPanner:MaterialExpressionAdd_1"')
+      MaterialExpressionEditorX=288
+      MaterialExpressionEditorY=304
+      MaterialExpressionGuid=B9B6424F4BE98BD65474DBBEFCCFC0AA
+      Function=MaterialFunction'"MF_CustomPanner"'
+   End Object
+   Begin Object Name="MaterialExpressionComponentMask_0"
+      Input=(Expression=MaterialExpressionFunctionInput'"MF_CustomPanner:MaterialExpressionFunctionInput_0"')
+      R=True
+      MaterialExpressionEditorX=-208
+      MaterialExpressionEditorY=256
+      MaterialExpressionGuid=135D69D4438FAFE412B432860D99B907
+      Function=MaterialFunction'"MF_CustomPanner"'
+   End Object
+   Begin Object Name="MaterialExpressionComponentMask_1"
+      Input=(Expression=MaterialExpressionFunctionInput'"MF_CustomPanner:MaterialExpressionFunctionInput_0"')
+      G=True
+      MaterialExpressionEditorX=-208
+      MaterialExpressionEditorY=352
+      MaterialExpressionGuid=135D69D4438FAFE412B432860D99B907
+      Function=MaterialFunction'"MF_CustomPanner"'
+   End Object
+   Begin Object Name="MaterialExpressionComponentMask_2"
+      Input=(Expression=MaterialExpressionFunctionInput'"MF_CustomPanner:MaterialExpressionFunctionInput_1"')
+      R=True
+      MaterialExpressionEditorX=-224
+      MaterialExpressionEditorY=480
+      MaterialExpressionGuid=135D69D4438FAFE412B432860D99B907
+      Function=MaterialFunction'"MF_CustomPanner"'
+   End Object
+   Begin Object Name="MaterialExpressionComponentMask_3"
+      Input=(Expression=MaterialExpressionFunctionInput'"MF_CustomPanner:MaterialExpressionFunctionInput_1"')
+      G=True
+      MaterialExpressionEditorX=-224
+      MaterialExpressionEditorY=576
+      MaterialExpressionGuid=135D69D4438FAFE412B432860D99B907
+      Function=MaterialFunction'"MF_CustomPanner"'
+   End Object
+   Begin Object Name="MaterialExpressionConstant2Vector_0"
+      MaterialExpressionEditorX=-592
+      MaterialExpressionEditorY=512
+      MaterialExpressionGuid=A00FD104451D9410B5B9718E12AE746B
+      Function=MaterialFunction'"MF_CustomPanner"'
+   End Object
+   Begin Object Name="MaterialExpressionFunctionInput_0"
+      Preview=(Expression=MaterialExpressionTextureCoordinate'"MF_CustomPanner:MaterialExpressionTextureCoordinate_1"')
+      InputName="UV"
+      Id=8B07AD7A431FB11D5FD4EAA32C613F63
+      InputType=FunctionInput_Vector2
+      bUsePreviewValueAsDefault=True
+      MaterialExpressionEditorX=-432
+      MaterialExpressionEditorY=304
+      MaterialExpressionGuid=845380FB43FF343E95D9879571681BD0
+      Function=MaterialFunction'"MF_CustomPanner"'
+      bCollapsed=True
+   End Object
+   Begin Object Name="MaterialExpressionFunctionInput_1"
+      Preview=(Expression=MaterialExpressionConstant2Vector'"MF_CustomPanner:MaterialExpressionConstant2Vector_0"')
+      InputName="Speed"
+      Id=B6732FC14D692F9168B8A7B484B1C2CA
+      InputType=FunctionInput_Vector2
+      bUsePreviewValueAsDefault=True
+      MaterialExpressionEditorX=-448
+      MaterialExpressionEditorY=512
+      MaterialExpressionGuid=814A626643E68D0DEBBBCFA6B2C388EC
+      Function=MaterialFunction'"MF_CustomPanner"'
+      bCollapsed=True
+   End Object
+   Begin Object Name="MaterialExpressionFunctionInput_2"
+      Preview=(Expression=MaterialExpressionMaterialFunctionCall'"MF_CustomPanner:MaterialExpressionMaterialFunctionCall_1"',OutputIndex=1)
+      InputName="Time "
+      Id=15CA61BA490B3235B52417A38197E3C7
+      InputType=FunctionInput_Scalar
+      bUsePreviewValueAsDefault=True
+      MaterialExpressionEditorX=-448
+      MaterialExpressionEditorY=672
+      MaterialExpressionGuid=2CC5FB5B46E2BFCEB87557B281D9894A
+      Function=MaterialFunction'"MF_CustomPanner"'
+      bCollapsed=True
+   End Object
+   Begin Object Name="MaterialExpressionFunctionOutput_0"
+      A=(Expression=MaterialExpressionAppendVector'"MF_CustomPanner:MaterialExpressionAppendVector_0"')
+      bLastPreviewed=True
+      Id=EFF06016455120DE75356B968526ABD2
+      MaterialExpressionEditorX=496
+      MaterialExpressionEditorY=272
+      MaterialExpressionGuid=604B481A450565207EDBC99BBD8A9DE8
+      Function=MaterialFunction'"MF_CustomPanner"'
+   End Object
+   Begin Object Name="MaterialExpressionMaterialFunctionCall_1"
+      MaterialFunction=MaterialFunction'"/Engine/Functions/Engine_MaterialFunctions02/Math/TimeWithSpeedVariable.TimeWithSpeedVariable"'
+      FunctionInputs(0)=(ExpressionInputId=59B34C3C499C7E5AC026CDA585ECA418,Input=(OutputIndex=-1,InputName="Time"))
+      FunctionInputs(1)=(ExpressionInputId=F53DA58A4D41C3C00189C29FEE78A32C,Input=(OutputIndex=-1,InputName="Speed"))
+      FunctionOutputs(0)=(ExpressionOutputId=695322674C3297B0A1AFE18F2312C9B4,Output=(OutputName="Frac Time"))
+      FunctionOutputs(1)=(ExpressionOutputId=BEFB288A41291F5871162DA06E7E2DEA,Output=(OutputName="Time"))
+      MaterialExpressionEditorX=-736
+      MaterialExpressionEditorY=656
+      MaterialExpressionGuid=F38634B84BE8215DA5891B89A8F78D70
+      Function=MaterialFunction'"MF_CustomPanner"'
+      Outputs(0)=(OutputName="Frac Time")
+      Outputs(1)=(OutputName="Time")
+   End Object
+   Begin Object Name="MaterialExpressionMultiply_0"
+      A=(Expression=MaterialExpressionComponentMask'"MF_CustomPanner:MaterialExpressionComponentMask_2"')
+      B=(Expression=MaterialExpressionFunctionInput'"MF_CustomPanner:MaterialExpressionFunctionInput_2"')
+      MaterialExpressionEditorX=-80
+      MaterialExpressionEditorY=480
+      MaterialExpressionGuid=95EDB20B4D939882CBB6E4A4F9890788
+      Function=MaterialFunction'"MF_CustomPanner"'
+   End Object
+   Begin Object Name="MaterialExpressionMultiply_1"
+      A=(Expression=MaterialExpressionComponentMask'"MF_CustomPanner:MaterialExpressionComponentMask_3"')
+      B=(Expression=MaterialExpressionFunctionInput'"MF_CustomPanner:MaterialExpressionFunctionInput_2"')
+      MaterialExpressionEditorX=-80
+      MaterialExpressionEditorY=576
+      MaterialExpressionGuid=95EDB20B4D939882CBB6E4A4F9890788
+      Function=MaterialFunction'"MF_CustomPanner"'
+   End Object
+   Begin Object Name="MaterialExpressionTextureCoordinate_1"
+      MaterialExpressionEditorX=-592
+      MaterialExpressionEditorY=304
+      MaterialExpressionGuid=407D9B6A42C81DAE10DD8A83CD91D251
+      Function=MaterialFunction'"MF_CustomPanner"'
+   End Object
+   Begin Object Name="SceneThumbnailInfoWithPrimitive_0"
+   End Object
+   FunctionExpressions(0)=MaterialExpressionFunctionOutput'"MaterialExpressionFunctionOutput_0"'
+   FunctionExpressions(1)=MaterialExpressionFunctionInput'"MaterialExpressionFunctionInput_0"'
+   FunctionExpressions(2)=MaterialExpressionComponentMask'"MaterialExpressionComponentMask_0"'
+   FunctionExpressions(3)=MaterialExpressionComponentMask'"MaterialExpressionComponentMask_1"'
+   FunctionExpressions(4)=MaterialExpressionAdd'"MaterialExpressionAdd_0"'
+   FunctionExpressions(5)=MaterialExpressionAdd'"MaterialExpressionAdd_1"'
+   FunctionExpressions(6)=MaterialExpressionFunctionInput'"MaterialExpressionFunctionInput_1"'
+   FunctionExpressions(7)=MaterialExpressionConstant2Vector'"MaterialExpressionConstant2Vector_0"'
+   FunctionExpressions(8)=MaterialExpressionComponentMask'"MaterialExpressionComponentMask_2"'
+   FunctionExpressions(9)=MaterialExpressionComponentMask'"MaterialExpressionComponentMask_3"'
+   FunctionExpressions(10)=MaterialExpressionMultiply'"MaterialExpressionMultiply_0"'
+   FunctionExpressions(11)=MaterialExpressionMultiply'"MaterialExpressionMultiply_1"'
+   FunctionExpressions(12)=MaterialExpressionFunctionInput'"MaterialExpressionFunctionInput_2"'
+   FunctionExpressions(13)=MaterialExpressionMaterialFunctionCall'"MaterialExpressionMaterialFunctionCall_1"'
+   FunctionExpressions(14)=MaterialExpressionAppendVector'"MaterialExpressionAppendVector_0"'
+   FunctionExpressions(15)=MaterialExpressionTextureCoordinate'"MaterialExpressionTextureCoordinate_1"'
+   DependentFunctionExpressionCandidates(0)=MaterialExpressionMaterialFunctionCall'"MaterialExpressionMaterialFunctionCall_1"'
+   StateId=5840FD06483447053EE75AB2611F385A
+   CombinedInputTypes=15
+   CombinedOutputTypes=15
+   ThumbnailInfo=SceneThumbnailInfoWithPrimitive'"SceneThumbnailInfoWithPrimitive_0"'
+End Object
