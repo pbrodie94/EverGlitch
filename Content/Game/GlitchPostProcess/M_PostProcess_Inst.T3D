@@ -1,0 +1,16 @@
+Begin Object Class=/Script/Engine.MaterialInstanceConstant Name="M_PostProcess_Inst"
+   Begin Object Class=/Script/UnrealEd.SceneThumbnailInfoWithPrimitive Name="SceneThumbnailInfoWithPrimitive_0"
+   End Object
+   Begin Object Name="SceneThumbnailInfoWithPrimitive_0"
+   End Object
+   ParameterStateId=4E5E5DB8429B443882F8F48FA67FDC0B
+   Parent=Material'"/Game/GlitchPostProcess/M_PostProcess.M_PostProcess"'
+   ScalarParameterValues(0)=(ParameterInfo=(Name="Green "),ParameterValue=-0.010000,ExpressionGUID=AC96910F4A3B826F44E4759E972800D5)
+   ScalarParameterValues(1)=(ParameterInfo=(Name="Max"),ParameterValue=300.000000,ExpressionGUID=656A397942806E61816126813AA64495)
+   ScalarParameterValues(2)=(ParameterInfo=(Name="Min"),ParameterValue=56.000000,ExpressionGUID=F064A6664F9D128FFD1AC2BB28D0F8DD)
+   ScalarParameterValues(3)=(ParameterInfo=(Name="Red"),ParameterValue=0.002000,ExpressionGUID=BAA0608340346FF6C01CC8BA952A17EB)
+   ScalarParameterValues(4)=(ParameterInfo=(Name="RefractionDepthBias"))
+   BasePropertyOverrides=(ShadingModel=MSM_Unlit,OpacityMaskClipValue=0.333300)
+   ThumbnailInfo=SceneThumbnailInfoWithPrimitive'"SceneThumbnailInfoWithPrimitive_0"'
+   LightingGuid=EB69BD7C474EF412BDDA8F8EC85832BB
+End Object

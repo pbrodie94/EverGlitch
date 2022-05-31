@@ -29,7 +29,7 @@ void AEnemyBase::Tick(float DeltaTime)
 
 }
 
-void AEnemyBase::SetMoveSpeed(bool running)
+/*void AEnemyBase::SetMoveSpeed(bool running)
 {
 	GetCharacterMovement()->MaxWalkSpeed = running ? runSpeed : walkSpeed;
-}
+}*/
