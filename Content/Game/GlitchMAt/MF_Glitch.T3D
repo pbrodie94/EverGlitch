@@ -1,0 +1,393 @@
+Begin Object Class=/Script/Engine.MaterialFunction Name="MF_Glitch"
+   Begin Object Class=/Script/Engine.Material Name="Material_0"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionAdd Name="MaterialExpressionAdd_0"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionAdd Name="MaterialExpressionAdd_1"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionAppendVector Name="MaterialExpressionAppendVector_1"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionAppendVector Name="MaterialExpressionAppendVector_2"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionAppendVector Name="MaterialExpressionAppendVector_3"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionCeil Name="MaterialExpressionCeil_0"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionCeil Name="MaterialExpressionCeil_1"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionComponentMask Name="MaterialExpressionComponentMask_0"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionComponentMask Name="MaterialExpressionComponentMask_1"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionConstant Name="MaterialExpressionConstant_0"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionFunctionInput Name="MaterialExpressionFunctionInput_0"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionFunctionInput Name="MaterialExpressionFunctionInput_1"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionFunctionInput Name="MaterialExpressionFunctionInput_2"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionFunctionOutput Name="MaterialExpressionFunctionOutput_0"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionFunctionOutput Name="MaterialExpressionFunctionOutput_1"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionLinearInterpolate Name="MaterialExpressionLinearInterpolate_0"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionMaterialFunctionCall Name="MaterialExpressionMaterialFunctionCall_0"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionMaterialFunctionCall Name="MaterialExpressionMaterialFunctionCall_1"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionMaterialFunctionCall Name="MaterialExpressionMaterialFunctionCall_2"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionMaterialFunctionCall Name="MaterialExpressionMaterialFunctionCall_3"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionMultiply Name="MaterialExpressionMultiply_1"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionScalarParameter Name="MaterialExpressionScalarParameter_0"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionSine Name="MaterialExpressionSine_0"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionSine Name="MaterialExpressionSine_1"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionSine Name="MaterialExpressionSine_2"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionSine Name="MaterialExpressionSine_3"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionTextureCoordinate Name="MaterialExpressionTextureCoordinate_0"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionVectorParameter Name="MaterialExpressionVectorParameter_0"
+   End Object
+   Begin Object Class=/Script/UnrealEd.SceneThumbnailInfoWithPrimitive Name="SceneThumbnailInfoWithPrimitive_0"
+   End Object
+   Begin Object Name="Material_0"
+      EmissiveColor=(Expression=MaterialExpressionFunctionOutput'"MF_Glitch:MaterialExpressionFunctionOutput_1"')
+      ShadingModel=MSM_Unlit
+      ShadingModels=(ShadingModelField=1)
+      Expressions(0)=MaterialExpressionFunctionOutput'"MF_Glitch:MaterialExpressionFunctionOutput_0"'
+      Expressions(1)=MaterialExpressionVectorParameter'"MF_Glitch:MaterialExpressionVectorParameter_0"'
+      Expressions(2)=MaterialExpressionAppendVector'"MF_Glitch:MaterialExpressionAppendVector_1"'
+      Expressions(3)=MaterialExpressionAppendVector'"MF_Glitch:MaterialExpressionAppendVector_2"'
+      Expressions(4)=MaterialExpressionConstant'"MF_Glitch:MaterialExpressionConstant_0"'
+      Expressions(5)=MaterialExpressionMaterialFunctionCall'"MF_Glitch:MaterialExpressionMaterialFunctionCall_0"'
+      Expressions(6)=MaterialExpressionMaterialFunctionCall'"MF_Glitch:MaterialExpressionMaterialFunctionCall_1"'
+      Expressions(7)=MaterialExpressionMaterialFunctionCall'"MF_Glitch:MaterialExpressionMaterialFunctionCall_2"'
+      Expressions(8)=MaterialExpressionMaterialFunctionCall'"MF_Glitch:MaterialExpressionMaterialFunctionCall_3"'
+      Expressions(9)=MaterialExpressionSine'"MF_Glitch:MaterialExpressionSine_0"'
+      Expressions(10)=MaterialExpressionSine'"MF_Glitch:MaterialExpressionSine_1"'
+      Expressions(11)=MaterialExpressionCeil'"MF_Glitch:MaterialExpressionCeil_0"'
+      Expressions(12)=MaterialExpressionSine'"MF_Glitch:MaterialExpressionSine_2"'
+      Expressions(13)=MaterialExpressionSine'"MF_Glitch:MaterialExpressionSine_3"'
+      Expressions(14)=MaterialExpressionCeil'"MF_Glitch:MaterialExpressionCeil_1"'
+      Expressions(15)=MaterialExpressionAdd'"MF_Glitch:MaterialExpressionAdd_0"'
+      Expressions(16)=MaterialExpressionMultiply'"MF_Glitch:MaterialExpressionMultiply_1"'
+      Expressions(17)=MaterialExpressionFunctionInput'"MF_Glitch:MaterialExpressionFunctionInput_0"'
+      Expressions(18)=MaterialExpressionFunctionOutput'"MF_Glitch:MaterialExpressionFunctionOutput_1"'
+      Expressions(19)=MaterialExpressionAdd'"MF_Glitch:MaterialExpressionAdd_1"'
+      Expressions(20)=MaterialExpressionFunctionInput'"MF_Glitch:MaterialExpressionFunctionInput_1"'
+      Expressions(21)=MaterialExpressionTextureCoordinate'"MF_Glitch:MaterialExpressionTextureCoordinate_0"'
+      Expressions(22)=MaterialExpressionComponentMask'"MF_Glitch:MaterialExpressionComponentMask_0"'
+      Expressions(23)=MaterialExpressionComponentMask'"MF_Glitch:MaterialExpressionComponentMask_1"'
+      Expressions(24)=MaterialExpressionAppendVector'"MF_Glitch:MaterialExpressionAppendVector_3"'
+      Expressions(25)=MaterialExpressionLinearInterpolate'"MF_Glitch:MaterialExpressionLinearInterpolate_0"'
+      Expressions(26)=MaterialExpressionFunctionInput'"MF_Glitch:MaterialExpressionFunctionInput_2"'
+      Expressions(27)=MaterialExpressionScalarParameter'"MF_Glitch:MaterialExpressionScalarParameter_0"'
+      bCanMaskedBeAssumedOpaque=True
+      StateId=B9B32F8B47694F47BDD4FB86E09B5620
+      CachedExpressionData=(Parameters=(RuntimeEntries[0]=(NameHashes=(16657906329141759839),ParameterInfos=((Name="GlitchAlpha ")),ExpressionGuids=(77B21EE64E3CCE0136091693A671AD5E),Overrides=(False)),RuntimeEntries[1]=(NameHashes=(4520297955780774139),ParameterInfos=((Name="GlitchSpeed")),ExpressionGuids=(410BE52344CC2599A9F244B0F521F81A),Overrides=(False)),ScalarValues=(0.030000),VectorValues=((R=3.000000,G=5.000000,B=0.000000,A=1.000000)),ScalarMinMaxValues=((X=0.000000,Y=0.000000)),ScalarCurveValues=(None),ScalarCurveAtlasValues=(None),VectorChannelNameValues=(()),VectorUsedAsChannelMaskValues=(False)),FunctionInfos=((StateId=3161742E4800C603B145E1AF56D3BE63,Function=MaterialFunction'"/Engine/Functions/Engine_MaterialFunctions02/Math/TimeWithSpeedVariable.TimeWithSpeedVariable"'),(StateId=5840FD06483447053EE75AB2611F385A,Function=MaterialFunction'"/Game/GlitchMAt/MF_CustomPanner.MF_CustomPanner"'),(StateId=3161742E4800C603B145E1AF56D3BE63,Function=MaterialFunction'"/Engine/Functions/Engine_MaterialFunctions02/Math/TimeWithSpeedVariable.TimeWithSpeedVariable"'),(StateId=5840FD06483447053EE75AB2611F385A,Function=MaterialFunction'"/Game/GlitchMAt/MF_CustomPanner.MF_CustomPanner"'),(StateId=B7C71B914E2BB667772D6CBE2AB55665,Function=MaterialFunction'"/Engine/Functions/Engine_MaterialFunctions01/Gradient/LinearGradient.LinearGradient"'),(StateId=B7C71B914E2BB667772D6CBE2AB55665,Function=MaterialFunction'"/Engine/Functions/Engine_MaterialFunctions01/Gradient/LinearGradient.LinearGradient"')),QualityLevelsUsed=(False,False,False,False))
+      ThumbnailInfo=SceneThumbnailInfoWithPrimitive'"MF_Glitch:SceneThumbnailInfoWithPrimitive_0"'
+      LightingGuid=B6650DF7411F1D7F9CDA2888590D8246
+   End Object
+   Begin Object Name="MaterialExpressionAdd_0"
+      A=(Expression=MaterialExpressionCeil'"MF_Glitch:MaterialExpressionCeil_0"')
+      B=(Expression=MaterialExpressionCeil'"MF_Glitch:MaterialExpressionCeil_1"')
+      MaterialExpressionEditorX=416
+      MaterialExpressionEditorY=288
+      MaterialExpressionGuid=54D4A29C43C6C5694F1BB2A8F1031F42
+      Function=MaterialFunction'"MF_Glitch"'
+   End Object
+   Begin Object Name="MaterialExpressionAdd_1"
+      A=(Expression=MaterialExpressionComponentMask'"MF_Glitch:MaterialExpressionComponentMask_0"')
+      B=(Expression=MaterialExpressionMultiply'"MF_Glitch:MaterialExpressionMultiply_1"')
+      MaterialExpressionEditorX=800
+      MaterialExpressionEditorY=32
+      MaterialExpressionGuid=2D1233BD4C46F3748CB5DBB53C5F3935
+      Function=MaterialFunction'"MF_Glitch"'
+   End Object
+   Begin Object Name="MaterialExpressionAppendVector_1"
+      A=(Expression=MaterialExpressionConstant'"MF_Glitch:MaterialExpressionConstant_0"')
+      B=(Expression=MaterialExpressionVectorParameter'"MF_Glitch:MaterialExpressionVectorParameter_0"',OutputIndex=1,Mask=1,MaskR=1)
+      MaterialExpressionEditorX=-544
+      MaterialExpressionEditorY=272
+      MaterialExpressionGuid=9D43F4084C9D26247BB871A78E5645BA
+      Function=MaterialFunction'"MF_Glitch"'
+      Desc="XSpeed"
+      bCommentBubbleVisible=True
+   End Object
+   Begin Object Name="MaterialExpressionAppendVector_2"
+      A=(Expression=MaterialExpressionConstant'"MF_Glitch:MaterialExpressionConstant_0"')
+      B=(Expression=MaterialExpressionVectorParameter'"MF_Glitch:MaterialExpressionVectorParameter_0"',OutputIndex=2,Mask=1,MaskG=1)
+      MaterialExpressionEditorX=-544
+      MaterialExpressionEditorY=375
+      MaterialExpressionGuid=9D43F4084C9D26247BB871A78E5645BA
+      Function=MaterialFunction'"MF_Glitch"'
+      Desc="YSpeed"
+      bCommentBubbleVisible=True
+   End Object
+   Begin Object Name="MaterialExpressionAppendVector_3"
+      A=(Expression=MaterialExpressionAdd'"MF_Glitch:MaterialExpressionAdd_1"')
+      B=(Expression=MaterialExpressionComponentMask'"MF_Glitch:MaterialExpressionComponentMask_1"')
+      MaterialExpressionEditorX=1120
+      MaterialExpressionEditorY=128
+      MaterialExpressionGuid=84854B674B8EA09029B988B1E8B41412
+      Function=MaterialFunction'"MF_Glitch"'
+   End Object
+   Begin Object Name="MaterialExpressionCeil_0"
+      Input=(Expression=MaterialExpressionSine'"MF_Glitch:MaterialExpressionSine_1"')
+      MaterialExpressionEditorX=304
+      MaterialExpressionEditorY=240
+      MaterialExpressionGuid=ED567F75499EE3BEB4FFCEA8FBD54E71
+      Function=MaterialFunction'"MF_Glitch"'
+   End Object
+   Begin Object Name="MaterialExpressionCeil_1"
+      Input=(Expression=MaterialExpressionSine'"MF_Glitch:MaterialExpressionSine_3"')
+      MaterialExpressionEditorX=304
+      MaterialExpressionEditorY=368
+      MaterialExpressionGuid=ED567F75499EE3BEB4FFCEA8FBD54E71
+      Function=MaterialFunction'"MF_Glitch"'
+   End Object
+   Begin Object Name="MaterialExpressionComponentMask_0"
+      Input=(Expression=MaterialExpressionFunctionInput'"MF_Glitch:MaterialExpressionFunctionInput_1"')
+      R=True
+      MaterialExpressionEditorX=512
+      MaterialExpressionEditorY=32
+      MaterialExpressionGuid=8FA631894838FA804517F8B7DD5DB41D
+      Function=MaterialFunction'"MF_Glitch"'
+   End Object
+   Begin Object Name="MaterialExpressionComponentMask_1"
+      Input=(Expression=MaterialExpressionFunctionInput'"MF_Glitch:MaterialExpressionFunctionInput_1"')
+      G=True
+      MaterialExpressionEditorX=512
+      MaterialExpressionEditorY=112
+      MaterialExpressionGuid=8FA631894838FA804517F8B7DD5DB41D
+      Function=MaterialFunction'"MF_Glitch"'
+   End Object
+   Begin Object Name="MaterialExpressionConstant_0"
+      MaterialExpressionEditorX=-656
+      MaterialExpressionEditorY=336
+      MaterialExpressionGuid=E2C08B7742AB3C44354441813BA7D9EA
+      Function=MaterialFunction'"MF_Glitch"'
+   End Object
+   Begin Object Name="MaterialExpressionFunctionInput_0"
+      InputName="GlitchTexture"
+      Id=EE79D2AB4840F946817016BF26930BA5
+      InputType=FunctionInput_Scalar
+      PreviewValue=(X=1.000000,Y=1.000000,Z=1.000000,W=1.000000)
+      bUsePreviewValueAsDefault=True
+      MaterialExpressionEditorX=416
+      MaterialExpressionEditorY=384
+      MaterialExpressionGuid=6D7C18024A24414639E09487EABE695F
+      Function=MaterialFunction'"MF_Glitch"'
+      bCollapsed=True
+   End Object
+   Begin Object Name="MaterialExpressionFunctionInput_1"
+      Preview=(Expression=MaterialExpressionTextureCoordinate'"MF_Glitch:MaterialExpressionTextureCoordinate_0"')
+      InputName="UV"
+      Id=D2238A074106D175A9970E8C345D2247
+      InputType=FunctionInput_Vector2
+      bUsePreviewValueAsDefault=True
+      MaterialExpressionEditorX=288
+      MaterialExpressionEditorY=64
+      MaterialExpressionGuid=88D03DA64BD7A54E04FEEDA9981240F9
+      Function=MaterialFunction'"MF_Glitch"'
+      bCollapsed=True
+   End Object
+   Begin Object Name="MaterialExpressionFunctionInput_2"
+      Preview=(Expression=MaterialExpressionScalarParameter'"MF_Glitch:MaterialExpressionScalarParameter_0"')
+      InputName="GlitchAlpha "
+      Id=06C2D1AC44FB68449B76AC88CC558CFB
+      InputType=FunctionInput_Scalar
+      bUsePreviewValueAsDefault=True
+      MaterialExpressionEditorX=1120
+      MaterialExpressionEditorY=240
+      MaterialExpressionGuid=C7061B75450D03B8EB6EC9B5D126E566
+      Function=MaterialFunction'"MF_Glitch"'
+      bCollapsed=True
+   End Object
+   Begin Object Name="MaterialExpressionFunctionOutput_0"
+      OutputName="UV"
+      A=(Expression=MaterialExpressionLinearInterpolate'"MF_Glitch:MaterialExpressionLinearInterpolate_0"')
+      bLastPreviewed=True
+      Id=C15E5CA54EB472438D1450AF15110B94
+      MaterialExpressionEditorX=1536
+      MaterialExpressionEditorY=64
+      MaterialExpressionGuid=77E119124CE74A60BD6349893C27EDC6
+      Function=MaterialFunction'"MF_Glitch"'
+      bCollapsed=True
+   End Object
+   Begin Object Name="MaterialExpressionFunctionOutput_1"
+      OutputName="Mask"
+      A=(Expression=MaterialExpressionMultiply'"MF_Glitch:MaterialExpressionMultiply_1"')
+      Id=C6891B9F4D2AFD89CD260082960533EE
+      MaterialExpressionEditorX=816
+      MaterialExpressionEditorY=448
+      MaterialExpressionGuid=B077602F4F6B1539330F7CAE9B5D655F
+      Function=MaterialFunction'"MF_Glitch"'
+      bCollapsed=True
+   End Object
+   Begin Object Name="MaterialExpressionLinearInterpolate_0"
+      A=(Expression=MaterialExpressionFunctionInput'"MF_Glitch:MaterialExpressionFunctionInput_1"')
+      B=(Expression=MaterialExpressionAppendVector'"MF_Glitch:MaterialExpressionAppendVector_3"')
+      Alpha=(Expression=MaterialExpressionFunctionInput'"MF_Glitch:MaterialExpressionFunctionInput_2"')
+      MaterialExpressionEditorX=1344
+      MaterialExpressionEditorY=64
+      MaterialExpressionGuid=01D9F41E4215A580E057398835BDB7C5
+      Function=MaterialFunction'"MF_Glitch"'
+   End Object
+   Begin Object Name="MaterialExpressionMaterialFunctionCall_0"
+      MaterialFunction=MaterialFunction'"/Game/GlitchMAt/MF_CustomPanner.MF_CustomPanner"'
+      FunctionInputs(0)=(ExpressionInputId=B6732FC14D692F9168B8A7B484B1C2CA,Input=(Expression=MaterialExpressionAppendVector'"MF_Glitch:MaterialExpressionAppendVector_1"',InputName="Speed"))
+      FunctionInputs(1)=(ExpressionInputId=15CA61BA490B3235B52417A38197E3C7,Input=(OutputIndex=-1,InputName="Time "))
+      FunctionInputs(2)=(ExpressionInputId=8B07AD7A431FB11D5FD4EAA32C613F63,Input=(OutputIndex=-1,InputName="UV"))
+      FunctionOutputs(0)=(ExpressionOutputId=EFF06016455120DE75356B968526ABD2,Output=(OutputName="Result"))
+      MaterialExpressionEditorX=-352
+      MaterialExpressionEditorY=240
+      MaterialExpressionGuid=D9E52DBE450562F21DD4D692253680EB
+      Function=MaterialFunction'"MF_Glitch"'
+      Outputs(0)=(OutputName="Result")
+   End Object
+   Begin Object Name="MaterialExpressionMaterialFunctionCall_1"
+      MaterialFunction=MaterialFunction'"/Game/GlitchMAt/MF_CustomPanner.MF_CustomPanner"'
+      FunctionInputs(0)=(ExpressionInputId=B6732FC14D692F9168B8A7B484B1C2CA,Input=(Expression=MaterialExpressionAppendVector'"MF_Glitch:MaterialExpressionAppendVector_2"',InputName="Speed"))
+      FunctionInputs(1)=(ExpressionInputId=15CA61BA490B3235B52417A38197E3C7,Input=(OutputIndex=-1,InputName="Time "))
+      FunctionInputs(2)=(ExpressionInputId=8B07AD7A431FB11D5FD4EAA32C613F63,Input=(OutputIndex=-1,InputName="UV"))
+      FunctionOutputs(0)=(ExpressionOutputId=EFF06016455120DE75356B968526ABD2,Output=(OutputName="Result"))
+      MaterialExpressionEditorX=-353
+      MaterialExpressionEditorY=372
+      MaterialExpressionGuid=D9E52DBE450562F21DD4D692253680EB
+      Function=MaterialFunction'"MF_Glitch"'
+      Outputs(0)=(OutputName="Result")
+   End Object
+   Begin Object Name="MaterialExpressionMaterialFunctionCall_2"
+      MaterialFunction=MaterialFunction'"/Engine/Functions/Engine_MaterialFunctions01/Gradient/LinearGradient.LinearGradient"'
+      FunctionInputs(0)=(ExpressionInputId=956846354D2549E665DAC68533EC21EC,Input=(Expression=MaterialExpressionMaterialFunctionCall'"MF_Glitch:MaterialExpressionMaterialFunctionCall_0"',InputName="UV Channel"))
+      FunctionOutputs(0)=(ExpressionOutputId=0F11154B443B1137CC9914998FC01F5E,Output=(OutputName="UGradient"))
+      FunctionOutputs(1)=(ExpressionOutputId=D0E9AADC4F9EEDBBFD95F9B3A5165013,Output=(OutputName="VGradient"))
+      MaterialExpressionEditorX=-128
+      MaterialExpressionEditorY=240
+      MaterialExpressionGuid=5AE62B4B4BB73021748E7CA28F748D23
+      Function=MaterialFunction'"MF_Glitch"'
+      Outputs(0)=(OutputName="UGradient")
+      Outputs(1)=(OutputName="VGradient")
+   End Object
+   Begin Object Name="MaterialExpressionMaterialFunctionCall_3"
+      MaterialFunction=MaterialFunction'"/Engine/Functions/Engine_MaterialFunctions01/Gradient/LinearGradient.LinearGradient"'
+      FunctionInputs(0)=(ExpressionInputId=956846354D2549E665DAC68533EC21EC,Input=(Expression=MaterialExpressionMaterialFunctionCall'"MF_Glitch:MaterialExpressionMaterialFunctionCall_1"',InputName="UV Channel"))
+      FunctionOutputs(0)=(ExpressionOutputId=0F11154B443B1137CC9914998FC01F5E,Output=(OutputName="UGradient"))
+      FunctionOutputs(1)=(ExpressionOutputId=D0E9AADC4F9EEDBBFD95F9B3A5165013,Output=(OutputName="VGradient"))
+      MaterialExpressionEditorX=-112
+      MaterialExpressionEditorY=368
+      MaterialExpressionGuid=5AE62B4B4BB73021748E7CA28F748D23
+      Function=MaterialFunction'"MF_Glitch"'
+      Outputs(0)=(OutputName="UGradient")
+      Outputs(1)=(OutputName="VGradient")
+   End Object
+   Begin Object Name="MaterialExpressionMultiply_1"
+      A=(Expression=MaterialExpressionAdd'"MF_Glitch:MaterialExpressionAdd_0"')
+      B=(Expression=MaterialExpressionFunctionInput'"MF_Glitch:MaterialExpressionFunctionInput_0"')
+      MaterialExpressionEditorX=656
+      MaterialExpressionEditorY=288
+      MaterialExpressionGuid=F2B749AE4331A5E4077BA7BEAAF54888
+      Function=MaterialFunction'"MF_Glitch"'
+   End Object
+   Begin Object Name="MaterialExpressionScalarParameter_0"
+      DefaultValue=0.030000
+      ParameterName="GlitchAlpha "
+      ExpressionGUID=77B21EE64E3CCE0136091693A671AD5E
+      MaterialExpressionEditorX=960
+      MaterialExpressionEditorY=224
+      MaterialExpressionGuid=2332C125408D389071794F8D7B8D686C
+      Function=MaterialFunction'"MF_Glitch"'
+   End Object
+   Begin Object Name="MaterialExpressionSine_0"
+      Input=(Expression=MaterialExpressionMaterialFunctionCall'"MF_Glitch:MaterialExpressionMaterialFunctionCall_2"',OutputIndex=1)
+      MaterialExpressionEditorX=112
+      MaterialExpressionEditorY=240
+      MaterialExpressionGuid=C640DCD34CCEE645F10A6A9B2F926E76
+      Function=MaterialFunction'"MF_Glitch"'
+   End Object
+   Begin Object Name="MaterialExpressionSine_1"
+      Input=(Expression=MaterialExpressionSine'"MF_Glitch:MaterialExpressionSine_0"')
+      MaterialExpressionEditorX=208
+      MaterialExpressionEditorY=240
+      MaterialExpressionGuid=C640DCD34CCEE645F10A6A9B2F926E76
+      Function=MaterialFunction'"MF_Glitch"'
+   End Object
+   Begin Object Name="MaterialExpressionSine_2"
+      Input=(Expression=MaterialExpressionMaterialFunctionCall'"MF_Glitch:MaterialExpressionMaterialFunctionCall_3"',OutputIndex=1)
+      MaterialExpressionEditorX=112
+      MaterialExpressionEditorY=368
+      MaterialExpressionGuid=C640DCD34CCEE645F10A6A9B2F926E76
+      Function=MaterialFunction'"MF_Glitch"'
+   End Object
+   Begin Object Name="MaterialExpressionSine_3"
+      Input=(Expression=MaterialExpressionSine'"MF_Glitch:MaterialExpressionSine_2"')
+      MaterialExpressionEditorX=208
+      MaterialExpressionEditorY=368
+      MaterialExpressionGuid=C640DCD34CCEE645F10A6A9B2F926E76
+      Function=MaterialFunction'"MF_Glitch"'
+   End Object
+   Begin Object Name="MaterialExpressionTextureCoordinate_0"
+      MaterialExpressionEditorX=144
+      MaterialExpressionEditorY=64
+      MaterialExpressionGuid=A44FA642445E2AF650B0208940D13E6A
+      Function=MaterialFunction'"MF_Glitch"'
+   End Object
+   Begin Object Name="MaterialExpressionVectorParameter_0"
+      DefaultValue=(R=3.000000,G=5.000000,B=0.000000,A=1.000000)
+      ParameterName="GlitchSpeed"
+      ExpressionGUID=410BE52344CC2599A9F244B0F521F81A
+      Group="Glitch"
+      MaterialExpressionEditorX=-864
+      MaterialExpressionEditorY=272
+      MaterialExpressionGuid=FA4C5BDD4FD95DACF499A0AA51BD2361
+      Function=MaterialFunction'"MF_Glitch"'
+   End Object
+   Begin Object Name="SceneThumbnailInfoWithPrimitive_0"
+   End Object
+   FunctionExpressions(0)=MaterialExpressionFunctionOutput'"MaterialExpressionFunctionOutput_0"'
+   FunctionExpressions(1)=MaterialExpressionVectorParameter'"MaterialExpressionVectorParameter_0"'
+   FunctionExpressions(2)=MaterialExpressionAppendVector'"MaterialExpressionAppendVector_1"'
+   FunctionExpressions(3)=MaterialExpressionAppendVector'"MaterialExpressionAppendVector_2"'
+   FunctionExpressions(4)=MaterialExpressionConstant'"MaterialExpressionConstant_0"'
+   FunctionExpressions(5)=MaterialExpressionMaterialFunctionCall'"MaterialExpressionMaterialFunctionCall_0"'
+   FunctionExpressions(6)=MaterialExpressionMaterialFunctionCall'"MaterialExpressionMaterialFunctionCall_1"'
+   FunctionExpressions(7)=MaterialExpressionMaterialFunctionCall'"MaterialExpressionMaterialFunctionCall_2"'
+   FunctionExpressions(8)=MaterialExpressionMaterialFunctionCall'"MaterialExpressionMaterialFunctionCall_3"'
+   FunctionExpressions(9)=MaterialExpressionSine'"MaterialExpressionSine_0"'
+   FunctionExpressions(10)=MaterialExpressionSine'"MaterialExpressionSine_1"'
+   FunctionExpressions(11)=MaterialExpressionCeil'"MaterialExpressionCeil_0"'
+   FunctionExpressions(12)=MaterialExpressionSine'"MaterialExpressionSine_2"'
+   FunctionExpressions(13)=MaterialExpressionSine'"MaterialExpressionSine_3"'
+   FunctionExpressions(14)=MaterialExpressionCeil'"MaterialExpressionCeil_1"'
+   FunctionExpressions(15)=MaterialExpressionAdd'"MaterialExpressionAdd_0"'
+   FunctionExpressions(16)=MaterialExpressionMultiply'"MaterialExpressionMultiply_1"'
+   FunctionExpressions(17)=MaterialExpressionFunctionInput'"MaterialExpressionFunctionInput_0"'
+   FunctionExpressions(18)=MaterialExpressionFunctionOutput'"MaterialExpressionFunctionOutput_1"'
+   FunctionExpressions(19)=MaterialExpressionAdd'"MaterialExpressionAdd_1"'
+   FunctionExpressions(20)=MaterialExpressionFunctionInput'"MaterialExpressionFunctionInput_1"'
+   FunctionExpressions(21)=MaterialExpressionTextureCoordinate'"MaterialExpressionTextureCoordinate_0"'
+   FunctionExpressions(22)=MaterialExpressionComponentMask'"MaterialExpressionComponentMask_0"'
+   FunctionExpressions(23)=MaterialExpressionComponentMask'"MaterialExpressionComponentMask_1"'
+   FunctionExpressions(24)=MaterialExpressionAppendVector'"MaterialExpressionAppendVector_3"'
+   FunctionExpressions(25)=MaterialExpressionLinearInterpolate'"MaterialExpressionLinearInterpolate_0"'
+   FunctionExpressions(26)=MaterialExpressionFunctionInput'"MaterialExpressionFunctionInput_2"'
+   FunctionExpressions(27)=MaterialExpressionScalarParameter'"MaterialExpressionScalarParameter_0"'
+   DependentFunctionExpressionCandidates(0)=MaterialExpressionMaterialFunctionCall'"MaterialExpressionMaterialFunctionCall_0"'
+   DependentFunctionExpressionCandidates(1)=MaterialExpressionMaterialFunctionCall'"MaterialExpressionMaterialFunctionCall_1"'
+   DependentFunctionExpressionCandidates(2)=MaterialExpressionMaterialFunctionCall'"MaterialExpressionMaterialFunctionCall_2"'
+   DependentFunctionExpressionCandidates(3)=MaterialExpressionMaterialFunctionCall'"MaterialExpressionMaterialFunctionCall_3"'
+   StateId=13FFCEFA4C92EB322F869D8BF67D5470
+   CombinedInputTypes=15
+   CombinedOutputTypes=15
+   ThumbnailInfo=SceneThumbnailInfoWithPrimitive'"SceneThumbnailInfoWithPrimitive_0"'
+End Object

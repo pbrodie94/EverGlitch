@@ -1,0 +1,515 @@
+Begin Object Class=/Script/Engine.Material Name="M_Glitch"
+   Begin Object Class=/Script/Engine.MaterialExpressionAdd Name="MaterialExpressionAdd_0"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionCeil Name="MaterialExpressionCeil_0"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionClamp Name="MaterialExpressionClamp_0"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionClamp Name="MaterialExpressionClamp_1"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionLinearInterpolate Name="MaterialExpressionLinearInterpolate_0"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionLinearInterpolate Name="MaterialExpressionLinearInterpolate_1"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionLinearInterpolate Name="MaterialExpressionLinearInterpolate_3"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionMaterialFunctionCall Name="MaterialExpressionMaterialFunctionCall_0"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionMaterialFunctionCall Name="MaterialExpressionMaterialFunctionCall_1"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionMaterialFunctionCall Name="MaterialExpressionMaterialFunctionCall_3"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionMultiply Name="MaterialExpressionMultiply_0"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionMultiply Name="MaterialExpressionMultiply_1"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionMultiply Name="MaterialExpressionMultiply_2"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionMultiply Name="MaterialExpressionMultiply_3"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionMultiply Name="MaterialExpressionMultiply_4"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionMultiply Name="MaterialExpressionMultiply_5"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionOneMinus Name="MaterialExpressionOneMinus_0"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionPanner Name="MaterialExpressionPanner_0"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionScalarParameter Name="MaterialExpressionScalarParameter_0"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionSine Name="MaterialExpressionSine_0"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionSubtract Name="MaterialExpressionSubtract_0"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionSubtract Name="MaterialExpressionSubtract_1"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionTextureSample Name="MaterialExpressionTextureSample_0"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionTextureSample Name="MaterialExpressionTextureSample_1"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionTextureSample Name="MaterialExpressionTextureSample_10"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionTextureSample Name="MaterialExpressionTextureSample_11"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionTextureSample Name="MaterialExpressionTextureSample_12"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionTextureSample Name="MaterialExpressionTextureSample_13"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionTextureSample Name="MaterialExpressionTextureSample_14"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionTextureSample Name="MaterialExpressionTextureSample_15"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionTextureSample Name="MaterialExpressionTextureSample_16"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionTextureSample Name="MaterialExpressionTextureSample_17"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionTextureSample Name="MaterialExpressionTextureSample_3"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionTextureSample Name="MaterialExpressionTextureSample_4"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionTextureSample Name="MaterialExpressionTextureSample_5"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionTextureSample Name="MaterialExpressionTextureSample_6"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionTextureSample Name="MaterialExpressionTextureSample_7"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionTextureSample Name="MaterialExpressionTextureSample_8"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionTextureSample Name="MaterialExpressionTextureSample_9"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionTime Name="MaterialExpressionTime_0"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionVectorParameter Name="MaterialExpressionVectorParameter_0"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionVectorParameter Name="MaterialExpressionVectorParameter_1"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionVectorParameter Name="MaterialExpressionVectorParameter_2"
+   End Object
+   Begin Object Class=/Script/UnrealEd.SceneThumbnailInfoWithPrimitive Name="SceneThumbnailInfoWithPrimitive_0"
+   End Object
+   Begin Object Name="MaterialExpressionAdd_0"
+      A=(Expression=MaterialExpressionTextureSample'"M_Glitch:MaterialExpressionTextureSample_1"',OutputIndex=1,Mask=1,MaskR=1)
+      B=(Expression=MaterialExpressionClamp'"M_Glitch:MaterialExpressionClamp_1"')
+      MaterialExpressionEditorX=1120
+      MaterialExpressionEditorY=288
+      MaterialExpressionGuid=CAD529D14503BDE0A27699A1C61957D0
+      Material=Material'"M_Glitch"'
+   End Object
+   Begin Object Name="MaterialExpressionCeil_0"
+      Input=(Expression=MaterialExpressionSubtract'"M_Glitch:MaterialExpressionSubtract_1"')
+      MaterialExpressionEditorX=288
+      MaterialExpressionEditorY=992
+      MaterialExpressionGuid=A23DF2BD48BD9D61BE410BA06C606D0A
+      Material=Material'"M_Glitch"'
+   End Object
+   Begin Object Name="MaterialExpressionClamp_0"
+      Input=(Expression=MaterialExpressionOneMinus'"M_Glitch:MaterialExpressionOneMinus_0"')
+      Min=(Expression=MaterialExpressionSine'"M_Glitch:MaterialExpressionSine_0"')
+      MaterialExpressionEditorX=-496
+      MaterialExpressionEditorY=-16
+      MaterialExpressionGuid=25322D6846944A03E6D03E96DC36009F
+      Material=Material'"M_Glitch"'
+   End Object
+   Begin Object Name="MaterialExpressionClamp_1"
+      Input=(Expression=MaterialExpressionSubtract'"M_Glitch:MaterialExpressionSubtract_0"')
+      MaterialExpressionEditorX=432
+      MaterialExpressionEditorY=208
+      MaterialExpressionGuid=48EFF5174C677BC5C6701B98C499A345
+      Material=Material'"M_Glitch"'
+   End Object
+   Begin Object Name="MaterialExpressionLinearInterpolate_0"
+      Alpha=(Expression=MaterialExpressionMaterialFunctionCall'"M_Glitch:MaterialExpressionMaterialFunctionCall_1"')
+      ConstA=1.000000
+      ConstB=0.000000
+      MaterialExpressionEditorX=-16
+      MaterialExpressionEditorY=512
+      MaterialExpressionGuid=971CE9754F3AED4AA570008F4AE0BE30
+      Material=Material'"M_Glitch"'
+   End Object
+   Begin Object Name="MaterialExpressionLinearInterpolate_1"
+      A=(Expression=MaterialExpressionVectorParameter'"M_Glitch:MaterialExpressionVectorParameter_1"',Mask=1,MaskR=1,MaskG=1,MaskB=1)
+      B=(Expression=MaterialExpressionVectorParameter'"M_Glitch:MaterialExpressionVectorParameter_2"',Mask=1,MaskR=1,MaskG=1,MaskB=1)
+      Alpha=(Expression=MaterialExpressionCeil'"M_Glitch:MaterialExpressionCeil_0"')
+      MaterialExpressionEditorX=454
+      MaterialExpressionEditorY=751
+      MaterialExpressionGuid=E80E86AB4F8D65A38E4EA7B667E3D28B
+      Material=Material'"M_Glitch"'
+   End Object
+   Begin Object Name="MaterialExpressionLinearInterpolate_3"
+      A=(Expression=MaterialExpressionMultiply'"M_Glitch:MaterialExpressionMultiply_1"')
+      B=(Expression=MaterialExpressionMultiply'"M_Glitch:MaterialExpressionMultiply_5"')
+      Alpha=(Expression=MaterialExpressionClamp'"M_Glitch:MaterialExpressionClamp_1"')
+      MaterialExpressionEditorX=1056
+      MaterialExpressionEditorY=128
+      MaterialExpressionGuid=78AEBE21491634C7679803BEDD7399A4
+      Material=Material'"M_Glitch"'
+   End Object
+   Begin Object Name="MaterialExpressionMaterialFunctionCall_0"
+      MaterialFunction=MaterialFunction'"/Game/GlitchMAt/MF_Glitch.MF_Glitch"'
+      FunctionInputs(0)=(ExpressionInputId=D2238A074106D175A9970E8C345D2247,Input=(OutputIndex=-1,InputName="UV"))
+      FunctionInputs(1)=(ExpressionInputId=06C2D1AC44FB68449B76AC88CC558CFB,Input=(OutputIndex=-1,InputName="GlitchAlpha "))
+      FunctionInputs(2)=(ExpressionInputId=EE79D2AB4840F946817016BF26930BA5,Input=(Expression=MaterialExpressionClamp'"M_Glitch:MaterialExpressionClamp_0"',InputName="GlitchTexture"))
+      FunctionOutputs(0)=(ExpressionOutputId=C6891B9F4D2AFD89CD260082960533EE,Output=(OutputName="Mask"))
+      FunctionOutputs(1)=(ExpressionOutputId=C15E5CA54EB472438D1450AF15110B94,Output=(OutputName="UV"))
+      MaterialExpressionEditorX=-272
+      MaterialExpressionEditorY=-16
+      MaterialExpressionGuid=F1BF5614422677AFC1577CBE4831F9C0
+      Material=Material'"M_Glitch"'
+      Outputs(0)=(OutputName="Mask")
+      Outputs(1)=(OutputName="UV")
+   End Object
+   Begin Object Name="MaterialExpressionMaterialFunctionCall_1"
+      MaterialFunction=MaterialFunction'"/Game/GlitchMAt/MF_Glitch.MF_Glitch"'
+      FunctionInputs(0)=(ExpressionInputId=D2238A074106D175A9970E8C345D2247,Input=(OutputIndex=-1,InputName="UV"))
+      FunctionInputs(1)=(ExpressionInputId=06C2D1AC44FB68449B76AC88CC558CFB,Input=(Expression=MaterialExpressionScalarParameter'"M_Glitch:MaterialExpressionScalarParameter_0"',InputName="GlitchAlpha "))
+      FunctionInputs(2)=(ExpressionInputId=EE79D2AB4840F946817016BF26930BA5,Input=(InputName="GlitchTexture"))
+      FunctionOutputs(0)=(ExpressionOutputId=C6891B9F4D2AFD89CD260082960533EE,Output=(OutputName="Mask"))
+      FunctionOutputs(1)=(ExpressionOutputId=C15E5CA54EB472438D1450AF15110B94,Output=(OutputName="UV"))
+      MaterialExpressionEditorX=-288
+      MaterialExpressionEditorY=256
+      MaterialExpressionGuid=F1BF5614422677AFC1577CBE4831F9C0
+      Material=Material'"M_Glitch"'
+      Outputs(0)=(OutputName="Mask")
+      Outputs(1)=(OutputName="UV")
+   End Object
+   Begin Object Name="MaterialExpressionMaterialFunctionCall_3"
+      MaterialFunction=MaterialFunction'"/Engine/Functions/Engine_MaterialFunctions01/Gradient/LinearGradient.LinearGradient"'
+      FunctionInputs(0)=(ExpressionInputId=956846354D2549E665DAC68533EC21EC,Input=(OutputIndex=-1,InputName="UV Channel"))
+      FunctionOutputs(0)=(ExpressionOutputId=0F11154B443B1137CC9914998FC01F5E,Output=(OutputName="UGradient"))
+      FunctionOutputs(1)=(ExpressionOutputId=D0E9AADC4F9EEDBBFD95F9B3A5165013,Output=(OutputName="VGradient"))
+      MaterialExpressionEditorX=-112
+      MaterialExpressionEditorY=992
+      MaterialExpressionGuid=A771308144C2D53D550391A561B666AE
+      Material=Material'"M_Glitch"'
+      Outputs(0)=(OutputName="UGradient")
+      Outputs(1)=(OutputName="VGradient")
+   End Object
+   Begin Object Name="MaterialExpressionMultiply_0"
+      A=(Expression=MaterialExpressionTime'"M_Glitch:MaterialExpressionTime_0"')
+      ConstB=5.000000
+      MaterialExpressionEditorX=-880
+      MaterialExpressionEditorY=208
+      MaterialExpressionGuid=1F72CB0042E936D75FBCDB93987826F4
+      Material=Material'"M_Glitch"'
+   End Object
+   Begin Object Name="MaterialExpressionMultiply_1"
+      A=(Expression=MaterialExpressionMultiply'"M_Glitch:MaterialExpressionMultiply_2"')
+      B=(Expression=MaterialExpressionTextureSample'"M_Glitch:MaterialExpressionTextureSample_1"',OutputIndex=1,Mask=1,MaskR=1)
+      MaterialExpressionEditorX=256
+      MaterialExpressionEditorY=-192
+      MaterialExpressionGuid=F5207D0D4C40DF11ECF4B290248ABE77
+      Material=Material'"M_Glitch"'
+   End Object
+   Begin Object Name="MaterialExpressionMultiply_2"
+      A=(Expression=MaterialExpressionVectorParameter'"M_Glitch:MaterialExpressionVectorParameter_0"',Mask=1,MaskR=1,MaskG=1,MaskB=1)
+      B=(Expression=MaterialExpressionVectorParameter'"M_Glitch:MaterialExpressionVectorParameter_0"',OutputIndex=4,Mask=1,MaskA=1)
+      MaterialExpressionEditorX=96
+      MaterialExpressionEditorY=-240
+      MaterialExpressionGuid=14D94D284811DF392A4AC5A0676727F1
+      Material=Material'"M_Glitch"'
+   End Object
+   Begin Object Name="MaterialExpressionMultiply_3"
+      A=(Expression=MaterialExpressionLinearInterpolate'"M_Glitch:MaterialExpressionLinearInterpolate_0"')
+      B=(Expression=MaterialExpressionLinearInterpolate'"M_Glitch:MaterialExpressionLinearInterpolate_1"')
+      MaterialExpressionEditorX=560
+      MaterialExpressionEditorY=512
+      MaterialExpressionGuid=D42A7303490645ADD656C8B6429D6D42
+      Material=Material'"M_Glitch"'
+   End Object
+   Begin Object Name="MaterialExpressionMultiply_4"
+      A=(Expression=MaterialExpressionClamp'"M_Glitch:MaterialExpressionClamp_1"')
+      B=(Expression=MaterialExpressionMultiply'"M_Glitch:MaterialExpressionMultiply_3"')
+      MaterialExpressionEditorX=688
+      MaterialExpressionEditorY=368
+      MaterialExpressionGuid=38C323594A1AF306280ED4A695464FA9
+      Material=Material'"M_Glitch"'
+   End Object
+   Begin Object Name="MaterialExpressionMultiply_5"
+      A=(Expression=MaterialExpressionMultiply'"M_Glitch:MaterialExpressionMultiply_4"')
+      ConstB=5.000000
+      MaterialExpressionEditorX=880
+      MaterialExpressionEditorY=368
+      MaterialExpressionGuid=99DFD42A4AF032916A4F6EBC4756352C
+      Material=Material'"M_Glitch"'
+   End Object
+   Begin Object Name="MaterialExpressionOneMinus_0"
+      Input=(Expression=MaterialExpressionTextureSample'"M_Glitch:MaterialExpressionTextureSample_6"',Mask=1,MaskR=1,MaskG=1,MaskB=1)
+      MaterialExpressionEditorX=-608
+      MaterialExpressionEditorY=-16
+      MaterialExpressionGuid=84240E60423894E251D606A5899FC697
+      Material=Material'"M_Glitch"'
+   End Object
+   Begin Object Name="MaterialExpressionPanner_0"
+      SpeedX=2.000000
+      SpeedY=3.000000
+      MaterialExpressionEditorX=-1041
+      MaterialExpressionEditorY=-34
+      MaterialExpressionGuid=EA334F654EC226FC240A7B870A2BCC14
+      Material=Material'"M_Glitch"'
+   End Object
+   Begin Object Name="MaterialExpressionScalarParameter_0"
+      DefaultValue=0.030000
+      ParameterName="GlitchColor"
+      ExpressionGUID=7C614F434BFF6B99DB60178FECEA7F77
+      MaterialExpressionEditorX=-448
+      MaterialExpressionEditorY=288
+      MaterialExpressionGuid=DC18C9B94FCEA75BED6034AF8AC75CAB
+      Material=Material'"M_Glitch"'
+   End Object
+   Begin Object Name="MaterialExpressionSine_0"
+      Input=(Expression=MaterialExpressionMultiply'"M_Glitch:MaterialExpressionMultiply_0"')
+      MaterialExpressionEditorX=-720
+      MaterialExpressionEditorY=208
+      MaterialExpressionGuid=441928E243FF300230B6609996BE5EFE
+      Material=Material'"M_Glitch"'
+   End Object
+   Begin Object Name="MaterialExpressionSubtract_0"
+      A=(Expression=MaterialExpressionTextureSample'"M_Glitch:MaterialExpressionTextureSample_1"',OutputIndex=1,Mask=1,MaskR=1)
+      B=(Expression=MaterialExpressionTextureSample'"M_Glitch:MaterialExpressionTextureSample_3"',OutputIndex=1,Mask=1,MaskR=1)
+      MaterialExpressionEditorX=265
+      MaterialExpressionEditorY=186
+      MaterialExpressionGuid=8EBB39DD4247E4DE645928BF30DEAA52
+      Material=Material'"M_Glitch"'
+   End Object
+   Begin Object Name="MaterialExpressionSubtract_1"
+      A=(Expression=MaterialExpressionMaterialFunctionCall'"M_Glitch:MaterialExpressionMaterialFunctionCall_3"')
+      ConstB=0.500000
+      MaterialExpressionEditorX=112
+      MaterialExpressionEditorY=992
+      MaterialExpressionGuid=02D9CF3848A6352E209CFB9250597202
+      Material=Material'"M_Glitch"'
+   End Object
+   Begin Object Name="MaterialExpressionTextureSample_0"
+      Texture=Texture2D'"/Game/GlitchMAt/TrialUV/T_Prop_CM.T_Prop_CM"'
+      MaterialExpressionEditorX=784
+      MaterialExpressionEditorY=976
+      MaterialExpressionGuid=751B721742117C836E8CE3BFD7FE152A
+      Material=Material'"M_Glitch"'
+   End Object
+   Begin Object Name="MaterialExpressionTextureSample_1"
+      Coordinates=(Expression=MaterialExpressionMaterialFunctionCall'"M_Glitch:MaterialExpressionMaterialFunctionCall_0"',OutputIndex=1)
+      Texture=Texture2D'"/Engine/EngineMaterials/T_Default_BaseColor.T_Default_BaseColor"'
+      MaterialExpressionEditorX=-64
+      MaterialExpressionEditorY=-16
+      MaterialExpressionGuid=16B4BA534FBED1692AE0F1A03AA63FF8
+      Material=Material'"M_Glitch"'
+   End Object
+   Begin Object Name="MaterialExpressionTextureSample_10"
+      Coordinates=(Expression=MaterialExpressionPanner'"M_Glitch:MaterialExpressionPanner_0"')
+      Texture=Texture2D'"/Game/glitchy_texture_2_by_omniscient_duck_d6diqne.glitchy_texture_2_by_omniscient_duck_d6diqne"'
+      MaterialExpressionEditorX=-864
+      MaterialExpressionEditorY=-2352
+      MaterialExpressionGuid=8543395D42AFB067BE4C748A6F47FD10
+      Material=Material'"M_Glitch"'
+   End Object
+   Begin Object Name="MaterialExpressionTextureSample_11"
+      Coordinates=(Expression=MaterialExpressionPanner'"M_Glitch:MaterialExpressionPanner_0"')
+      Texture=Texture2D'"/Game/glitchy_texture_by_omniscient_duck_d6dchv2.glitchy_texture_by_omniscient_duck_d6dchv2"'
+      MaterialExpressionEditorX=-864
+      MaterialExpressionEditorY=-2096
+      MaterialExpressionGuid=1AB2568F49E2D43128439B8F59AAB6E0
+      Material=Material'"M_Glitch"'
+   End Object
+   Begin Object Name="MaterialExpressionTextureSample_12"
+      Coordinates=(Expression=MaterialExpressionPanner'"M_Glitch:MaterialExpressionPanner_0"')
+      Texture=Texture2D'"/Game/grid_by_praseodym_d2t2y05.grid_by_praseodym_d2t2y05"'
+      MaterialExpressionEditorX=-864
+      MaterialExpressionEditorY=-1840
+      MaterialExpressionGuid=B0B8518B42AF29ECCE4CD8919E28A1FC
+      Material=Material'"M_Glitch"'
+   End Object
+   Begin Object Name="MaterialExpressionTextureSample_13"
+      Coordinates=(Expression=MaterialExpressionPanner'"M_Glitch:MaterialExpressionPanner_0"')
+      Texture=Texture2D'"/Game/screen-error-glich-texture-background.screen-error-glich-texture-background"'
+      MaterialExpressionEditorX=-864
+      MaterialExpressionEditorY=-1600
+      MaterialExpressionGuid=388F507D4A386B530B7B489035DF2488
+      Material=Material'"M_Glitch"'
+   End Object
+   Begin Object Name="MaterialExpressionTextureSample_14"
+      Coordinates=(Expression=MaterialExpressionPanner'"M_Glitch:MaterialExpressionPanner_0"')
+      Texture=Texture2D'"/Game/texture___abstract_by_seiden_stocks_db83lf1.texture___abstract_by_seiden_stocks_db83lf1"'
+      MaterialExpressionEditorX=-864
+      MaterialExpressionEditorY=-1328
+      MaterialExpressionGuid=089C73D944890A0A99A354934B5FB724
+      Material=Material'"M_Glitch"'
+   End Object
+   Begin Object Name="MaterialExpressionTextureSample_15"
+      Coordinates=(Expression=MaterialExpressionPanner'"M_Glitch:MaterialExpressionPanner_0"')
+      Texture=Texture2D'"/Game/tv-screen-error-glitch-background.tv-screen-error-glitch-background"'
+      MaterialExpressionEditorX=-864
+      MaterialExpressionEditorY=-1056
+      MaterialExpressionGuid=5B33745F45B38FED89F7EA88116F59C8
+      Material=Material'"M_Glitch"'
+   End Object
+   Begin Object Name="MaterialExpressionTextureSample_16"
+      Texture=Texture2D'"/Game/weapons_of_math_destruction_by_praseodym_d36c1hg.weapons_of_math_destruction_by_praseodym_d36c1hg"'
+      MaterialExpressionEditorX=-864
+      MaterialExpressionEditorY=-800
+      MaterialExpressionGuid=D95E34A64003FC9F38406BB1983F8CFF
+      Material=Material'"M_Glitch"'
+   End Object
+   Begin Object Name="MaterialExpressionTextureSample_17"
+      Coordinates=(Expression=MaterialExpressionPanner'"M_Glitch:MaterialExpressionPanner_0"')
+      Texture=Texture2D'"/Game/weapons_of_math_destruction_by_praseodym_d36c1hg__1_.weapons_of_math_destruction_by_praseodym_d36c1hg__1_"'
+      MaterialExpressionEditorX=-848
+      MaterialExpressionEditorY=-528
+      MaterialExpressionGuid=8E397FB445420B7244B79E98BC80927E
+      Material=Material'"M_Glitch"'
+   End Object
+   Begin Object Name="MaterialExpressionTextureSample_3"
+      Coordinates=(Expression=MaterialExpressionMaterialFunctionCall'"M_Glitch:MaterialExpressionMaterialFunctionCall_1"',OutputIndex=1)
+      Texture=Texture2D'"/Engine/EngineMaterials/T_Default_BaseColor.T_Default_BaseColor"'
+      MaterialExpressionEditorX=-48
+      MaterialExpressionEditorY=240
+      MaterialExpressionGuid=16B4BA534FBED1692AE0F1A03AA63FF8
+      Material=Material'"M_Glitch"'
+   End Object
+   Begin Object Name="MaterialExpressionTextureSample_4"
+      Coordinates=(Expression=MaterialExpressionPanner'"M_Glitch:MaterialExpressionPanner_0"')
+      Texture=Texture2D'"/Game/Glitch/T_techNoiseTest.T_techNoiseTest"'
+      MaterialExpressionEditorX=-848
+      MaterialExpressionEditorY=-272
+      MaterialExpressionGuid=A65BAF464C77ACF98D5D26A9739B2BE5
+      Material=Material'"M_Glitch"'
+   End Object
+   Begin Object Name="MaterialExpressionTextureSample_5"
+      Coordinates=(Expression=MaterialExpressionPanner'"M_Glitch:MaterialExpressionPanner_0"')
+      Texture=Texture2D'"/Game/Glitch/txt_fx_glitch_pattern.txt_fx_glitch_pattern"'
+      SamplerType=SAMPLERTYPE_LinearColor
+      MaterialExpressionEditorX=-848
+      MaterialExpressionEditorY=-32
+      MaterialExpressionGuid=09E1E82745F47973364BE4A230E6822B
+      Material=Material'"M_Glitch"'
+   End Object
+   Begin Object Name="MaterialExpressionTextureSample_6"
+      Coordinates=(Expression=MaterialExpressionPanner'"M_Glitch:MaterialExpressionPanner_0"')
+      Texture=Texture2D'"/Game/glitch-vhs-effect-tv-texture-free-download.glitch-vhs-effect-tv-texture-free-download"'
+      MaterialExpressionEditorX=-864
+      MaterialExpressionEditorY=-3120
+      MaterialExpressionGuid=F2E0E52048B458ED08F9B08EDC58B7B5
+      Material=Material'"M_Glitch"'
+   End Object
+   Begin Object Name="MaterialExpressionTextureSample_7"
+      Texture=Texture2D'"/Game/glitch_art_1_by_niedec_stock_d7jtqvu.glitch_art_1_by_niedec_stock_d7jtqvu"'
+      MaterialExpressionEditorX=-2416
+      MaterialExpressionEditorY=-1520
+      MaterialExpressionGuid=BD28CD0B43CCC7A762B9508A36558A1B
+      Material=Material'"M_Glitch"'
+   End Object
+   Begin Object Name="MaterialExpressionTextureSample_8"
+      Coordinates=(Expression=MaterialExpressionPanner'"M_Glitch:MaterialExpressionPanner_0"')
+      Texture=Texture2D'"/Game/glitch_art_4_by_niedec_stock_d7jtsuj.glitch_art_4_by_niedec_stock_d7jtsuj"'
+      MaterialExpressionEditorX=-864
+      MaterialExpressionEditorY=-2864
+      MaterialExpressionGuid=53FD28764ED150E7D6903AB9ECB98131
+      Material=Material'"M_Glitch"'
+   End Object
+   Begin Object Name="MaterialExpressionTextureSample_9"
+      Coordinates=(Expression=MaterialExpressionPanner'"M_Glitch:MaterialExpressionPanner_0"')
+      Texture=Texture2D'"/Game/glitch_art_6_by_niedec_stock_d7jtte0.glitch_art_6_by_niedec_stock_d7jtte0"'
+      MaterialExpressionEditorX=-864
+      MaterialExpressionEditorY=-2608
+      MaterialExpressionGuid=CDC243B4406EC56081D888B7AA7EF69E
+      Material=Material'"M_Glitch"'
+   End Object
+   Begin Object Name="MaterialExpressionTime_0"
+      MaterialExpressionEditorX=-1024
+      MaterialExpressionEditorY=208
+      MaterialExpressionGuid=9D1CB4734AA84F7125D06B8C31204F66
+      Material=Material'"M_Glitch"'
+   End Object
+   Begin Object Name="MaterialExpressionVectorParameter_0"
+      DefaultValue=(R=0.321244,G=4.880620,B=5.000000,A=3.000000)
+      ParameterName="EmissiveColor"
+      ExpressionGUID=CF0337954B571C59C531FA90724A61C6
+      MaterialExpressionEditorX=-112
+      MaterialExpressionEditorY=-288
+      MaterialExpressionGuid=313ED8034956AB4A274DEFA455DD26E5
+      Material=Material'"M_Glitch"'
+   End Object
+   Begin Object Name="MaterialExpressionVectorParameter_1"
+      DefaultValue=(R=0.000000,G=0.920000,B=1.000000,A=1.000000)
+      ParameterName="GlitchColor_1"
+      ExpressionGUID=FECA8A774B80432A75AF8C8431959BEA
+      MaterialExpressionEditorX=208
+      MaterialExpressionEditorY=576
+      MaterialExpressionGuid=EBBF7D354AF3A87715CCB7AB323827B6
+      Material=Material'"M_Glitch"'
+   End Object
+   Begin Object Name="MaterialExpressionVectorParameter_2"
+      DefaultValue=(R=1.000000,G=0.000000,B=0.007716,A=1.000000)
+      ParameterName="GlitchColor_2"
+      ExpressionGUID=02BD0B084184BB1A6B321DBCE1D56D26
+      MaterialExpressionEditorX=208
+      MaterialExpressionEditorY=784
+      MaterialExpressionGuid=EBBF7D354AF3A87715CCB7AB323827B6
+      Material=Material'"M_Glitch"'
+   End Object
+   Begin Object Name="SceneThumbnailInfoWithPrimitive_0"
+   End Object
+   EmissiveColor=(Expression=MaterialExpressionLinearInterpolate'"MaterialExpressionLinearInterpolate_3"')
+   OpacityMask=(Expression=MaterialExpressionAdd'"MaterialExpressionAdd_0"')
+   BlendMode=BLEND_Masked
+   ShadingModel=MSM_Unlit
+   ShadingModels=(ShadingModelField=1)
+   bUsedWithStaticLighting=True
+   EditorX=1616
+   EditorY=96
+   Expressions(0)=MaterialExpressionLinearInterpolate'"MaterialExpressionLinearInterpolate_3"'
+   Expressions(1)=MaterialExpressionAdd'"MaterialExpressionAdd_0"'
+   Expressions(2)=MaterialExpressionTextureSample'"MaterialExpressionTextureSample_1"'
+   Expressions(3)=MaterialExpressionPanner'"MaterialExpressionPanner_0"'
+   Expressions(4)=MaterialExpressionOneMinus'"MaterialExpressionOneMinus_0"'
+   Expressions(5)=MaterialExpressionClamp'"MaterialExpressionClamp_0"'
+   Expressions(6)=MaterialExpressionTime'"MaterialExpressionTime_0"'
+   Expressions(7)=MaterialExpressionMultiply'"MaterialExpressionMultiply_0"'
+   Expressions(8)=MaterialExpressionSine'"MaterialExpressionSine_0"'
+   Expressions(9)=MaterialExpressionMaterialFunctionCall'"MaterialExpressionMaterialFunctionCall_0"'
+   Expressions(10)=MaterialExpressionMultiply'"MaterialExpressionMultiply_1"'
+   Expressions(11)=MaterialExpressionVectorParameter'"MaterialExpressionVectorParameter_0"'
+   Expressions(12)=MaterialExpressionMultiply'"MaterialExpressionMultiply_2"'
+   Expressions(13)=MaterialExpressionTextureSample'"MaterialExpressionTextureSample_3"'
+   Expressions(14)=MaterialExpressionMaterialFunctionCall'"MaterialExpressionMaterialFunctionCall_1"'
+   Expressions(15)=MaterialExpressionScalarParameter'"MaterialExpressionScalarParameter_0"'
+   Expressions(16)=MaterialExpressionSubtract'"MaterialExpressionSubtract_0"'
+   Expressions(17)=MaterialExpressionClamp'"MaterialExpressionClamp_1"'
+   Expressions(18)=MaterialExpressionLinearInterpolate'"MaterialExpressionLinearInterpolate_0"'
+   Expressions(19)=MaterialExpressionVectorParameter'"MaterialExpressionVectorParameter_1"'
+   Expressions(20)=MaterialExpressionVectorParameter'"MaterialExpressionVectorParameter_2"'
+   Expressions(21)=MaterialExpressionLinearInterpolate'"MaterialExpressionLinearInterpolate_1"'
+   Expressions(22)=MaterialExpressionMaterialFunctionCall'"MaterialExpressionMaterialFunctionCall_3"'
+   Expressions(23)=MaterialExpressionSubtract'"MaterialExpressionSubtract_1"'
+   Expressions(24)=MaterialExpressionCeil'"MaterialExpressionCeil_0"'
+   Expressions(25)=MaterialExpressionMultiply'"MaterialExpressionMultiply_3"'
+   Expressions(26)=MaterialExpressionMultiply'"MaterialExpressionMultiply_4"'
+   Expressions(27)=MaterialExpressionMultiply'"MaterialExpressionMultiply_5"'
+   Expressions(28)=MaterialExpressionTextureSample'"MaterialExpressionTextureSample_4"'
+   Expressions(29)=MaterialExpressionTextureSample'"MaterialExpressionTextureSample_0"'
+   Expressions(30)=MaterialExpressionTextureSample'"MaterialExpressionTextureSample_5"'
+   Expressions(31)=MaterialExpressionTextureSample'"MaterialExpressionTextureSample_6"'
+   Expressions(32)=MaterialExpressionTextureSample'"MaterialExpressionTextureSample_7"'
+   Expressions(33)=MaterialExpressionTextureSample'"MaterialExpressionTextureSample_8"'
+   Expressions(34)=MaterialExpressionTextureSample'"MaterialExpressionTextureSample_9"'
+   Expressions(35)=MaterialExpressionTextureSample'"MaterialExpressionTextureSample_10"'
+   Expressions(36)=MaterialExpressionTextureSample'"MaterialExpressionTextureSample_11"'
+   Expressions(37)=MaterialExpressionTextureSample'"MaterialExpressionTextureSample_12"'
+   Expressions(38)=MaterialExpressionTextureSample'"MaterialExpressionTextureSample_13"'
+   Expressions(39)=MaterialExpressionTextureSample'"MaterialExpressionTextureSample_14"'
+   Expressions(40)=MaterialExpressionTextureSample'"MaterialExpressionTextureSample_15"'
+   Expressions(41)=MaterialExpressionTextureSample'"MaterialExpressionTextureSample_16"'
+   Expressions(42)=MaterialExpressionTextureSample'"MaterialExpressionTextureSample_17"'
+   ParameterGroupData(0)=(GroupName="None")
+   ParameterGroupData(1)=(GroupName="None")
+   ParameterGroupData(2)=(GroupName="None")
+   ParameterGroupData(3)=(GroupName="None")
+   StateId=B8F621BB4FEF1291A12D8D8E158A61C1
+   CachedExpressionData=(Parameters=(RuntimeEntries[0]=(NameHashes=(16657906329141759839,17546614249747524552),ParameterInfos=((Name="GlitchAlpha "),(Name="GlitchColor")),ExpressionGuids=(77B21EE64E3CCE0136091693A671AD5E,7C614F434BFF6B99DB60178FECEA7F77),Overrides=(False,False)),RuntimeEntries[1]=(NameHashes=(2236351998331959773,4520297955780774139,13273720324116231612,14086607036428180716),ParameterInfos=((Name="EmissiveColor"),(Name="GlitchSpeed"),(Name="GlitchColor_2"),(Name="GlitchColor_1")),ExpressionGuids=(CF0337954B571C59C531FA90724A61C6,410BE52344CC2599A9F244B0F521F81A,02BD0B084184BB1A6B321DBCE1D56D26,FECA8A774B80432A75AF8C8431959BEA),Overrides=(False,False,False,False)),ScalarValues=(0.030000,0.030000),VectorValues=((R=0.321244,G=4.880620,B=5.000000,A=3.000000),(R=3.000000,G=5.000000,B=0.000000,A=1.000000),(R=1.000000,G=0.000000,B=0.007716,A=1.000000),(R=0.000000,G=0.920000,B=1.000000,A=1.000000)),ScalarMinMaxValues=((X=0.000000,Y=0.000000),(X=0.000000,Y=0.000000)),ScalarCurveValues=(None,None),ScalarCurveAtlasValues=(None,None),VectorChannelNameValues=((),(),(),()),VectorUsedAsChannelMaskValues=(False,False,False,False)),ReferencedTextures=(Texture2D'"/Engine/EngineMaterials/T_Default_BaseColor.T_Default_BaseColor"',Texture2D'"/Game/Glitch/T_techNoiseTest.T_techNoiseTest"',Texture2D'"/Game/GlitchMAt/TrialUV/T_Prop_CM.T_Prop_CM"',Texture2D'"/Game/Glitch/txt_fx_glitch_pattern.txt_fx_glitch_pattern"',Texture2D'"/Game/glitch-vhs-effect-tv-texture-free-download.glitch-vhs-effect-tv-texture-free-download"',Texture2D'"/Game/glitch_art_1_by_niedec_stock_d7jtqvu.glitch_art_1_by_niedec_stock_d7jtqvu"',Texture2D'"/Game/glitch_art_4_by_niedec_stock_d7jtsuj.glitch_art_4_by_niedec_stock_d7jtsuj"',Texture2D'"/Game/glitch_art_6_by_niedec_stock_d7jtte0.glitch_art_6_by_niedec_stock_d7jtte0"',Texture2D'"/Game/glitchy_texture_2_by_omniscient_duck_d6diqne.glitchy_texture_2_by_omniscient_duck_d6diqne"',Texture2D'"/Game/glitchy_texture_by_omniscient_duck_d6dchv2.glitchy_texture_by_omniscient_duck_d6dchv2"',Texture2D'"/Game/grid_by_praseodym_d2t2y05.grid_by_praseodym_d2t2y05"',Texture2D'"/Game/screen-error-glich-texture-background.screen-error-glich-texture-background"',Texture2D'"/Game/texture___abstract_by_seiden_stocks_db83lf1.texture___abstract_by_seiden_stocks_db83lf1"',Texture2D'"/Game/tv-screen-error-glitch-background.tv-screen-error-glitch-background"',Texture2D'"/Game/weapons_of_math_destruction_by_praseodym_d36c1hg.weapons_of_math_destruction_by_praseodym_d36c1hg"',Texture2D'"/Game/weapons_of_math_destruction_by_praseodym_d36c1hg__1_.weapons_of_math_destruction_by_praseodym_d36c1hg__1_"'),FunctionInfos=((StateId=3161742E4800C603B145E1AF56D3BE63,Function=MaterialFunction'"/Engine/Functions/Engine_MaterialFunctions02/Math/TimeWithSpeedVariable.TimeWithSpeedVariable"'),(StateId=5840FD06483447053EE75AB2611F385A,Function=MaterialFunction'"/Game/GlitchMAt/MF_CustomPanner.MF_CustomPanner"'),(StateId=3161742E4800C603B145E1AF56D3BE63,Function=MaterialFunction'"/Engine/Functions/Engine_MaterialFunctions02/Math/TimeWithSpeedVariable.TimeWithSpeedVariable"'),(StateId=5840FD06483447053EE75AB2611F385A,Function=MaterialFunction'"/Game/GlitchMAt/MF_CustomPanner.MF_CustomPanner"'),(StateId=B7C71B914E2BB667772D6CBE2AB55665,Function=MaterialFunction'"/Engine/Functions/Engine_MaterialFunctions01/Gradient/LinearGradient.LinearGradient"'),(StateId=B7C71B914E2BB667772D6CBE2AB55665,Function=MaterialFunction'"/Engine/Functions/Engine_MaterialFunctions01/Gradient/LinearGradient.LinearGradient"'),(StateId=13FFCEFA4C92EB322F869D8BF67D5470,Function=MaterialFunction'"/Game/GlitchMAt/MF_Glitch.MF_Glitch"'),(StateId=3161742E4800C603B145E1AF56D3BE63,Function=MaterialFunction'"/Engine/Functions/Engine_MaterialFunctions02/Math/TimeWithSpeedVariable.TimeWithSpeedVariable"'),(StateId=5840FD06483447053EE75AB2611F385A,Function=MaterialFunction'"/Game/GlitchMAt/MF_CustomPanner.MF_CustomPanner"'),(StateId=3161742E4800C603B145E1AF56D3BE63,Function=MaterialFunction'"/Engine/Functions/Engine_MaterialFunctions02/Math/TimeWithSpeedVariable.TimeWithSpeedVariable"'),(StateId=5840FD06483447053EE75AB2611F385A,Function=MaterialFunction'"/Game/GlitchMAt/MF_CustomPanner.MF_CustomPanner"'),(StateId=B7C71B914E2BB667772D6CBE2AB55665,Function=MaterialFunction'"/Engine/Functions/Engine_MaterialFunctions01/Gradient/LinearGradient.LinearGradient"'),(StateId=B7C71B914E2BB667772D6CBE2AB55665,Function=MaterialFunction'"/Engine/Functions/Engine_MaterialFunctions01/Gradient/LinearGradient.LinearGradient"'),(StateId=13FFCEFA4C92EB322F869D8BF67D5470,Function=MaterialFunction'"/Game/GlitchMAt/MF_Glitch.MF_Glitch"'),(StateId=B7C71B914E2BB667772D6CBE2AB55665,Function=MaterialFunction'"/Engine/Functions/Engine_MaterialFunctions01/Gradient/LinearGradient.LinearGradient"')),QualityLevelsUsed=(False,False,False,False))
+   ReferencedTextureGuids(0)=2C39C69445712FA2BBFCC88895404F69
+   ReferencedTextureGuids(1)=0AB1790C455709937EAB42954046B276
+   TextureStreamingDataVersion=1
+   TextureStreamingData(0)=(SamplingScale=1.000000,UVChannelIndex=0,TextureName="glitch-vhs-effect-tv-texture-free-download",TextureReference=/Game/glitch-vhs-effect-tv-texture-free-download.glitch-vhs-effect-tv-texture-free-download)
+   TextureStreamingData(1)=(SamplingScale=0.974182,UVChannelIndex=0,TextureName="T_Default_BaseColor",TextureReference=/Engine/EngineMaterials/T_Default_BaseColor.T_Default_BaseColor)
+   ThumbnailInfo=SceneThumbnailInfoWithPrimitive'"SceneThumbnailInfoWithPrimitive_0"'
+   LightingGuid=B42F64194F9FA3C167278BA1BAF04162
+End Object
