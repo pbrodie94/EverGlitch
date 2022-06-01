@@ -59,6 +59,8 @@ public:
 	*/
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void ApplyJumpChange(float percentage, float duration);
+	
+	virtual bool PlayAnim(class UAnimMontage* montage, FName section) = 0;
 
 	/**
 	 * Returns player's ability energy level
@@ -141,6 +143,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	bool GetHasWeapon() const;
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	bool GetIsCombatStance() const;
 	
 	/**
 	 * Subscribes actors as a new player observer

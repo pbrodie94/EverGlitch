@@ -84,6 +84,11 @@ void AEntityBase::Tick(float DeltaTime)
 *********************************************************************/
 float AEntityBase::TakeIncomingDamage_Implementation(float damageAmount, AActor* damageCauser, AController* eventInstigator, FDamageData damageData)
 {
+	if (GetIsDead())
+	{
+		return 0;
+	}
+	
 	if (damageAmount <= 0 || currentHealth <= 0)
 	{
 		return 0;
@@ -280,6 +285,11 @@ void AEntityBase::AddStatusEffect_Implementation(FStatusEffect statusEffect)
 
 float AEntityBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
+	if (GetIsDead())
+	{
+		return 0;
+	}
+	
 	Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 
 	if (DamageAmount <= 0 || currentHealth <= 0)

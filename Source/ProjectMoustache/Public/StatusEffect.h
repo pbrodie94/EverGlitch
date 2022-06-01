@@ -94,6 +94,7 @@ class UChilledStatus : public UStatusEffectBase
 	GENERATED_BODY()
 
 	float defaultSpeed;
+	float effectedSpeed;
 
 	virtual void OnExpired() override;
 
@@ -104,6 +105,8 @@ public:
 	virtual void Init(AActor* actor, float amount, float effectDuration, float interval, float worldTime) override;
 	
 	virtual FORCEINLINE EStatusEffectType GetEffectType() override { return Chilled; }
+
+	FORCEINLINE float GetDebuffSpeed() const { return effectedSpeed; }
 };
 
 /************************************************************
