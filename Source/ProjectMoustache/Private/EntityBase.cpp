@@ -309,6 +309,8 @@ float AEntityBase::GetMoveSpeed() const
 
 void AEntityBase::Die_Implementation()
 {
+	RemoveAllStatusEffects();
+	
 	if (OnDied.IsBound())
 	{
 		OnDied.Broadcast(this);
@@ -347,6 +349,20 @@ void AEntityBase::RemoveStatusEffect_Implementation(UStatusEffectBase* statusEff
 
 	statusEffect->SetExpired();
 	removedStatusEffects.Add(statusEffect);
+}
+
+void AEntityBase::RemoveAllStatusEffects()
+{
+	if (statusEffects.Num() <= 0)
+	{
+		return;
+	}
+
+	for (UStatusEffectBase* statusEffect : statusEffects)
+	{
+		statusEffect->SetExpired();
+		removedStatusEffects.Add(statusEffect);
+	}
 }
 
 /**
