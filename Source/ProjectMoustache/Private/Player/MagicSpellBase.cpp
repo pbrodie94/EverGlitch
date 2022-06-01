@@ -10,8 +10,42 @@ UMagicSpellBase::UMagicSpellBase()
 {
 }
 
-void UMagicSpellBase::Execute(APawn* userActor)
+bool UMagicSpellBase::Execute(APawn* userActor)
 {
+	if (userActor == nullptr)
+	{
+		return false;
+	}
+	
+	const UWorld* world = GetWorld();
+	if (world->GetTimeSeconds() < timeNextFire)
+	{
+		return false;
+	}
+
+	IPlayerCharacter* player = Cast<IPlayerCharacter>(userActor);
+	if (player == nullptr)
+	{
+		CastSpell(userActor);
+		return false;
+	}
+
+	if (!player->PlayAnim(castAnimation, "Default"))
+	{
+		CastSpell(userActor);
+		return false;
+	}
+
+	return true;
+}
+
+void UMagicSpellBase::CastSpell(APawn* userActor)
+{
+	if (userActor == nullptr)
+	{
+		return;
+	}
+
 	if (spellProjectile == nullptr)
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red,
@@ -20,10 +54,6 @@ void UMagicSpellBase::Execute(APawn* userActor)
 	}
 	
 	UWorld* world = GetWorld();
-	if (world->GetTimeSeconds() < timeNextFire)
-	{
-		return;
-	}
 	
 	// TODO: Add call to get spawn point from player character when created
 	FRotator spawnRotation = userActor->GetControlRotation();
@@ -73,7 +103,7 @@ void UMagicSpellBase::Execute(APawn* userActor)
 }
 
 float UMagicSpellBase::GetCooldownProgress()
-{
+{	
 	const float time = (GetWorld()->GetTimeSeconds() - timeFired) / coolDownTime;
 	return FMath::Clamp(time, 0.0f, 1.0f);
 }

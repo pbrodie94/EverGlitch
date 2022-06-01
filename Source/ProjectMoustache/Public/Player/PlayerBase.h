@@ -6,6 +6,7 @@
 #include "PlayerCharacter.h"
 #include "PlayerObserver.h"
 #include "EntityBase.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "Weapons/WeaponBase.h"
 #include "PlayerBase.generated.h"
 
@@ -296,6 +297,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TSubclassOf<AWeaponBase> startingWeapon;
 
+	UPROPERTY(EditDefaultsOnly)
+	FName weaponAttachSocketName;
+
 	UPROPERTY(BlueprintReadWrite)
 	AWeaponBase* currentWeapon;
 
@@ -432,6 +436,9 @@ public:
 	void ApplyJumpChange(float percentage, float duration);
 	void ApplyJumpChange_Implementation(float percentage, float duration);
 
+	UFUNCTION()
+	bool PlayAnim(class UAnimMontage* montage, FName section);
+
 	/**
 	* Returns player's ability energy level
 	*/
@@ -452,7 +459,7 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void SetInteractable(const TScriptInterface<IInteractable>& interactableObject);
 	virtual void SetInteractable_Implementation(const TScriptInterface<IInteractable>& interactableObject);
-
+	
 	/**
 	* Takes in an interactable reference, and removes it from the player's interactable pointer
 	* if the player currently has a pointer to the calling interactable object it will not be removed
@@ -517,6 +524,12 @@ public:
 	float GetCurrentPlayerVelocity() const;
 	float GetCurrentPlayerVelocity_Implementation() const;
 
+	void ChangeMoveSpeed();
+	
+	virtual void SetMoveSpeed(float speed) override;
+
+	FORCEINLINE virtual float GetMoveSpeed() const override { return runSpeed; }
+
 	/**
 	* Returns the currently equipped weapon
 	*/
@@ -527,6 +540,11 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	bool GetHasWeapon() const;
 	FORCEINLINE bool GetHasWeapon_Implementation() const { return currentWeapon != nullptr; }
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	bool GetIsCombatStance() const;
+	FORCEINLINE bool GetIsCombatStance_Implementation() const
+	{ return !GetCharacterMovement()->bOrientRotationToMovement; }
 	
 	/**
 	* Subscribes actors as a new player observer
