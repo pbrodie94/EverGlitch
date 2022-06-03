@@ -123,6 +123,11 @@ bool AWeaponBase::OnFireDown_Implementation()
 
 bool AWeaponBase::OnFireUp_Implementation()
 {
+	if (!isFiring)
+	{
+		return true;
+	}
+
 	isFiring = false;
 	
 	IPlayerCharacter* player = Cast<IPlayerCharacter>(GetOwner());
