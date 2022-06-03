@@ -923,6 +923,7 @@ float APlayerBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEven
 		return 0;
 	}
 
+	FireUp();
 	StopAnimMontage();
 	if (magicComponent != nullptr)
 	{
@@ -953,6 +954,8 @@ float APlayerBase::TakeIncomingDamage_Implementation(float damageAmount, AActor*
 		return 0;
 	}
 
+	FireUp();
+	
 	StopAnimMontage();
 	if (magicComponent != nullptr)
 	{
