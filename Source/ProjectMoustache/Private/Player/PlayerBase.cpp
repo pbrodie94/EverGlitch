@@ -394,16 +394,17 @@ void APlayerBase::Dash()
 
 	GetCharacterMovement()->Launch(moveDirection);
 
-	HandleDashEffects();
+	if (dashMontage != nullptr)
+	{
+		PlayAnimMontage(dashMontage, 1, "Default");
+	}
+
+	DashCameraEffects();
 
 	const float worldTime = GetWorld()->GetTimeSeconds();
 
 	timeNextDash = worldTime + dashDelayInterval;
 	timeBeginRecharge = worldTime + energyRechargeDelay;
-}
-
-void APlayerBase::HandleDashEffects_Implementation()
-{
 }
 
 // Temporary

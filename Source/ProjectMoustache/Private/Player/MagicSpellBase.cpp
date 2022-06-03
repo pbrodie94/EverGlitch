@@ -30,7 +30,7 @@ bool UMagicSpellBase::Execute(APawn* userActor)
 		return false;
 	}
 
-	if (!player->PlayAnim(castAnimation, "Default"))
+	if (!player->PlayAnim(castAnimation, animMontageSection))
 	{
 		CastSpell(userActor);
 		return false;

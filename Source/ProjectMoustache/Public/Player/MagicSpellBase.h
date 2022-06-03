@@ -45,6 +45,10 @@ protected:
 	UPROPERTY(EditAnywhere)
 	UAnimMontage* castAnimation;
 
+	// The section to play in the cast animation
+	UPROPERTY(EditAnywhere)
+	FName animMontageSection;
+
 	// Amount of damage done
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = MagicSpell)
 	float damage;
