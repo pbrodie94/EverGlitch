@@ -324,6 +324,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Combat)
 	float meleeDamage;
 
+	UPROPERTY(EditDefaultsOnly)
+	UAnimMontage* dashMontage;
+
 	UPROPERTY(BlueprintReadWrite)
 	bool godMode;
 
@@ -344,8 +347,8 @@ protected:
 	void EndMeleeAttackDamage();
 
 	UFUNCTION(BlueprintNativeEvent) // Expects that the function is defined in Blueprint
-	void HandleDashEffects(); // Put whatever parameters you need
-	void HandleDashEffects_Implentaion() { }
+	void DashCameraEffects(); // Put whatever parameters you need
+	void DashCameraEffects_Implementation() { }
 
 	//Function for spawning projectiles in blueprint
 	UFUNCTION(BlueprintImplementableEvent)
