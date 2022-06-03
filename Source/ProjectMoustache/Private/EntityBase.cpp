@@ -20,6 +20,8 @@ AEntityBase::AEntityBase()
 	iceEffectiveness = 100;
 	lightningEffectiveness = 100;
 	waterEffectiveness = 100;
+
+	currentHealth = 100;
 }
 
 // Called when the game starts or when spawned
@@ -49,9 +51,11 @@ void AEntityBase::Tick(float DeltaTime)
 	if (removedStatusEffects.Num() > 0)
 	{
 		for (UStatusEffectBase* removedEffect : removedStatusEffects)
-		{
+		{			
 			statusEffects.Remove(removedEffect);
 			OnStatusEffectRemoved.Broadcast(removedEffect);
+
+			removedEffect->ConditionalBeginDestroy();
 		}
 
 		removedStatusEffects.Empty();
@@ -280,7 +284,7 @@ void AEntityBase::AddStatusEffect_Implementation(FStatusEffect statusEffect)
 	}
 	
 	status->Init(this, statusEffect.effectAmount, statusEffect.duration, statusEffect.dotInterval, GetWorld()->GetTimeSeconds());
-	newStatusEffects.Add(status);
+	newStatusEffects.AddUnique(status);
 }
 
 float AEntityBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
@@ -342,7 +346,7 @@ void AEntityBase::RemoveStatus_Implementation(EStatusEffectType statusEffect)
 		if (status->GetEffectType() == statusEffect)
 		{
 			status->SetExpired();
-			removedStatusEffects.Add(status);
+			removedStatusEffects.AddUnique(status);
 		}
 	}
 }
@@ -358,7 +362,7 @@ void AEntityBase::RemoveStatusEffect_Implementation(UStatusEffectBase* statusEff
 	}
 
 	statusEffect->SetExpired();
-	removedStatusEffects.Add(statusEffect);
+	removedStatusEffects.AddUnique(statusEffect);
 }
 
 void AEntityBase::RemoveAllStatusEffects()
@@ -370,24 +374,18 @@ void AEntityBase::RemoveAllStatusEffects()
 
 	for (UStatusEffectBase* statusEffect : statusEffects)
 	{
-		statusEffect->SetExpired();
-		removedStatusEffects.Add(statusEffect);
+		RemoveStatusEffect_Implementation(statusEffect);
 	}
+
+	newStatusEffects.Empty();
 }
 
 /**
 * Returns a list of status effects active on the character
 */
-TArray<UStatusEffectBase*> AEntityBase::GetAllStatusEffects_Implementation()
+TArray<UStatusEffectBase*> AEntityBase::GetAllStatusEffects_Implementation() const
 {
-	TArray<UStatusEffectBase*> effects;
-
-	for (UStatusEffectBase* status : statusEffects)
-	{
-		effects.Add(status);
-	}
-
-	return effects;
+	return statusEffects;
 }
 
 /**

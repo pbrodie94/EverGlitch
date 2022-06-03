@@ -258,8 +258,8 @@ void APlayerBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	PlayerInputComponent->BindAction("Dash", IE_Pressed, this, &APlayerBase::Dash);
 	PlayerInputComponent->BindAction("Action", IE_Pressed, this, &APlayerBase::InteractWithObject);
 	PlayerInputComponent->BindAction("Inventory", IE_Pressed, this, &APlayerBase::ToggleInventory);
-	PlayerInputComponent->BindAction("Aim", IE_Pressed, this, &APlayerBase::BeginAiming);
-	PlayerInputComponent->BindAction("Aim", IE_Released, this, &APlayerBase::EndAiming);
+	//PlayerInputComponent->BindAction("Aim", IE_Pressed, this, &APlayerBase::BeginAiming);
+	//PlayerInputComponent->BindAction("Aim", IE_Released, this, &APlayerBase::EndAiming);
 	PlayerInputComponent->BindAction("Shoot", IE_Pressed, this, &APlayerBase::Fire);
 	PlayerInputComponent->BindAction("Shoot", IE_Released, this, &APlayerBase::FireUp);
 
@@ -377,6 +377,8 @@ void APlayerBase::Dash()
 	{
 		magicComponent->CancelCasting();
 	}
+
+	FireUp();
 
 	abilityEnergy -= dashEnergyCost;
 
@@ -803,6 +805,8 @@ void APlayerBase::UseAbility1()
 		return;
 	}
 
+	FireUp();
+
 	//Switch to combat stance
 	BeginCombatStance();
 	BeginEndCombatStanceTimer();
@@ -830,6 +834,8 @@ void APlayerBase::UseAbility2()
 	{
 		return;
 	}
+
+	FireUp();
 
 	//Switch to combat stance
 	BeginCombatStance();
@@ -917,12 +923,8 @@ float APlayerBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEven
 		return 0;
 	}
 
-	StopAnimMontage();
-	if (magicComponent != nullptr)
-	{
-		magicComponent->CancelCasting();
-	}
-
+	PlayHitAnimations(DamageCauser);
+	
 	const float damage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 	
 	if (damage > 0)
@@ -947,11 +949,7 @@ float APlayerBase::TakeIncomingDamage_Implementation(float damageAmount, AActor*
 		return 0;
 	}
 
-	StopAnimMontage();
-	if (magicComponent != nullptr)
-	{
-		magicComponent->CancelCasting();
-	}
+	PlayHitAnimations(damageCauser);
 	
 	const float damage = Super::TakeIncomingDamage_Implementation(damageAmount, damageCauser,
 		eventInstigator, damageData);
@@ -964,6 +962,34 @@ float APlayerBase::TakeIncomingDamage_Implementation(float damageAmount, AActor*
 	return damage;
 }
 
+/**
+* Plays hit animations and cancels attacks
+* Takes in the damage causer and uses it to determine the direction the
+* damage came from, then plays the appropriate damage animation.
+* If the damage causer or animation are null, no attacks are cancelled/
+*/
+void APlayerBase::PlayHitAnimations(AActor* damageCauser)
+{
+	if (damageCauser == nullptr || damageMontage == nullptr)
+	{
+		return;
+	}
+
+	FireUp();
+	
+	StopAnimMontage();
+	if (magicComponent != nullptr)
+	{
+		magicComponent->CancelCasting();
+	}
+
+	const FVector damageDir = damageCauser->GetActorLocation() - GetActorLocation();
+
+	const FName animSection = FVector::DotProduct(damageDir, GetMesh()->GetForwardVector()) > 0 ?
+		"Font" : "Back";
+
+	PlayAnimMontage(damageMontage, 1.0f, animSection);
+}
 
 //Begins melee hit detection
 void APlayerBase::BeginMeleeAttackDamage()
