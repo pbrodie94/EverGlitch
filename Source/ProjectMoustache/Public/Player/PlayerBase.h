@@ -255,6 +255,14 @@ class PROJECTMOUSTACHE_API APlayerBase : public AEntityBase, public IPlayerChara
 	void EndCombatStance() const;
 
 	/**
+	 * Plays hit animations and cancels attacks
+	 * Takes in the damage causer and uses it to determine the direction the
+	 * damage came from, then plays the appropriate damage animation.
+	 * If the damage causer or animation are null, no attacks are cancelled/
+	 */
+	void PlayHitAnimations(AActor* damageCauser);
+
+	/**
 	 * Expiry functions for stat change timers
 	 * Resets the values to default once expired
 	 */
@@ -326,6 +334,9 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly)
 	UAnimMontage* dashMontage;
+
+	UPROPERTY(EditDefaultsOnly)
+	UAnimMontage* damageMontage;
 
 	UPROPERTY(BlueprintReadWrite)
 	bool godMode;
