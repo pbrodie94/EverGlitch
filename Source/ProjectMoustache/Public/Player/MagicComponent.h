@@ -17,6 +17,11 @@ class PROJECTMOUSTACHE_API UMagicComponent : public UActorComponent
 
 	UPROPERTY()
 	UMagicSpellBase* supportSpell;
+
+	UPROPERTY()
+	UMagicSpellBase* currentSpell;
+
+	bool isCasting;
 	
 public:	
 	// Sets default values for this component's properties
@@ -37,8 +42,8 @@ protected:
 
 public:
 	
-	void CastDestructionSpell() const;
-	void CastSupportSpell() const;
+	void CastDestructionSpell();
+	void CastSupportSpell();
 	
 	/**
 	* Creates and Equips a new destruction spell
@@ -53,9 +58,15 @@ public:
 	void SetSupportMagicSpell(TSubclassOf<UMagicSpellBase> newSupportSpell);
 
 	UFUNCTION(BlueprintCallable)
+	void CastMagicProjectile();
+
+	void CancelCasting();
+
+	UFUNCTION(BlueprintCallable)
 	UMagicSpellBase* GetCurrentDestructionSpell();
 
 	UFUNCTION(BlueprintCallable)
 	UMagicSpellBase* GetCurrentSupportSpell();
-	
+
+	FORCEINLINE bool GetIsCasting() const { return isCasting; }
 };
