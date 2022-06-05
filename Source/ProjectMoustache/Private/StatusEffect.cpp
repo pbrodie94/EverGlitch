@@ -89,6 +89,7 @@ void UChilledStatus::Init(AActor* actor, float amount, float effectDuration, flo
 	}
 
 	defaultSpeed = damagableActor->GetMoveSpeed();
+	effectedSpeed = defaultSpeed / 2;
 	damagableActor->SetMoveSpeed(defaultSpeed / 2);
 }
 

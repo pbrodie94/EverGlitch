@@ -2,6 +2,8 @@
 
 
 #include "Player/PlayerBase.h"
+
+#include "StatusEffect.h"
 #include "Camera/CameraComponent.h"
 #include "Components/BoxComponent.h"
 #include "GameFramework/SpringArmComponent.h"
@@ -173,7 +175,8 @@ void APlayerBase::BeginPlay()
 			spawnLocation,FVector(1.0f, 1.0f, 1.0f)), spawnParams);
 
 		currentWeapon->AttachToComponent(GetMesh(),
-			FAttachmentTransformRules(EAttachmentRule::KeepRelative, true));
+			FAttachmentTransformRules(EAttachmentRule::SnapToTarget, true),
+			weaponAttachSocketName);
 	}
 
 	//Sets player's default values for reference
@@ -222,7 +225,7 @@ void APlayerBase::Tick(float DeltaTime)
 	// Temporary
 	if (currentWeapon != nullptr)
 	{
-		UpdateWeaponPosition();
+		//UpdateWeaponPosition();
 	}
 
 	// Recharge energy
@@ -234,7 +237,7 @@ void APlayerBase::Tick(float DeltaTime)
 	// Detect melee hits when attacking
 	if (isMeleeAttacking)
 	{
-		DetectMeleeHits();
+		//DetectMeleeHits();
 	}
 }
 
@@ -370,6 +373,11 @@ void APlayerBase::Dash()
 		return;
 	}
 
+	if (magicComponent != nullptr)
+	{
+		magicComponent->CancelCasting();
+	}
+
 	abilityEnergy -= dashEnergyCost;
 
 	if (numAirDashes > -1 && GetCharacterMovement()->IsFalling())
@@ -386,16 +394,17 @@ void APlayerBase::Dash()
 
 	GetCharacterMovement()->Launch(moveDirection);
 
-	HandleDashEffects();
+	if (dashMontage != nullptr)
+	{
+		PlayAnimMontage(dashMontage, 1, "Default");
+	}
+
+	DashCameraEffects();
 
 	const float worldTime = GetWorld()->GetTimeSeconds();
 
 	timeNextDash = worldTime + dashDelayInterval;
 	timeBeginRecharge = worldTime + energyRechargeDelay;
-}
-
-void APlayerBase::HandleDashEffects_Implementation()
-{
 }
 
 // Temporary
@@ -430,6 +439,11 @@ void APlayerBase::Fire()
 
 	const UWorld* world = GetWorld();
 	if (world->GetTimeSeconds() < timeNextShot)
+	{
+		return;
+	}
+
+	if (magicComponent != nullptr && magicComponent->GetIsCasting())
 	{
 		return;
 	}
@@ -903,6 +917,12 @@ float APlayerBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEven
 		return 0;
 	}
 
+	StopAnimMontage();
+	if (magicComponent != nullptr)
+	{
+		magicComponent->CancelCasting();
+	}
+
 	const float damage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 	
 	if (damage > 0)
@@ -925,6 +945,12 @@ float APlayerBase::TakeIncomingDamage_Implementation(float damageAmount, AActor*
 	if (GetIsDead())
 	{
 		return 0;
+	}
+
+	StopAnimMontage();
+	if (magicComponent != nullptr)
+	{
+		magicComponent->CancelCasting();
 	}
 	
 	const float damage = Super::TakeIncomingDamage_Implementation(damageAmount, damageCauser,
@@ -961,9 +987,9 @@ void APlayerBase::BeginAiming_Implementation()
 	}
 
 	isAiming = true;
-	GetCharacterMovement()->MaxWalkSpeed = aimSpeed;
 
-	//GetCharacterMovement()->bOrientRotationToMovement = false;
+	ChangeMoveSpeed();
+	
 	BeginCombatStance();
 
 	// Call to observers if any exist
@@ -982,8 +1008,9 @@ void APlayerBase::BeginAiming_Implementation()
 void APlayerBase::EndAiming_Implementation()
 {
 	isAiming = false;
-    GetCharacterMovement()->bOrientRotationToMovement = true;
-    GetCharacterMovement()->MaxWalkSpeed = runSpeed;
+    //GetCharacterMovement()->bOrientRotationToMovement = true;
+
+	ChangeMoveSpeed();
 
 	EndCombatStance();
 
@@ -1139,6 +1166,18 @@ void APlayerBase::ApplyJumpChange_Implementation(float percentage, float duratio
 		&APlayerBase::OnJumpChangeExpired, duration);
 }
 
+bool APlayerBase::PlayAnim(UAnimMontage* montage, FName section)
+{
+	if (montage == nullptr)
+	{
+		return false;
+	}
+
+	PlayAnimMontage(montage, 1, section);
+
+	return true;
+}
+
 /**
 * Takes in an interactable object, and sets it as the current interactable object
 */
@@ -1248,6 +1287,29 @@ float APlayerBase::GetCurrentPlayerVelocity_Implementation() const
 {
 	return GetCharacterMovement()->Velocity.Size();
 }
+
+void APlayerBase::ChangeMoveSpeed()
+{
+	float wantedSpeed = isAiming ? aimSpeed : runSpeed;
+	if (GetHasStatusEffect(Chilled))
+	{
+		const UChilledStatus* chilledStatus = Cast<UChilledStatus>(GetStatusEffect(Chilled));
+		wantedSpeed = FMath::Min(wantedSpeed, chilledStatus->GetDebuffSpeed());
+	}
+
+	GetCharacterMovement()->MaxWalkSpeed = wantedSpeed;
+}
+
+void APlayerBase::SetMoveSpeed(float speed)
+{
+	if (speed > GetMoveSpeed() && isAiming)
+	{
+		return;
+	}
+
+	Super::SetMoveSpeed(speed);
+}
+
 
 /**
 * Subscribes actors as a new player observer

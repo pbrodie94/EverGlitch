@@ -37,6 +37,18 @@ protected:
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<AProjectileBase> projectile;
 
+	UPROPERTY(EditDefaultsOnly)
+	UAnimMontage* fireAnimation;
+
+	UPROPERTY(EditDefaultsOnly)
+	FName fireBegin;
+
+	UPROPERTY(EditDefaultsOnly)
+	FName fireEnd;
+
+	UPROPERTY(EditDefaultsOnly)
+	float fireStartupDelay;
+
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
