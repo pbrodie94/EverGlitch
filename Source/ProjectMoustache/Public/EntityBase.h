@@ -110,6 +110,8 @@ public:
 	float TakeIncomingDamage(float damageAmount, AActor* damageCauser, AController* eventInstigator, FDamageData damageData);
 	virtual float TakeIncomingDamage_Implementation(float damageAmount, AActor* damageCauser, AController* eventInstigator, FDamageData damageData) override;
 
+	virtual void SetMoveSpeed(float speed) override;
+	
 	/**
 	* Takes in a status effect struct and adds it to the character
 	* If the resistance to the element is <= 0, the effect will not be added
@@ -131,13 +133,16 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void RemoveStatusEffect(class UStatusEffectBase* statusEffect);
 	virtual void RemoveStatusEffect_Implementation(class UStatusEffectBase* statusEffect) override;
+	
+	UFUNCTION(BlueprintCallable)
+	void RemoveAllStatusEffects();
 
 	/**
 	* Returns a list of status effects active on the character
 	*/
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	TArray<UStatusEffectBase*> GetAllStatusEffects();
-	TArray<UStatusEffectBase*> GetAllStatusEffects_Implementation();
+	TArray<UStatusEffectBase*> GetAllStatusEffects() const;
+	FORCEINLINE TArray<UStatusEffectBase*> GetAllStatusEffects_Implementation() const;
 	
 	/**
 	 * Returns the first found non-expired object for the inputted status effect type
@@ -193,6 +198,8 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	float GetMaxHealth() const;
 	float FORCEINLINE GetMaxHealth_Implementation() const override { return maxHealth; }
+
+	virtual float GetMoveSpeed() const override;
 
 	/**
 	* Returns true if the character is dead

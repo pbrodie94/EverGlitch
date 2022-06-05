@@ -4,22 +4,27 @@
 #include "GameFramework/Actor.h"
 #include "ItemBase.generated.h"
 
+UENUM(BlueprintType, Blueprintable)
+enum EItemType
+{
+	Health UMETA(DisplayName = "Health"),
+	Damage UMETA(DisplayName = "Damage"),
+};
+
 UCLASS()
 class PROJECTMOUSTACHE_API AItemBase : public AActor
 {
 	GENERATED_BODY()
-	
-	public:	
-	// Sets default values for this actor's properties
-	AItemBase();
 
 	protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
-
+	
 	// Item's display name
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = ItemProperties)
 	FText itemName;
+
+	// Item type
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = ItemProperties)
+	TEnumAsByte<EItemType> itemType;
 
 	// Items description, and use effects
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = ItemProperties)
@@ -40,10 +45,14 @@ class PROJECTMOUSTACHE_API AItemBase : public AActor
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = InventoryProperties)
 	int quantity;
 	
-	public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
+	// Called when the game starts or when spawned
+	virtual void BeginPlay() override;
+	
+public:	
 
+	// Sets default values for this actor's properties
+	AItemBase();
+	
 	/**
 	 * Use function to be overridden by item subclasses to perform their unique use functions
 	 * Takes in the user actor, and returns whether or not the use was successful
@@ -52,17 +61,20 @@ class PROJECTMOUSTACHE_API AItemBase : public AActor
 	bool Use(AActor* userActor);
 
 	UFUNCTION(BlueprintCallable)
-	FText GetItemName() { return itemName; }
+	FORCEINLINE FText GetItemName() const { return itemName; }
 
 	UFUNCTION(BlueprintCallable)
-	FText GetItemDescription() { return itemDescription; }
+	FORCEINLINE TEnumAsByte<EItemType> GetItemType() const { return itemType;}
 
 	UFUNCTION(BlueprintCallable)
-	UTexture2D* GetItemIcon() { return itemIcon; }
+	FORCEINLINE FText GetItemDescription() const { return itemDescription; }
 
 	UFUNCTION(BlueprintCallable)
-	bool GetIsStackable() { return isStackable; }
+	FORCEINLINE UTexture2D* GetItemIcon() const { return itemIcon; }
 
 	UFUNCTION(BlueprintCallable)
-	int GetMaxStackSize() { return maxStackSize; }
+	FORCEINLINE bool GetIsStackable() const { return isStackable; }
+
+	UFUNCTION(BlueprintCallable)
+	FORCEINLINE int GetMaxStackSize() const { return maxStackSize; }
 };

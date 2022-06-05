@@ -12,9 +12,33 @@ struct FInventoryItem
 {
 	GENERATED_BODY()
 
+	FInventoryItem()
+	{
+		itemName = FText::FromString(TEXT("Item"));
+		itemType = Health;
+		itemIcon = nullptr;
+		itemClass = nullptr;
+		
+		itemDescription = FText::FromString(TEXT("A usable item"));
+		isStackable = true;
+		maxStackSize = 1;
+	}
+	
+	FInventoryItem(FText name, TEnumAsByte<EItemType> type, UTexture2D* icon, TSubclassOf<class AItemBase> item)
+		: itemName(name), itemType(type), itemIcon(icon), itemClass(item)
+	{
+		itemDescription = FText::FromString(TEXT("A usable item"));
+		isStackable = true;
+		maxStackSize = 1;
+	}
+
 	// Item's name
 	UPROPERTY(BlueprintReadWrite)
 	FText itemName;
+
+	// Item type
+	UPROPERTY(BlueprintReadWrite)
+	TEnumAsByte<EItemType> itemType;
 	
 	// Item's description
 	UPROPERTY(BlueprintReadWrite)
@@ -85,8 +109,21 @@ class PROJECTMOUSTACHE_API UInventoryComponentBase : public UActorComponent
 {
 	GENERATED_BODY()
 
-	UPROPERTY()
-	UInputComponent* InputComponent;
+	/*UPROPERTY()
+	UInputComponent* InputComponent;*/
+
+	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = true))
+	TSubclassOf<AItemBase> slot1Item;
+
+	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = true))
+	TSubclassOf<AItemBase> slot2Item;
+
+	FInventorySlot slot1;
+	FInventorySlot slot2;
+
+	// The maximum amount of items in the slot
+	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = true))
+	int maxSlotSize;
 
 	FQuickSlot quickSlot1;
 	FQuickSlot quickSlot2;
@@ -126,9 +163,7 @@ public:
 	UInventoryComponentBase();
 
 protected:
-	// Called when the game starts
-	virtual void BeginPlay() override;
-
+	
 	// Array of items in the inventory
 	UPROPERTY(BlueprintReadWrite)
 	TArray<FInventorySlot> inventory;
@@ -136,6 +171,9 @@ protected:
 	// Number of inventory slots available
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	int numberOfSlots;
+
+	// Called when the game starts
+	virtual void BeginPlay() override;
 
 	UFUNCTION(BlueprintCallable)
 	void RemoveItem(int index);
@@ -146,9 +184,7 @@ protected:
 	void UpdateQuickSlots();
 	
 public:	
-	// Called every frame
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
-	
+
 	UPROPERTY(BlueprintAssignable)
 	FOnQuickslotsUpdated OnQuickslotsUpdated;
 	
@@ -206,4 +242,10 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	int GetSelectedItem() { return selectedItem; }
+
+	UFUNCTION(BlueprintCallable)
+	FORCEINLINE FInventorySlot GetQuickSlot1() const { return slot1;}
+
+	UFUNCTION(BlueprintCallable)
+	FORCEINLINE FInventorySlot GetQuickSlot2() const { return slot2;}
 };

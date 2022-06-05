@@ -20,6 +20,8 @@ AEntityBase::AEntityBase()
 	iceEffectiveness = 100;
 	lightningEffectiveness = 100;
 	waterEffectiveness = 100;
+
+	currentHealth = 100;
 }
 
 // Called when the game starts or when spawned
@@ -49,9 +51,11 @@ void AEntityBase::Tick(float DeltaTime)
 	if (removedStatusEffects.Num() > 0)
 	{
 		for (UStatusEffectBase* removedEffect : removedStatusEffects)
-		{
+		{			
 			statusEffects.Remove(removedEffect);
 			OnStatusEffectRemoved.Broadcast(removedEffect);
+
+			removedEffect->ConditionalBeginDestroy();
 		}
 
 		removedStatusEffects.Empty();
@@ -84,6 +88,11 @@ void AEntityBase::Tick(float DeltaTime)
 *********************************************************************/
 float AEntityBase::TakeIncomingDamage_Implementation(float damageAmount, AActor* damageCauser, AController* eventInstigator, FDamageData damageData)
 {
+	if (GetIsDead())
+	{
+		return 0;
+	}
+	
 	if (damageAmount <= 0 || currentHealth <= 0)
 	{
 		return 0;
@@ -275,11 +284,16 @@ void AEntityBase::AddStatusEffect_Implementation(FStatusEffect statusEffect)
 	}
 	
 	status->Init(this, statusEffect.effectAmount, statusEffect.duration, statusEffect.dotInterval, GetWorld()->GetTimeSeconds());
-	newStatusEffects.Add(status);
+	newStatusEffects.AddUnique(status);
 }
 
 float AEntityBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
+	if (GetIsDead())
+	{
+		return 0;
+	}
+	
 	Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 
 	if (DamageAmount <= 0 || currentHealth <= 0)
@@ -297,8 +311,20 @@ float AEntityBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEven
 	return DamageAmount;
 }
 
+void AEntityBase::SetMoveSpeed(float speed)
+{
+	GetCharacterMovement()->MaxWalkSpeed = speed;	
+}
+
+float AEntityBase::GetMoveSpeed() const
+{
+	return GetCharacterMovement()->MaxWalkSpeed;	
+}
+
 void AEntityBase::Die_Implementation()
 {
+	RemoveAllStatusEffects();
+	
 	if (OnDied.IsBound())
 	{
 		OnDied.Broadcast(this);
@@ -319,8 +345,8 @@ void AEntityBase::RemoveStatus_Implementation(EStatusEffectType statusEffect)
 	{
 		if (status->GetEffectType() == statusEffect)
 		{
-			status->SetIsExpired(true);
-			removedStatusEffects.Add(status);
+			status->SetExpired();
+			removedStatusEffects.AddUnique(status);
 		}
 	}
 }
@@ -335,23 +361,31 @@ void AEntityBase::RemoveStatusEffect_Implementation(UStatusEffectBase* statusEff
 		return;
 	}
 
-	statusEffect->SetIsExpired(true);
-	removedStatusEffects.Add(statusEffect);
+	statusEffect->SetExpired();
+	removedStatusEffects.AddUnique(statusEffect);
+}
+
+void AEntityBase::RemoveAllStatusEffects()
+{
+	if (statusEffects.Num() <= 0)
+	{
+		return;
+	}
+
+	for (UStatusEffectBase* statusEffect : statusEffects)
+	{
+		RemoveStatusEffect_Implementation(statusEffect);
+	}
+
+	newStatusEffects.Empty();
 }
 
 /**
 * Returns a list of status effects active on the character
 */
-TArray<UStatusEffectBase*> AEntityBase::GetAllStatusEffects_Implementation()
+TArray<UStatusEffectBase*> AEntityBase::GetAllStatusEffects_Implementation() const
 {
-	TArray<UStatusEffectBase*> effects;
-
-	for (UStatusEffectBase* status : statusEffects)
-	{
-		effects.Add(status);
-	}
-
-	return effects;
+	return statusEffects;
 }
 
 /**

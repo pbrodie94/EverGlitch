@@ -126,6 +126,9 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	float TakeIncomingDamage(float damageAmount, AActor* damageCauser, AController* eventInstigator, FDamageData damageData);
 
+	UFUNCTION()
+	virtual void SetMoveSpeed(float speed) = 0; 
+	
 	/**
 	* Takes in a status effect struct and adds it to the character
 	* If the resistance to the element is <= 0, the effect will not be added
@@ -149,7 +152,7 @@ public:
 	 * Returns a list of status effects active on the character
 	 */
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	TArray<UStatusEffectBase*> GetAllStatusEffects();
+	TArray<UStatusEffectBase*> GetAllStatusEffects() const;
 
 	/**
 	 * Returns character's resistance to fire
@@ -198,6 +201,9 @@ public:
 	 */
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	float GetMaxHealth() const;
+
+	UFUNCTION()
+	virtual float GetMoveSpeed() const = 0;
 
 	/**
 	 * Returns true if the character is dead

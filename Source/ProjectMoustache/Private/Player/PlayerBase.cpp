@@ -2,13 +2,18 @@
 
 
 #include "Player/PlayerBase.h"
+
+#include "StatusEffect.h"
 #include "Camera/CameraComponent.h"
 #include "Components/BoxComponent.h"
-#include "Debug/ReporterBase.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Interactables/Telekinesisable.h"
+#include "Player/CombatManagerComponent.h"
+#include "Player/MagicComponent.h"
+#include "Interactables/InventoryComponentBase.h"
+#include "Kismet/KismetMathLibrary.h"
 
 // Sets default values
 APlayerBase::APlayerBase()
@@ -69,6 +74,9 @@ APlayerBase::APlayerBase()
 
 	// Combat manager
 	combatManager = CreateDefaultSubobject<UCombatManagerComponent>(TEXT("CombatManager"));
+
+	// Inventory Component
+	inventoryComponent = CreateDefaultSubobject<UInventoryComponentBase>(TEXT("InventoryComponent"));
 
 	// Init TK vars
 	isUsingTK = false;
@@ -154,6 +162,23 @@ void APlayerBase::BeginPlay()
 		combatStanceTime = 3;
 	}
 
+	// TODO: Spawn staff and attach to appropriate bone
+	if (startingWeapon != nullptr)
+	{
+		const FVector spawnLocation = (followCamera->GetForwardVector() * 100.0f) + GetActorLocation()
+		+ FVector(0.0f, 0.0f, 50.0f);
+		const FRotator spawnRotation = UKismetMathLibrary::MakeRotFromX(followCamera->GetForwardVector());
+		FActorSpawnParameters spawnParams;
+		spawnParams.Owner = this;
+		spawnParams.Instigator = this;
+		currentWeapon = GetWorld()->SpawnActor<AWeaponBase>(startingWeapon, FTransform(spawnRotation,
+			spawnLocation,FVector(1.0f, 1.0f, 1.0f)), spawnParams);
+
+		currentWeapon->AttachToComponent(GetMesh(),
+			FAttachmentTransformRules(EAttachmentRule::SnapToTarget, true),
+			weaponAttachSocketName);
+	}
+
 	//Sets player's default values for reference
 	runSpeed = GetCharacterMovement()->MaxWalkSpeed;
 	if (aimSpeed <= 0)
@@ -197,6 +222,12 @@ void APlayerBase::Tick(float DeltaTime)
 		}
 	}
 
+	// Temporary
+	if (currentWeapon != nullptr)
+	{
+		//UpdateWeaponPosition();
+	}
+
 	// Recharge energy
 	if (abilityEnergy < maxAbilityEnergy && GetWorld()->GetTimeSeconds() > timeBeginRecharge && !isUsingTK)
 	{
@@ -206,7 +237,7 @@ void APlayerBase::Tick(float DeltaTime)
 	// Detect melee hits when attacking
 	if (isMeleeAttacking)
 	{
-		DetectMeleeHits();
+		//DetectMeleeHits();
 	}
 }
 
@@ -227,8 +258,8 @@ void APlayerBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	PlayerInputComponent->BindAction("Dash", IE_Pressed, this, &APlayerBase::Dash);
 	PlayerInputComponent->BindAction("Action", IE_Pressed, this, &APlayerBase::InteractWithObject);
 	PlayerInputComponent->BindAction("Inventory", IE_Pressed, this, &APlayerBase::ToggleInventory);
-	PlayerInputComponent->BindAction("Aim", IE_Pressed, this, &APlayerBase::BeginAiming);
-	PlayerInputComponent->BindAction("Aim", IE_Released, this, &APlayerBase::EndAiming);
+	//PlayerInputComponent->BindAction("Aim", IE_Pressed, this, &APlayerBase::BeginAiming);
+	//PlayerInputComponent->BindAction("Aim", IE_Released, this, &APlayerBase::EndAiming);
 	PlayerInputComponent->BindAction("Shoot", IE_Pressed, this, &APlayerBase::Fire);
 	PlayerInputComponent->BindAction("Shoot", IE_Released, this, &APlayerBase::FireUp);
 
@@ -342,6 +373,13 @@ void APlayerBase::Dash()
 		return;
 	}
 
+	if (magicComponent != nullptr)
+	{
+		magicComponent->CancelCasting();
+	}
+
+	FireUp();
+
 	abilityEnergy -= dashEnergyCost;
 
 	if (numAirDashes > -1 && GetCharacterMovement()->IsFalling())
@@ -358,7 +396,12 @@ void APlayerBase::Dash()
 
 	GetCharacterMovement()->Launch(moveDirection);
 
-	HandleDashEffects();
+	if (dashMontage != nullptr)
+	{
+		PlayAnimMontage(dashMontage, 1, "Default");
+	}
+
+	DashCameraEffects();
 
 	const float worldTime = GetWorld()->GetTimeSeconds();
 
@@ -366,9 +409,16 @@ void APlayerBase::Dash()
 	timeBeginRecharge = worldTime + energyRechargeDelay;
 }
 
-void APlayerBase::HandleDashEffects_Implementation()
+// Temporary
+void APlayerBase::UpdateWeaponPosition() const
 {
+	const FVector position = (followCamera->GetForwardVector() * 100.0f) +
+		GetActorLocation() + FVector(0.0f, 0.0f, 50.0f);
+	const FRotator rotation = UKismetMathLibrary::MakeRotFromX(followCamera->GetForwardVector());
+
+	currentWeapon->SetActorTransform(FTransform(rotation, position, FVector(1.0f, 1.0f, 1.0f)));
 }
+
 
 /**
 * Fire projectiles on main fire button.
@@ -395,6 +445,11 @@ void APlayerBase::Fire()
 		return;
 	}
 
+	if (magicComponent != nullptr && magicComponent->GetIsCasting())
+	{
+		return;
+	}
+
 	if (currentWeapon != nullptr)
 	{
 		if (currentWeapon->OnFireDown())
@@ -406,10 +461,10 @@ void APlayerBase::Fire()
 
 void APlayerBase::FireUp()
 {
-	if (GetIsDead() || !hasControl)
+	/*if (GetIsDead() || !hasControl)
 	{
 		return;
-	}
+	}*/
 	
 	if (currentWeapon != nullptr)
 	{
@@ -437,6 +492,16 @@ void APlayerBase::DetectTKObjects()
 	}
 
 	const UWorld* world = GetWorld();
+
+	// Add a delay in between checks
+	const float worldTime = world->GetTimeSeconds();
+	if (worldTime < timeNextDetectTK)
+	{
+		return;
+	}
+
+	timeNextDetectTK = worldTime + 0.2f;
+	
 	TArray<AActor*> nearbyTKObjects;
 
 	// Get TK objects in proximity
@@ -740,6 +805,8 @@ void APlayerBase::UseAbility1()
 		return;
 	}
 
+	FireUp();
+
 	//Switch to combat stance
 	BeginCombatStance();
 	BeginEndCombatStanceTimer();
@@ -767,6 +834,8 @@ void APlayerBase::UseAbility2()
 	{
 		return;
 	}
+
+	FireUp();
 
 	//Switch to combat stance
 	BeginCombatStance();
@@ -854,6 +923,8 @@ float APlayerBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEven
 		return 0;
 	}
 
+	PlayHitAnimations(DamageCauser);
+	
 	const float damage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 	
 	if (damage > 0)
@@ -877,6 +948,8 @@ float APlayerBase::TakeIncomingDamage_Implementation(float damageAmount, AActor*
 	{
 		return 0;
 	}
+
+	PlayHitAnimations(damageCauser);
 	
 	const float damage = Super::TakeIncomingDamage_Implementation(damageAmount, damageCauser,
 		eventInstigator, damageData);
@@ -889,6 +962,34 @@ float APlayerBase::TakeIncomingDamage_Implementation(float damageAmount, AActor*
 	return damage;
 }
 
+/**
+* Plays hit animations and cancels attacks
+* Takes in the damage causer and uses it to determine the direction the
+* damage came from, then plays the appropriate damage animation.
+* If the damage causer or animation are null, no attacks are cancelled/
+*/
+void APlayerBase::PlayHitAnimations(AActor* damageCauser)
+{
+	if (damageCauser == nullptr || damageMontage == nullptr)
+	{
+		return;
+	}
+
+	FireUp();
+	
+	StopAnimMontage();
+	if (magicComponent != nullptr)
+	{
+		magicComponent->CancelCasting();
+	}
+
+	const FVector damageDir = damageCauser->GetActorLocation() - GetActorLocation();
+
+	const FName animSection = FVector::DotProduct(damageDir, GetMesh()->GetForwardVector()) > 0 ?
+		"Font" : "Back";
+
+	PlayAnimMontage(damageMontage, 1.0f, animSection);
+}
 
 //Begins melee hit detection
 void APlayerBase::BeginMeleeAttackDamage()
@@ -912,9 +1013,9 @@ void APlayerBase::BeginAiming_Implementation()
 	}
 
 	isAiming = true;
-	GetCharacterMovement()->MaxWalkSpeed = aimSpeed;
 
-	//GetCharacterMovement()->bOrientRotationToMovement = false;
+	ChangeMoveSpeed();
+	
 	BeginCombatStance();
 
 	// Call to observers if any exist
@@ -933,8 +1034,9 @@ void APlayerBase::BeginAiming_Implementation()
 void APlayerBase::EndAiming_Implementation()
 {
 	isAiming = false;
-    GetCharacterMovement()->bOrientRotationToMovement = true;
-    GetCharacterMovement()->MaxWalkSpeed = runSpeed;
+    //GetCharacterMovement()->bOrientRotationToMovement = true;
+
+	ChangeMoveSpeed();
 
 	EndCombatStance();
 
@@ -953,12 +1055,16 @@ void APlayerBase::EndAiming_Implementation()
 
 void APlayerBase::Die_Implementation()
 {
+	Super::Die_Implementation();
+	
 	//Reset all temporary values
 	ApplyDamageChange(0, 0);
 	ApplySpeedChange(0, 0);
 	ApplyJumpChange(0, 0);
 
 	EndMeleeAttackDamage();
+	FireUp();
+	EndCombatStance();
 
 	if (isAiming)
 	{
@@ -1086,6 +1192,18 @@ void APlayerBase::ApplyJumpChange_Implementation(float percentage, float duratio
 		&APlayerBase::OnJumpChangeExpired, duration);
 }
 
+bool APlayerBase::PlayAnim(UAnimMontage* montage, FName section)
+{
+	if (montage == nullptr)
+	{
+		return false;
+	}
+
+	PlayAnimMontage(montage, 1, section);
+
+	return true;
+}
+
 /**
 * Takes in an interactable object, and sets it as the current interactable object
 */
@@ -1113,7 +1231,7 @@ void APlayerBase::RemoveSelfAsInteractable_Implementation(const TScriptInterface
 /**
 * Returns whether or not the player currently has a reference to an interactable object
 */
-bool APlayerBase::GetHasInteractable_Implementation()
+bool APlayerBase::GetHasInteractable_Implementation() const
 {
 	return currentInteractableObject != nullptr;
 }
@@ -1129,9 +1247,17 @@ FText APlayerBase::GetInteractableMessage_Implementation()
 /**
 * Returns the camera's current location
 */
-FVector APlayerBase::GetCameraLocation_Implementation()
+FVector APlayerBase::GetCameraLocation_Implementation() const
 {
 	return followCamera->GetComponentLocation();
+}
+
+/**
+* Returns the forward vector of the player's camera
+*/
+FVector APlayerBase::GetCameraForwardVector_Implementation() const
+{
+	return followCamera->GetForwardVector();
 }
 
 /**
@@ -1159,7 +1285,7 @@ void APlayerBase::OnJumpChangeExpired()
 /**
 * Returns player's current location
 */
-FVector APlayerBase::GetPlayerLocation_Implementation()
+FVector APlayerBase::GetPlayerLocation_Implementation() const
 {
 	return GetActorLocation();
 }
@@ -1167,7 +1293,7 @@ FVector APlayerBase::GetPlayerLocation_Implementation()
 /**
 * Returns player's current forward direction
 */
-FVector APlayerBase::GetPlayerForwardDirection_Implementation()
+FVector APlayerBase::GetPlayerForwardDirection_Implementation() const
 {
 	return GetActorForwardVector();
 }
@@ -1175,7 +1301,7 @@ FVector APlayerBase::GetPlayerForwardDirection_Implementation()
 /**
 * Returns player's current rotation
 */
-FRotator APlayerBase::GetPlayerRotation_Implementation()
+FRotator APlayerBase::GetPlayerRotation_Implementation() const
 {
 	return GetActorRotation();
 }
@@ -1183,10 +1309,33 @@ FRotator APlayerBase::GetPlayerRotation_Implementation()
 /**
 * Returns player's current velocity
 */
-float APlayerBase::GetCurrentPlayerVelocity_Implementation()
+float APlayerBase::GetCurrentPlayerVelocity_Implementation() const
 {
 	return GetCharacterMovement()->Velocity.Size();
 }
+
+void APlayerBase::ChangeMoveSpeed()
+{
+	float wantedSpeed = isAiming ? aimSpeed : runSpeed;
+	if (GetHasStatusEffect(Chilled))
+	{
+		const UChilledStatus* chilledStatus = Cast<UChilledStatus>(GetStatusEffect(Chilled));
+		wantedSpeed = FMath::Min(wantedSpeed, chilledStatus->GetDebuffSpeed());
+	}
+
+	GetCharacterMovement()->MaxWalkSpeed = wantedSpeed;
+}
+
+void APlayerBase::SetMoveSpeed(float speed)
+{
+	if (speed > GetMoveSpeed() && isAiming)
+	{
+		return;
+	}
+
+	Super::SetMoveSpeed(speed);
+}
+
 
 /**
 * Subscribes actors as a new player observer
