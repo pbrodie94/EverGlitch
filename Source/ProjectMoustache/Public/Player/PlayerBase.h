@@ -6,6 +6,7 @@
 #include "PlayerCharacter.h"
 #include "PlayerObserver.h"
 #include "EntityBase.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "Weapons/WeaponBase.h"
 #include "PlayerBase.generated.h"
 
@@ -254,6 +255,14 @@ class PROJECTMOUSTACHE_API APlayerBase : public AEntityBase, public IPlayerChara
 	void EndCombatStance() const;
 
 	/**
+	 * Plays hit animations and cancels attacks
+	 * Takes in the damage causer and uses it to determine the direction the
+	 * damage came from, then plays the appropriate damage animation.
+	 * If the damage causer or animation are null, no attacks are cancelled/
+	 */
+	void PlayHitAnimations(AActor* damageCauser);
+
+	/**
 	 * Expiry functions for stat change timers
 	 * Resets the values to default once expired
 	 */
@@ -296,6 +305,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TSubclassOf<AWeaponBase> startingWeapon;
 
+	UPROPERTY(EditDefaultsOnly)
+	FName weaponAttachSocketName;
+
 	UPROPERTY(BlueprintReadWrite)
 	AWeaponBase* currentWeapon;
 
@@ -320,6 +332,12 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Combat)
 	float meleeDamage;
 
+	UPROPERTY(EditDefaultsOnly)
+	UAnimMontage* dashMontage;
+
+	UPROPERTY(EditDefaultsOnly)
+	UAnimMontage* damageMontage;
+
 	UPROPERTY(BlueprintReadWrite)
 	bool godMode;
 
@@ -340,8 +358,8 @@ protected:
 	void EndMeleeAttackDamage();
 
 	UFUNCTION(BlueprintNativeEvent) // Expects that the function is defined in Blueprint
-	void HandleDashEffects(); // Put whatever parameters you need
-	void HandleDashEffects_Implentaion() { }
+	void DashCameraEffects(); // Put whatever parameters you need
+	void DashCameraEffects_Implementation() { }
 
 	//Function for spawning projectiles in blueprint
 	UFUNCTION(BlueprintImplementableEvent)
@@ -432,6 +450,9 @@ public:
 	void ApplyJumpChange(float percentage, float duration);
 	void ApplyJumpChange_Implementation(float percentage, float duration);
 
+	UFUNCTION()
+	bool PlayAnim(class UAnimMontage* montage, FName section);
+
 	/**
 	* Returns player's ability energy level
 	*/
@@ -452,7 +473,7 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void SetInteractable(const TScriptInterface<IInteractable>& interactableObject);
 	virtual void SetInteractable_Implementation(const TScriptInterface<IInteractable>& interactableObject);
-
+	
 	/**
 	* Takes in an interactable reference, and removes it from the player's interactable pointer
 	* if the player currently has a pointer to the calling interactable object it will not be removed
@@ -517,6 +538,12 @@ public:
 	float GetCurrentPlayerVelocity() const;
 	float GetCurrentPlayerVelocity_Implementation() const;
 
+	void ChangeMoveSpeed();
+	
+	virtual void SetMoveSpeed(float speed) override;
+
+	FORCEINLINE virtual float GetMoveSpeed() const override { return runSpeed; }
+
 	/**
 	* Returns the currently equipped weapon
 	*/
@@ -527,6 +554,11 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	bool GetHasWeapon() const;
 	FORCEINLINE bool GetHasWeapon_Implementation() const { return currentWeapon != nullptr; }
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	bool GetIsCombatStance() const;
+	FORCEINLINE bool GetIsCombatStance_Implementation() const
+	{ return !GetCharacterMovement()->bOrientRotationToMovement; }
 	
 	/**
 	* Subscribes actors as a new player observer
