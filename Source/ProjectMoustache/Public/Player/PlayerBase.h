@@ -47,6 +47,8 @@ class PROJECTMOUSTACHE_API APlayerBase : public AEntityBase, public IPlayerChara
 
 	// ********************************************************************************
 	// MOVEMENT ***********************************************************************
+
+	FVector inputAxis;
 	
 	//Default move speed
 	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = true))
@@ -495,6 +497,10 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	FText GetInteractableMessage();
 	FText GetInteractableMessage_Implementation();
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	FVector GetInputAxis() const;
+	FORCEINLINE FVector GetInputAxis_Implementation() const { return inputAxis; } 
 
 	/**
 	* Returns the camera's current location

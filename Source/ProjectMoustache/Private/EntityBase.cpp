@@ -323,6 +323,8 @@ float AEntityBase::GetMoveSpeed() const
 
 void AEntityBase::Die_Implementation()
 {
+	currentHealth = 0;
+	
 	RemoveAllStatusEffects();
 	
 	if (OnDied.IsBound())
