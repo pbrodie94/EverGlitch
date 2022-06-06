@@ -19,6 +19,8 @@ AWeaponBase::AWeaponBase()
 
 	firePoint = CreateDefaultSubobject<USceneComponent>(TEXT("FirePoint"));
 	firePoint->SetupAttachment(staffMesh);
+
+	fireStartupDelay = 0.75f;
 }
 
 // Called when the game starts or when spawned
@@ -105,26 +107,35 @@ void AWeaponBase::Fire()
 
 bool AWeaponBase::OnFireDown_Implementation()
 {
-	/*const UWorld* world = GetWorld();
-	if (world->GetTimeSeconds() < timeNextFire)
+	isFiring = true;
+	
+	IPlayerCharacter* player = Cast<IPlayerCharacter>(GetOwner());
+	if (fireAnimation == nullptr || player == nullptr)
 	{
-		return false;
+		return true;
 	}
 
-	timeNextFire = world->GetTimeSeconds() + fireRate;*/
-	isFiring = true;
+	player->PlayAnim(fireAnimation, fireBegin);
+	timeNextFire = GetWorld()->GetTimeSeconds() + fireStartupDelay;
+	
 	return true;
 }
 
 bool AWeaponBase::OnFireUp_Implementation()
 {
-	/*const UWorld* world = GetWorld();
-	if (world->GetTimeSeconds() < timeNextFire)
+	if (!isFiring)
 	{
-		return false;
+		return true;
 	}
 
-	timeNextFire = world->GetTimeSeconds() + fireRate;*/
 	isFiring = false;
+	
+	IPlayerCharacter* player = Cast<IPlayerCharacter>(GetOwner());
+	if (fireAnimation != nullptr && player != nullptr)
+	{
+		player->PlayAnim(fireAnimation, fireEnd);
+	}
+	
+	
 	return true;
 }

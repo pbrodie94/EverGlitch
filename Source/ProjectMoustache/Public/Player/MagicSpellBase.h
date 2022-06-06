@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "UObject/Object.h"
+#include "Animation/AnimMontage.h"
 #include "MagicSpellBase.generated.h"
 
 /**
@@ -40,6 +41,14 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = MagicSpell)
 	TSubclassOf<AActor> spellProjectile;
 
+	// Animation
+	UPROPERTY(EditAnywhere)
+	UAnimMontage* castAnimation;
+
+	// The section to play in the cast animation
+	UPROPERTY(EditAnywhere)
+	FName animMontageSection;
+
 	// Amount of damage done
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = MagicSpell)
 	float damage;
@@ -53,7 +62,7 @@ protected:
 	float coolDownTime;
 
 	UFUNCTION(BlueprintCallable)
-	virtual UWorld* GetWorld() const;
+	virtual UWorld* GetWorld() const override;
 
 public:
 
@@ -64,7 +73,9 @@ public:
 	 * Checks if the spell can be casted before casting
 	 */
 	UFUNCTION(BlueprintCallable)
-	void Execute(APawn* userActor);
+	bool Execute(APawn* userActor);
+
+	void CastSpell(APawn* userActor);
 
 	UFUNCTION(BlueprintCallable)
 	FText GetSpellName() { return spellName; }
