@@ -126,6 +126,9 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	float TakeIncomingDamage(float damageAmount, AActor* damageCauser, AController* eventInstigator, FDamageData damageData);
 
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void Die();
+	
 	UFUNCTION()
 	virtual void SetMoveSpeed(float speed) = 0; 
 	
