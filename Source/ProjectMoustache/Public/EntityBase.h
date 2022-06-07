@@ -141,8 +141,8 @@ public:
 	* Returns a list of status effects active on the character
 	*/
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	TArray<UStatusEffectBase*> GetAllStatusEffects() const;
-	FORCEINLINE TArray<UStatusEffectBase*> GetAllStatusEffects_Implementation() const;
+	TArray<UStatusEffectBase*> GetAllStatusEffects();
+	TArray<UStatusEffectBase*> GetAllStatusEffects_Implementation();
 	
 	/**
 	 * Returns the first found non-expired object for the inputted status effect type

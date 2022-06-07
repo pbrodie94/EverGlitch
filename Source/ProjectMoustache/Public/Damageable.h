@@ -155,7 +155,7 @@ public:
 	 * Returns a list of status effects active on the character
 	 */
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	TArray<UStatusEffectBase*> GetAllStatusEffects() const;
+	TArray<UStatusEffectBase*> GetAllStatusEffects();
 
 	/**
 	 * Returns character's resistance to fire
