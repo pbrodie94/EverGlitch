@@ -111,6 +111,9 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	FVector GetCameraForwardVector() const;
 
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	FVector GetInputAxis() const;
+
 	/**
 	 * Returns player's current location
 	 */

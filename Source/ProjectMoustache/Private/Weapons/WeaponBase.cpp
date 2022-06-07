@@ -63,26 +63,18 @@ void AWeaponBase::Fire()
 	const FVector cameraPosition = IPlayerCharacter::Execute_GetCameraLocation(GetOwner());
 	const FVector cameraForward = IPlayerCharacter::Execute_GetCameraForwardVector(GetOwner());
 	
-	const FVector start = UKismetMathLibrary::ProjectPointOnToPlane(cameraPosition,
-		firePoint->GetComponentLocation(), cameraForward);
-	const FVector end = start + (cameraForward * 10000);
+	const FVector end = cameraPosition + (cameraForward * 10000);
 	FHitResult hitResult;
-	const bool traceHit = world->LineTraceSingleByChannel(hitResult, start, end, ECC_Visibility);
+	const bool traceHit = world->LineTraceSingleByChannel(hitResult, cameraPosition, end, ECC_Visibility);
 	FVector fireDirection = cameraForward;
 	if (traceHit)
 	{
 		// Get angle
 		FVector dirToImpact = hitResult.ImpactPoint - firePoint->GetComponentLocation();
 		dirToImpact.Normalize();
-		float angle = FVector::DotProduct(cameraForward, dirToImpact);
-		angle = FMath::Acos(angle);
-		angle = FMath::RadiansToDegrees(angle);
 
-		if (angle < 10.0f)
-		{
-			fireDirection = hitResult.ImpactPoint - firePoint->GetComponentLocation();
-			fireDirection.Normalize();
-		}
+		fireDirection = hitResult.ImpactPoint - firePoint->GetComponentLocation();
+		fireDirection.Normalize();
 	}
 
 	// Spawn projectile
@@ -123,11 +115,6 @@ bool AWeaponBase::OnFireDown_Implementation()
 
 bool AWeaponBase::OnFireUp_Implementation()
 {
-	if (!isFiring)
-	{
-		return true;
-	}
-
 	isFiring = false;
 	
 	IPlayerCharacter* player = Cast<IPlayerCharacter>(GetOwner());

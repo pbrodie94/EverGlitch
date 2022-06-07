@@ -15,9 +15,9 @@ class PROJECTMOUSTACHE_API UStatusEffectBase : public UObject
 {
 	GENERATED_BODY()
 
-protected:
-
 	bool isExpired;
+
+protected:
 
 	UPROPERTY()
 	AActor* effectedActor;
