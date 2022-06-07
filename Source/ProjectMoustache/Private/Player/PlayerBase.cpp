@@ -273,8 +273,11 @@ void APlayerBase::MoveForward(float value)
 {
 	if (GetIsDead() || !hasControl)
 	{
+		inputAxis.X = 0;
 		return;
 	}
+
+	inputAxis.X = value;
 
 	if (Controller != nullptr && value != 0)
 	{
@@ -292,8 +295,11 @@ void APlayerBase::MoveRight(float value)
 {
 	if (GetIsDead() || !hasControl)
 	{
+		inputAxis.Y = 0;
 		return;
 	}
+
+	inputAxis.Y = value;
 
 	if (Controller != nullptr && value != 0)
 	{
