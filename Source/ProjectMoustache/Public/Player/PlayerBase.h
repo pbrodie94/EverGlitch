@@ -3,11 +3,10 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "CombatManagerComponent.h"
-#include "MagicComponent.h"
 #include "PlayerCharacter.h"
 #include "PlayerObserver.h"
 #include "EntityBase.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "Weapons/WeaponBase.h"
 #include "PlayerBase.generated.h"
 
@@ -30,10 +29,13 @@ class PROJECTMOUSTACHE_API APlayerBase : public AEntityBase, public IPlayerChara
 	TSubclassOf<UMatineeCameraShake> cameraShake;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = true))
-	UMagicComponent* magicComponent;
+	class UMagicComponent* magicComponent;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = true))
-	UCombatManagerComponent* combatManager;
+	class UCombatManagerComponent* combatManager;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = true))
+	class UInventoryComponentBase* inventoryComponent;
 
 	//************************************************************************************
 
@@ -43,7 +45,11 @@ class PROJECTMOUSTACHE_API APlayerBase : public AEntityBase, public IPlayerChara
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = true))
 	float aimSensitivityY;
 
+	// ********************************************************************************
 	// MOVEMENT ***********************************************************************
+
+	FVector inputAxis;
+	
 	//Default move speed
 	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = true))
 	float runSpeed;
@@ -60,6 +66,10 @@ class PROJECTMOUSTACHE_API APlayerBase : public AEntityBase, public IPlayerChara
 	UPROPERTY(EditDefaultsOnly, Category = Abilities, meta = (AllowPrivateAccess = true))
 	float airControl;
 
+	// Controls when player has control of the character
+	bool hasControl;
+
+	// *********************************************************************************
 	// ENERGY VARIABLES ****************************************************************
 	
 	// Amount of energy player has to perform abilities like dash
@@ -104,22 +114,22 @@ class PROJECTMOUSTACHE_API APlayerBase : public AEntityBase, public IPlayerChara
 
 	//**********************************************************************************
 	// COMBAT VARIABLES ****************************************************************
+	
 	//Duration player is facing direction of camera after performing ranged attack
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Combat, meta = (AllowPrivateAccess = true))
 	float combatStanceTime;
 
+	// Enabled as player is performing a melee attack
 	bool isMeleeAttacking;
 
 	//Time able to fire again, time plus delay set every shot
 	float timeNextShot;
 
 	//*********************************************************************************
-
+	// ENERGY ABILITY VARIABLES *******************************************************
+	
 	//Next time able to dash
 	float timeNextDash;
-	
-	// Controls when player has control of the character
-	bool hasControl;
 
 	// TELEKINESIS VARIABLES *******************************************************
 
@@ -171,6 +181,7 @@ class PROJECTMOUSTACHE_API APlayerBase : public AEntityBase, public IPlayerChara
 
 	//****************************************************************************
 	// Timer handles *************************************************************
+	
 	FTimerHandle rangedCombatTimerHandle;
 
 	FTimerHandle damageTimerHandle;
@@ -190,6 +201,12 @@ class PROJECTMOUSTACHE_API APlayerBase : public AEntityBase, public IPlayerChara
 	void BeginJump();
 	void EndJump();
 
+	// *****************************************************************************
+	// WEAPON FUNCTIONS ************************************************************
+	
+	// Temporarily Updating position
+	void UpdateWeaponPosition() const;
+	
 	/**
 	 * Fire projectiles on main fire button.
 	 * Will be changed to call a fire function on a weapon when created
@@ -200,6 +217,8 @@ class PROJECTMOUSTACHE_API APlayerBase : public AEntityBase, public IPlayerChara
 	 * Called when the fire button is released
 	 */
 	void FireUp();
+
+	// ****************************************************************************
 
 	/**
 	 * Takes the movement direction of the player, excludes the vertical direction
@@ -280,6 +299,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TSubclassOf<AWeaponBase> startingWeapon;
 
+	UPROPERTY(EditDefaultsOnly)
+	FName weaponAttachSocketName;
+
 	UPROPERTY(BlueprintReadWrite)
 	AWeaponBase* currentWeapon;
 
@@ -304,6 +326,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Combat)
 	float meleeDamage;
 
+	UPROPERTY(EditDefaultsOnly)
+	UAnimMontage* dashMontage;
+
 	UPROPERTY(BlueprintReadWrite)
 	bool godMode;
 
@@ -324,8 +349,8 @@ protected:
 	void EndMeleeAttackDamage();
 
 	UFUNCTION(BlueprintNativeEvent) // Expects that the function is defined in Blueprint
-	void HandleDashEffects(); // Put whatever parameters you need
-	void HandleDashEffects_Implentaion() { }
+	void DashCameraEffects(); // Put whatever parameters you need
+	void DashCameraEffects_Implementation() { }
 
 	//Function for spawning projectiles in blueprint
 	UFUNCTION(BlueprintImplementableEvent)
@@ -368,7 +393,13 @@ public:
 	 * Returns pointer reference to combat manager
 	 */
 	UFUNCTION(BlueprintCallable)
-	UCombatManagerComponent* GetCombatManager() { return combatManager; }
+	FORCEINLINE class UCombatManagerComponent* GetCombatManager() { return combatManager; }
+
+	/**
+	 * Returns pointer to inventory component
+	 */
+	UFUNCTION(BlueprintCallable)
+	FORCEINLINE class UInventoryComponentBase* GetInventoryComponent() { return inventoryComponent; }
 
 	//Player Character interface functions
 	/**
@@ -410,6 +441,9 @@ public:
 	void ApplyJumpChange(float percentage, float duration);
 	void ApplyJumpChange_Implementation(float percentage, float duration);
 
+	UFUNCTION()
+	bool PlayAnim(class UAnimMontage* montage, FName section);
+
 	/**
 	* Returns player's ability energy level
 	*/
@@ -430,7 +464,7 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void SetInteractable(const TScriptInterface<IInteractable>& interactableObject);
 	virtual void SetInteractable_Implementation(const TScriptInterface<IInteractable>& interactableObject);
-
+	
 	/**
 	* Takes in an interactable reference, and removes it from the player's interactable pointer
 	* if the player currently has a pointer to the calling interactable object it will not be removed
@@ -443,8 +477,8 @@ public:
 	* Returns whether or not the player currently has a reference to an interactable object
 	*/
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	bool GetHasInteractable();
-	bool GetHasInteractable_Implementation();
+	bool GetHasInteractable() const;
+	bool GetHasInteractable_Implementation() const;
 
 	/**
 	* Returns the unique interactable message for each interactable
@@ -453,41 +487,74 @@ public:
 	FText GetInteractableMessage();
 	FText GetInteractableMessage_Implementation();
 
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	FVector GetInputAxis() const;
+	FORCEINLINE FVector GetInputAxis_Implementation() const { return inputAxis; } 
+
 	/**
 	* Returns the camera's current location
 	*/
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	FVector GetCameraLocation();
-	FVector GetCameraLocation_Implementation();
+	FVector GetCameraLocation() const;
+	FVector GetCameraLocation_Implementation() const;
+
+	/**
+	 * Returns the forward vector of the player's camera
+	 */
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	FVector GetCameraForwardVector() const;
+	FVector GetCameraForwardVector_Implementation() const;
 
 	/**
 	* Returns player's current location
 	*/
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	FVector GetPlayerLocation();
-	FVector GetPlayerLocation_Implementation();
+	FVector GetPlayerLocation() const;
+	FVector GetPlayerLocation_Implementation() const;
 
 	/**
 	* Returns player's current forward direction
 	*/
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	FVector GetPlayerForwardDirection();
-	FVector GetPlayerForwardDirection_Implementation();
+	FVector GetPlayerForwardDirection() const;
+	FVector GetPlayerForwardDirection_Implementation() const;
 
 	/**
 	* Returns player's current rotation
 	*/
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	FRotator GetPlayerRotation();
-	FRotator GetPlayerRotation_Implementation();
+	FRotator GetPlayerRotation() const;
+	FRotator GetPlayerRotation_Implementation() const;
 
 	/**
 	* Returns player's current velocity
 	*/
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	float GetCurrentPlayerVelocity();
-	float GetCurrentPlayerVelocity_Implementation();
+	float GetCurrentPlayerVelocity() const;
+	float GetCurrentPlayerVelocity_Implementation() const;
 
+	void ChangeMoveSpeed();
+	
+	virtual void SetMoveSpeed(float speed) override;
+
+	FORCEINLINE virtual float GetMoveSpeed() const override { return runSpeed; }
+
+	/**
+	* Returns the currently equipped weapon
+	*/
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	AWeaponBase* GetWeapon() const;
+	FORCEINLINE AWeaponBase* GetWeapon_Implementation() const { return currentWeapon; }
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	bool GetHasWeapon() const;
+	FORCEINLINE bool GetHasWeapon_Implementation() const { return currentWeapon != nullptr; }
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	bool GetIsCombatStance() const;
+	FORCEINLINE bool GetIsCombatStance_Implementation() const
+	{ return !GetCharacterMovement()->bOrientRotationToMovement; }
+	
 	/**
 	* Subscribes actors as a new player observer
 	* Must implement the Player Observer Interface

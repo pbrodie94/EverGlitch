@@ -4,7 +4,7 @@
 
 AItemBase::AItemBase()
 {
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
 
 	quantity = 1;
 }
@@ -27,12 +27,6 @@ void AItemBase::BeginPlay()
 	{
 		quantity = maxStackSize;
 	}
-}
-
-
-void AItemBase::Tick(float DeltaTime)
-{
-	
 }
 
 bool AItemBase::Use_Implementation(AActor* userActor) { return true; }

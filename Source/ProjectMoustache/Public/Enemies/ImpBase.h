@@ -77,5 +77,5 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void UnlockTarget();
 	
-	virtual void SetMoveSpeed(bool running) override;
+	/*virtual void SetMoveSpeed(bool running) override;*/
 };

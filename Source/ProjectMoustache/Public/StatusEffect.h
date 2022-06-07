@@ -34,6 +34,8 @@ protected:
 	float timeEnded;
 	float timeRemaining;
 
+	virtual void OnExpired() { }
+
 public:
 
 	UStatusEffectBase();
@@ -48,7 +50,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	FORCEINLINE float GetDuration() const { return duration; }
 
-	FORCEINLINE void SetIsExpired(bool expired) { isExpired = expired; }
+	void SetExpired();
 
 	UFUNCTION(BlueprintCallable)
 	virtual FORCEINLINE EStatusEffectType GetEffectType() { return None; }
@@ -90,9 +92,21 @@ UCLASS()
 class UChilledStatus : public UStatusEffectBase
 {
 	GENERATED_BODY()
+
+	float defaultSpeed;
+	float effectedSpeed;
+
+	virtual void OnExpired() override;
+
 public:
 
+	UChilledStatus() { }
+
+	virtual void Init(AActor* actor, float amount, float effectDuration, float interval, float worldTime) override;
+	
 	virtual FORCEINLINE EStatusEffectType GetEffectType() override { return Chilled; }
+
+	FORCEINLINE float GetDebuffSpeed() const { return effectedSpeed; }
 };
 
 /************************************************************

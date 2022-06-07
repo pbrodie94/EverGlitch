@@ -84,6 +84,11 @@ void AEntityBase::Tick(float DeltaTime)
 *********************************************************************/
 float AEntityBase::TakeIncomingDamage_Implementation(float damageAmount, AActor* damageCauser, AController* eventInstigator, FDamageData damageData)
 {
+	if (GetIsDead())
+	{
+		return 0;
+	}
+	
 	if (damageAmount <= 0 || currentHealth <= 0)
 	{
 		return 0;
@@ -280,6 +285,11 @@ void AEntityBase::AddStatusEffect_Implementation(FStatusEffect statusEffect)
 
 float AEntityBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
+	if (GetIsDead())
+	{
+		return 0;
+	}
+	
 	Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 
 	if (DamageAmount <= 0 || currentHealth <= 0)
@@ -297,8 +307,22 @@ float AEntityBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEven
 	return DamageAmount;
 }
 
+void AEntityBase::SetMoveSpeed(float speed)
+{
+	GetCharacterMovement()->MaxWalkSpeed = speed;	
+}
+
+float AEntityBase::GetMoveSpeed() const
+{
+	return GetCharacterMovement()->MaxWalkSpeed;	
+}
+
 void AEntityBase::Die_Implementation()
 {
+	currentHealth = 0;
+	
+	RemoveAllStatusEffects();
+	
 	if (OnDied.IsBound())
 	{
 		OnDied.Broadcast(this);
@@ -319,7 +343,7 @@ void AEntityBase::RemoveStatus_Implementation(EStatusEffectType statusEffect)
 	{
 		if (status->GetEffectType() == statusEffect)
 		{
-			status->SetIsExpired(true);
+			status->SetExpired();
 			removedStatusEffects.Add(status);
 		}
 	}
@@ -335,8 +359,22 @@ void AEntityBase::RemoveStatusEffect_Implementation(UStatusEffectBase* statusEff
 		return;
 	}
 
-	statusEffect->SetIsExpired(true);
+	statusEffect->SetExpired();
 	removedStatusEffects.Add(statusEffect);
+}
+
+void AEntityBase::RemoveAllStatusEffects()
+{
+	if (statusEffects.Num() <= 0)
+	{
+		return;
+	}
+
+	for (UStatusEffectBase* statusEffect : statusEffects)
+	{
+		statusEffect->SetExpired();
+		removedStatusEffects.Add(statusEffect);
+	}
 }
 
 /**
