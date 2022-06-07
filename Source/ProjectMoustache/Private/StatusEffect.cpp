@@ -23,7 +23,7 @@ void UStatusEffectBase::Init(AActor* actor, float amount, float effectDuration, 
 	duration = effectDuration;
 	timeEnded = worldTime + duration;
 	effectAmount = amount;
-	
+
 	timeRemaining = duration;
 }
 
@@ -101,13 +101,13 @@ void UChilledStatus::Init(AActor* actor, float amount, float effectDuration, flo
 void UChilledStatus::OnExpired()
 {
 	Super::OnExpired();
-	
+
 	IDamageable* damagableActor = Cast<IDamageable>(effectedActor);
 	if(damagableActor == nullptr)
 	{
 		return;
 	}
-	
+
 	damagableActor->SetMoveSpeed(defaultSpeed);
 }
 
