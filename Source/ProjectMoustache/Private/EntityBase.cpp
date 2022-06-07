@@ -20,8 +20,6 @@ AEntityBase::AEntityBase()
 	iceEffectiveness = 100;
 	lightningEffectiveness = 100;
 	waterEffectiveness = 100;
-
-	currentHealth = 100;
 }
 
 // Called when the game starts or when spawned
@@ -51,11 +49,9 @@ void AEntityBase::Tick(float DeltaTime)
 	if (removedStatusEffects.Num() > 0)
 	{
 		for (UStatusEffectBase* removedEffect : removedStatusEffects)
-		{			
+		{
 			statusEffects.Remove(removedEffect);
 			OnStatusEffectRemoved.Broadcast(removedEffect);
-
-			removedEffect->ConditionalBeginDestroy();
 		}
 
 		removedStatusEffects.Empty();
@@ -284,7 +280,7 @@ void AEntityBase::AddStatusEffect_Implementation(FStatusEffect statusEffect)
 	}
 	
 	status->Init(this, statusEffect.effectAmount, statusEffect.duration, statusEffect.dotInterval, GetWorld()->GetTimeSeconds());
-	newStatusEffects.AddUnique(status);
+	newStatusEffects.Add(status);
 }
 
 float AEntityBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
@@ -323,6 +319,8 @@ float AEntityBase::GetMoveSpeed() const
 
 void AEntityBase::Die_Implementation()
 {
+	currentHealth = 0;
+	
 	RemoveAllStatusEffects();
 	
 	if (OnDied.IsBound())
@@ -346,7 +344,7 @@ void AEntityBase::RemoveStatus_Implementation(EStatusEffectType statusEffect)
 		if (status->GetEffectType() == statusEffect)
 		{
 			status->SetExpired();
-			removedStatusEffects.AddUnique(status);
+			removedStatusEffects.Add(status);
 		}
 	}
 }
@@ -362,7 +360,7 @@ void AEntityBase::RemoveStatusEffect_Implementation(UStatusEffectBase* statusEff
 	}
 
 	statusEffect->SetExpired();
-	removedStatusEffects.AddUnique(statusEffect);
+	removedStatusEffects.Add(statusEffect);
 }
 
 void AEntityBase::RemoveAllStatusEffects()
@@ -374,18 +372,24 @@ void AEntityBase::RemoveAllStatusEffects()
 
 	for (UStatusEffectBase* statusEffect : statusEffects)
 	{
-		RemoveStatusEffect_Implementation(statusEffect);
+		statusEffect->SetExpired();
+		removedStatusEffects.Add(statusEffect);
 	}
-
-	newStatusEffects.Empty();
 }
 
 /**
 * Returns a list of status effects active on the character
 */
-TArray<UStatusEffectBase*> AEntityBase::GetAllStatusEffects_Implementation() const
+TArray<UStatusEffectBase*> AEntityBase::GetAllStatusEffects_Implementation()
 {
-	return statusEffects;
+	TArray<UStatusEffectBase*> effects;
+
+	for (UStatusEffectBase* status : statusEffects)
+	{
+		effects.Add(status);
+	}
+
+	return effects;
 }
 
 /**
