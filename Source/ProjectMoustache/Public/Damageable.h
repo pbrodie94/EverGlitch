@@ -128,10 +128,10 @@ public:
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void Die();
-	
+
 	UFUNCTION()
-	virtual void SetMoveSpeed(float speed) = 0; 
-	
+	virtual void SetMoveSpeed(float speed) = 0;
+
 	/**
 	* Takes in a status effect struct and adds it to the character
 	* If the resistance to the element is <= 0, the effect will not be added
