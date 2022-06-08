@@ -23,7 +23,7 @@ void UStatusEffectBase::Init(AActor* actor, float amount, float effectDuration, 
 	duration = effectDuration;
 	timeEnded = worldTime + duration;
 	effectAmount = amount;
-	
+
 	timeRemaining = duration;
 }
 
@@ -64,16 +64,11 @@ void UBurnStatus::UpdateStatus(float worldTime)
 {
 	Super::UpdateStatus(worldTime);
 
-	if (isExpired)
-	{
-		return;
-	}
-
 	// Deal damage on tick interval
 	if (worldTime > timeNextDamage)
 	{
 		const FStatusEffect effect(Burn);
-		IDamageable::Execute_TakeIncomingDamage(effectedActor, effectAmount, nullptr, eventInstigator, FDamageData(effect));
+		IDamageable::Execute_TakeIncomingDamage(effectedActor, effectAmount, damageCauser, eventInstigator, FDamageData(effect));
 
 		timeNextDamage = worldTime + damageInterval;
 	}
@@ -101,13 +96,13 @@ void UChilledStatus::Init(AActor* actor, float amount, float effectDuration, flo
 void UChilledStatus::OnExpired()
 {
 	Super::OnExpired();
-	
+
 	IDamageable* damagableActor = Cast<IDamageable>(effectedActor);
 	if(damagableActor == nullptr)
 	{
 		return;
 	}
-	
+
 	damagableActor->SetMoveSpeed(defaultSpeed);
 }
 
