@@ -384,6 +384,8 @@ void APlayerBase::Dash()
 		magicComponent->CancelCasting();
 	}
 
+	FireUp();
+
 	abilityEnergy -= dashEnergyCost;
 
 	if (numAirDashes > -1 && GetCharacterMovement()->IsFalling())
@@ -469,8 +471,13 @@ void APlayerBase::FireUp()
 	{
 		return;
 	}*/
+
+	if (magicComponent != nullptr && magicComponent->GetIsCasting())
+	{
+		return;
+	}
 	
-	if (currentWeapon != nullptr)
+	if (currentWeapon != nullptr && currentWeapon->GetIsFiring())
 	{
 		currentWeapon->OnFireUp();
 	}
@@ -809,6 +816,8 @@ void APlayerBase::UseAbility1()
 		return;
 	}
 
+	FireUp();
+
 	//Switch to combat stance
 	BeginCombatStance();
 	BeginEndCombatStanceTimer();
@@ -836,6 +845,8 @@ void APlayerBase::UseAbility2()
 	{
 		return;
 	}
+
+	FireUp();
 
 	//Switch to combat stance
 	BeginCombatStance();
@@ -923,10 +934,15 @@ float APlayerBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEven
 		return 0;
 	}
 
-	StopAnimMontage();
-	if (magicComponent != nullptr)
+	if (DamageCauser != nullptr)
 	{
-		magicComponent->CancelCasting();
+		StopAnimMontage();
+		if (magicComponent != nullptr)
+		{
+			magicComponent->CancelCasting();
+		}
+
+		FireUp();
 	}
 
 	const float damage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
@@ -953,10 +969,15 @@ float APlayerBase::TakeIncomingDamage_Implementation(float damageAmount, AActor*
 		return 0;
 	}
 
-	StopAnimMontage();
-	if (magicComponent != nullptr)
+	if (damageCauser != nullptr)
 	{
-		magicComponent->CancelCasting();
+		StopAnimMontage();
+		if (magicComponent != nullptr)
+		{
+			magicComponent->CancelCasting();
+		}
+
+		FireUp();
 	}
 	
 	const float damage = Super::TakeIncomingDamage_Implementation(damageAmount, damageCauser,
