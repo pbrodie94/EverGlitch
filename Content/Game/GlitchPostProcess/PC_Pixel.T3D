@@ -1,0 +1,4 @@
+Begin Object Class=/Script/Engine.MaterialParameterCollection Name="PC_Pixel"
+   StateId=5EAEBB0E425413761170F2A64600ECA2
+   ScalarParameters(0)=(ParameterName="Switch",Id=B093E0FF48ABD7E73B3D998414B0B7A7)
+End Object

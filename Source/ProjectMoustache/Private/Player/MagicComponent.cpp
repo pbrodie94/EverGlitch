@@ -24,16 +24,26 @@ void UMagicComponent::BeginPlay()
 	if (startingDestructionSpell != nullptr)
 	{
 		SetDestructionMagicSpell(startingDestructionSpell);
+		currentSpell = destructionSpell;
 	}
 
 	if (startingSupportSpell != nullptr)
 	{
 		SetSupportMagicSpell(startingSupportSpell);
+		if (currentSpell == nullptr)
+		{
+			currentSpell = supportSpell;
+		}
 	}
 }
 
-void UMagicComponent::CastDestructionSpell() const
+void UMagicComponent::CastDestructionSpell()
 {
+	if (isCasting)
+	{
+		return;
+	}
+	
 	if (GetOwner()->Implements<UPlayerCharacter>())
 	{
 		if (!IPlayerCharacter::Execute_GetHasControl(GetOwner()))
@@ -55,12 +65,21 @@ void UMagicComponent::CastDestructionSpell() const
 	if (destructionSpell != nullptr)
 	{
 		APawn* ownerPawn = Cast<APawn>(GetOwner());
-		destructionSpell->Execute(ownerPawn);
+		if (destructionSpell->Execute(ownerPawn))
+		{
+			currentSpell = destructionSpell;
+			isCasting = true;
+		}		
 	}
 }
 
-void UMagicComponent::CastSupportSpell() const
+void UMagicComponent::CastSupportSpell()
 {
+	if (isCasting)
+	{
+		return;
+	}
+	
 	if (GetOwner()->Implements<UPlayerCharacter>())
 	{
 		if (!IPlayerCharacter::Execute_GetHasControl(GetOwner()))
@@ -82,8 +101,30 @@ void UMagicComponent::CastSupportSpell() const
 	if (supportSpell != nullptr)
 	{
 		APawn* ownerPawn = Cast<APawn>(GetOwner());
-		supportSpell->Execute(ownerPawn);
+		if (supportSpell->Execute(ownerPawn))
+		{
+			currentSpell = supportSpell;
+			isCasting = true;
+		}		
 	}
+}
+
+void UMagicComponent::CastMagicProjectile()
+{
+	if (!isCasting || currentSpell == nullptr)
+	{
+		return;
+	}
+
+	APawn* ownerPawn = Cast<APawn>(GetOwner());
+	currentSpell->CastSpell(ownerPawn);
+
+	isCasting = false;
+}
+
+void UMagicComponent::CancelCasting()
+{
+	isCasting = false;	
 }
 
 /**

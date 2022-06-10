@@ -2,17 +2,50 @@
 
 
 #include "Player/MagicSpellBase.h"
-
-#include <vector>
-
 #include "Kismet/KismetMathLibrary.h"
+#include "Player/PlayerCharacter.h"
+#include "Weapons/WeaponBase.h"
 
 UMagicSpellBase::UMagicSpellBase()
 {
 }
 
-void UMagicSpellBase::Execute(APawn* userActor)
+bool UMagicSpellBase::Execute(APawn* userActor)
 {
+	if (userActor == nullptr)
+	{
+		return false;
+	}
+	
+	const UWorld* world = GetWorld();
+	if (world->GetTimeSeconds() < timeNextFire)
+	{
+		return false;
+	}
+
+	IPlayerCharacter* player = Cast<IPlayerCharacter>(userActor);
+	if (player == nullptr)
+	{
+		CastSpell(userActor);
+		return false;
+	}
+
+	if (!player->PlayAnim(castAnimation, animMontageSection))
+	{
+		CastSpell(userActor);
+		return false;
+	}
+
+	return true;
+}
+
+void UMagicSpellBase::CastSpell(APawn* userActor)
+{
+	if (userActor == nullptr)
+	{
+		return;
+	}
+
 	if (spellProjectile == nullptr)
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red,
@@ -21,16 +54,42 @@ void UMagicSpellBase::Execute(APawn* userActor)
 	}
 	
 	UWorld* world = GetWorld();
-	if (world->GetTimeSeconds() < timeNextFire)
-	{
-		return;
-	}
 	
 	// TODO: Add call to get spawn point from player character when created
-	const FRotator spawnRotation = userActor->GetControlRotation();
-	const FVector spawnPosition = userActor->GetActorLocation() +
+	FRotator spawnRotation = userActor->GetControlRotation();
+	FVector spawnPosition = userActor->GetActorLocation() +
 		(UKismetMathLibrary::GetForwardVector(spawnRotation) * 150.0f);
 	const FVector spawnScale = FVector(1.0f, 1.0f, 1.0f);
+
+	if (userActor->GetClass()->ImplementsInterface(UPlayerCharacter::StaticClass()))
+	{		
+		// Get Direction to Fire
+		const FVector cameraPosition = IPlayerCharacter::Execute_GetCameraLocation(userActor);
+		const FVector cameraForward = IPlayerCharacter::Execute_GetCameraForwardVector(userActor);
+
+		// Line trace to get point in space the projectile will fire towards
+		const FVector end = (cameraForward * 10000) + cameraPosition;
+		FHitResult hitResult;
+		TArray<AActor*> ignoreActors;
+		ignoreActors.Add(userActor);
+
+		spawnPosition = IPlayerCharacter::Execute_GetWeapon(userActor)->GetFirePoint()->GetComponentLocation();
+
+		// Check for impact point to fire towards
+		const bool traceHit = world->LineTraceSingleByChannel(hitResult, cameraPosition, end,
+			ECC_Visibility);
+		if (traceHit)
+		{
+			// If hit somewhere, get direction from the fire position to the impact point
+			FVector fireDirection = hitResult.ImpactPoint - spawnPosition;
+			fireDirection.Normalize();
+
+			spawnRotation = UKismetMathLibrary::MakeRotFromX(fireDirection);
+		} else
+		{
+			spawnRotation = UKismetMathLibrary::MakeRotFromX(cameraForward);
+		}
+	}
 
 	FActorSpawnParameters spawnParameters;
 	spawnParameters.Owner = userActor;
@@ -44,7 +103,7 @@ void UMagicSpellBase::Execute(APawn* userActor)
 }
 
 float UMagicSpellBase::GetCooldownProgress()
-{
+{	
 	const float time = (GetWorld()->GetTimeSeconds() - timeFired) / coolDownTime;
 	return FMath::Clamp(time, 0.0f, 1.0f);
 }
