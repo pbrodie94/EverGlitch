@@ -150,15 +150,15 @@ class PROJECTMOUSTACHE_API APlayerBase : public AEntityBase, public IPlayerChara
 	float timeNextDetectTK;
 
 	// The speed the player can push or pull a TK object in the air
-	UPROPERTY(EditDefaultsOnly, Category = Abilities, meta = (AllowPrivateAccess = true))
+	UPROPERTY(EditDefaultsOnly, Category = Telekinesis, meta = (AllowPrivateAccess = true))
 	float pushPullSpeed;
 
 	// The ability energy cost to use telekinesis
-	UPROPERTY(EditDefaultsOnly, Category = Abilities, meta = (AllowPrivateAccess = true))
+	UPROPERTY(EditDefaultsOnly, Category = Telekinesis, meta = (AllowPrivateAccess = true))
 	float tkEnergyCost;
 	
 	// The accuracy of how close the object gets to the target point
-	UPROPERTY(EditDefaultsOnly, Category = Abilities, meta = (AllowPrivateAccess = true))
+	UPROPERTY(EditDefaultsOnly, Category = Telekinesis, meta = (AllowPrivateAccess = true))
 	float tkAccuracy;
 
 	// The detection angle in degrees for highlighting objects to interact with TK
@@ -168,16 +168,30 @@ class PROJECTMOUSTACHE_API APlayerBase : public AEntityBase, public IPlayerChara
 	float minTKRange;
 	
 	// Max range of the telekinesis ability
-	UPROPERTY(EditDefaultsOnly, Category = Abilities, meta = (AllowPrivateAccess = true))
+	UPROPERTY(EditDefaultsOnly, Category = Telekinesis, meta = (AllowPrivateAccess = true))
 	float maxTKRange;
 
 	// The amount of force the TK push has
-	UPROPERTY(EditDefaultsOnly, Category = Abilities, meta = (AllowPrivateAccess = true))
+	UPROPERTY(EditDefaultsOnly, Category = Telekinesis, meta = (AllowPrivateAccess = true))
 	float tkPushForce;
 
 	// List of objects that are not tk objects
 	UPROPERTY()
 	TArray<AActor*> nonTKObjects;
+
+	// Animation
+	UPROPERTY(EditDefaultsOnly, Category = Telekinesis, meta = (AllowPrivateAccess = true))
+	UAnimMontage* telekinesisAnimation;
+
+	// Sound effects
+	UPROPERTY(EditDefaultsOnly, Category = Telekinesis, meta = (AllowPrivateAccess = true))
+	USoundBase* telekinesisSound;
+
+	UPROPERTY(EditDefaultsOnly, Category = Telekinesis, meta = (AllowPrivateAccess = true))
+	USoundBase* telekinesisEndSound;
+
+	UPROPERTY()
+	UAudioComponent* telekinesisSoundSource;
 
 	//****************************************************************************
 	// Timer handles *************************************************************
@@ -287,10 +301,6 @@ class PROJECTMOUSTACHE_API APlayerBase : public AEntityBase, public IPlayerChara
 	void StopPushingTKObject();
 
 	void StopPullingTKObject();
-	
-	//**********************************************************************************
-
-	void ScreenDebugMessage(FString message, FColor displayColor, float displayTime);
 	
 protected:
 	// Called when the game starts or when spawned
