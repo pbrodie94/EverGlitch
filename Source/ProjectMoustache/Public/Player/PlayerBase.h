@@ -561,6 +561,11 @@ public:
 	FORCEINLINE bool GetHasWeapon_Implementation() const { return currentWeapon != nullptr; }
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	float GetDamageMultiplier() const;
+	FORCEINLINE float GetDamageMultiplier_Implementation() const
+	{ return percentageDamageChange; }
+	
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	bool GetIsCombatStance() const;
 	FORCEINLINE bool GetIsCombatStance_Implementation() const
 	{ return !GetCharacterMovement()->bOrientRotationToMovement; }

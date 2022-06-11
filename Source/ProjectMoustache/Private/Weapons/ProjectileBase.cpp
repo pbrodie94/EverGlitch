@@ -43,43 +43,6 @@ void AProjectileBase::BeginPlay()
 	}
 }
 
-/*void AProjectileBase::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
-	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
-{
-	
-}*/
-
-void AProjectileBase::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp,
-	FVector NormalImpulse, const FHitResult& Hit)
-{
-	if (OtherActor == GetOwner())
-	{
-		return;
-	}
-
-	/*if (OtherActor != nullptr && OtherActor->ActorHasTag("LevelBounds"))
-	{
-		return;
-	}*/
-
-	if (OtherActor != nullptr && OtherActor->ActorHasTag("Enemy"))
-	{
-		if (OtherActor->GetClass()->ImplementsInterface(UDamageable::StaticClass()))
-		{
-			if (IDamageable::Execute_GetIsDead(OtherActor))
-			{
-				return;
-			}
-		}
-		
-		OtherActor->TakeDamage(damage, FDamageEvent(), GetOwner()->GetInstigatorController(),
-			GetOwner());
-	}
-
-	this->Destroy();
-}
-
-
 void AProjectileBase::SetProjectileSpeed(float speed)
 {
 	projectileMovement->MaxSpeed = speed;
@@ -94,3 +57,8 @@ void AProjectileBase::SetDamage(float damageAmount)
 {
 	damage = damageAmount;
 }
+
+/*void AProjectileBase::SetDamageMultiplier(float multiplier)
+{
+	damage *= multiplier;
+}*/

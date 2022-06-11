@@ -259,7 +259,7 @@ void APlayerBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	PlayerInputComponent->BindAction("Jump", IE_Released, this, &APlayerBase::EndJump);
 	PlayerInputComponent->BindAction("Dash", IE_Pressed, this, &APlayerBase::Dash);
 	PlayerInputComponent->BindAction("Action", IE_Pressed, this, &APlayerBase::InteractWithObject);
-	PlayerInputComponent->BindAction("Inventory", IE_Pressed, this, &APlayerBase::ToggleInventory);
+	//PlayerInputComponent->BindAction("Inventory", IE_Pressed, this, &APlayerBase::ToggleInventory);
 	//PlayerInputComponent->BindAction("Aim", IE_Pressed, this, &APlayerBase::BeginAiming);
 	//PlayerInputComponent->BindAction("Aim", IE_Released, this, &APlayerBase::EndAiming);
 	PlayerInputComponent->BindAction("Shoot", IE_Pressed, this, &APlayerBase::Fire);
@@ -677,6 +677,8 @@ void APlayerBase::ManipulateTKObject(float deltaTime)
 	{
 		return;
 	}
+
+	// TODO: Fix object being pushed through wall bug
 	
 	// Update the target position
 	targetPoint = followCamera->GetComponentLocation() + (followCamera->GetForwardVector() * targetDistance);
