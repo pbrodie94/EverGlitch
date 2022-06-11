@@ -5,6 +5,7 @@
 
 #include "StatusEffect.h"
 #include "Camera/CameraComponent.h"
+#include "Components/AudioComponent.h"
 #include "Components/BoxComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -13,6 +14,7 @@
 #include "Player/CombatManagerComponent.h"
 #include "Player/MagicComponent.h"
 #include "Interactables/InventoryComponentBase.h"
+#include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
 
 // Sets default values
@@ -257,9 +259,9 @@ void APlayerBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	PlayerInputComponent->BindAction("Jump", IE_Released, this, &APlayerBase::EndJump);
 	PlayerInputComponent->BindAction("Dash", IE_Pressed, this, &APlayerBase::Dash);
 	PlayerInputComponent->BindAction("Action", IE_Pressed, this, &APlayerBase::InteractWithObject);
-	PlayerInputComponent->BindAction("Inventory", IE_Pressed, this, &APlayerBase::ToggleInventory);
-	PlayerInputComponent->BindAction("Aim", IE_Pressed, this, &APlayerBase::BeginAiming);
-	PlayerInputComponent->BindAction("Aim", IE_Released, this, &APlayerBase::EndAiming);
+	//PlayerInputComponent->BindAction("Inventory", IE_Pressed, this, &APlayerBase::ToggleInventory);
+	//PlayerInputComponent->BindAction("Aim", IE_Pressed, this, &APlayerBase::BeginAiming);
+	//PlayerInputComponent->BindAction("Aim", IE_Released, this, &APlayerBase::EndAiming);
 	PlayerInputComponent->BindAction("Shoot", IE_Pressed, this, &APlayerBase::Fire);
 	PlayerInputComponent->BindAction("Shoot", IE_Released, this, &APlayerBase::FireUp);
 
@@ -384,6 +386,8 @@ void APlayerBase::Dash()
 		magicComponent->CancelCasting();
 	}
 
+	FireUp();
+
 	abilityEnergy -= dashEnergyCost;
 
 	if (numAirDashes > -1 && GetCharacterMovement()->IsFalling())
@@ -469,8 +473,13 @@ void APlayerBase::FireUp()
 	{
 		return;
 	}*/
+
+	if (magicComponent != nullptr && magicComponent->GetIsCasting())
+	{
+		return;
+	}
 	
-	if (currentWeapon != nullptr)
+	if (currentWeapon != nullptr && currentWeapon->GetIsFiring())
 	{
 		currentWeapon->OnFireUp();
 	}
@@ -668,6 +677,8 @@ void APlayerBase::ManipulateTKObject(float deltaTime)
 	{
 		return;
 	}
+
+	// TODO: Fix object being pushed through wall bug
 	
 	// Update the target position
 	targetPoint = followCamera->GetComponentLocation() + (followCamera->GetForwardVector() * targetDistance);
@@ -717,6 +728,28 @@ void APlayerBase::PickupTKObject()
 	isUsingTK = true;
 
 	abilityEnergy -= tkEnergyCost;
+
+	// Play animation if set
+	if (telekinesisAnimation != nullptr)
+	{
+		PlayAnimMontage(telekinesisAnimation);
+	}
+
+	// If set, play telekinesis sounds
+	if (telekinesisSound == nullptr)
+	{
+		return;
+	}
+
+	// If source doesn't exist, create it, otherwise just play
+	if (telekinesisSoundSource == nullptr)
+	{
+		telekinesisSoundSource = UGameplayStatics::SpawnSound2D(GetWorld(), telekinesisSound, 1, 1,
+		0, nullptr, false, false);
+	} else
+	{
+		telekinesisSoundSource->Play();
+	}
 }
 
 void APlayerBase::DropTKObject()
@@ -742,6 +775,27 @@ void APlayerBase::DropTKObject()
 	isUsingTK = false;
 	
 	EndCombatStance();
+
+	// Stop animation
+	if (telekinesisAnimation != nullptr)
+	{
+		StopAnimMontage(telekinesisAnimation);
+	}
+
+	// Stop telekinesis sounds
+	if (telekinesisSoundSource != nullptr)
+	{
+		telekinesisSoundSource->Stop();
+	}
+
+	// Play drop sounds if they're set
+	if (telekinesisEndSound == nullptr)
+	{
+		return;
+	}
+	
+	UGameplayStatics::PlaySound2D(GetWorld(), telekinesisEndSound, 1, 1, 0,
+		nullptr, nullptr, false);
 }
 
 void APlayerBase::PushTKObject()
@@ -809,6 +863,8 @@ void APlayerBase::UseAbility1()
 		return;
 	}
 
+	FireUp();
+
 	//Switch to combat stance
 	BeginCombatStance();
 	BeginEndCombatStanceTimer();
@@ -836,6 +892,8 @@ void APlayerBase::UseAbility2()
 	{
 		return;
 	}
+
+	FireUp();
 
 	//Switch to combat stance
 	BeginCombatStance();
@@ -923,10 +981,15 @@ float APlayerBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEven
 		return 0;
 	}
 
-	StopAnimMontage();
-	if (magicComponent != nullptr)
+	if (DamageCauser != nullptr)
 	{
-		magicComponent->CancelCasting();
+		StopAnimMontage();
+		if (magicComponent != nullptr)
+		{
+			magicComponent->CancelCasting();
+		}
+
+		FireUp();
 	}
 
 	const float damage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
@@ -953,10 +1016,15 @@ float APlayerBase::TakeIncomingDamage_Implementation(float damageAmount, AActor*
 		return 0;
 	}
 
-	StopAnimMontage();
-	if (magicComponent != nullptr)
+	if (damageCauser != nullptr)
 	{
-		magicComponent->CancelCasting();
+		StopAnimMontage();
+		if (magicComponent != nullptr)
+		{
+			magicComponent->CancelCasting();
+		}
+
+		FireUp();
 	}
 	
 	const float damage = Super::TakeIncomingDamage_Implementation(damageAmount, damageCauser,
@@ -1337,9 +1405,4 @@ void APlayerBase::UnSubscribePlayerObserver_Implementation(const TScriptInterfac
 	}
 
 	observers.Remove(oldObserver);
-}
-
-void APlayerBase::ScreenDebugMessage(FString message, FColor displayColor, float displayTime)
-{
-	GEngine->AddOnScreenDebugMessage(-1, displayTime, displayColor, message);
 }
