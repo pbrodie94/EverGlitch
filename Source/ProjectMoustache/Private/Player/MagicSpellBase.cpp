@@ -58,7 +58,7 @@ void UMagicSpellBase::CastSpell(APawn* userActor)
 	// TODO: Add call to get spawn point from player character when created
 	FRotator spawnRotation = userActor->GetControlRotation();
 	FVector spawnPosition = userActor->GetActorLocation() +
-		(UKismetMathLibrary::GetForwardVector(spawnRotation) * 150.0f);
+		(UKismetMathLibrary::GetForwardVector(spawnRotation) * 250.0f);
 	const FVector spawnScale = FVector(1.0f, 1.0f, 1.0f);
 
 	if (userActor->GetClass()->ImplementsInterface(UPlayerCharacter::StaticClass()))
@@ -77,7 +77,7 @@ void UMagicSpellBase::CastSpell(APawn* userActor)
 		TArray<AActor*> ignoreActors;
 		ignoreActors.Add(userActor);
 
-		spawnPosition = IPlayerCharacter::Execute_GetWeapon(userActor)->GetFirePoint()->GetComponentLocation();
+		//spawnPosition = IPlayerCharacter::Execute_GetWeapon(userActor)->GetFirePoint()->GetComponentLocation();
 
 		// Check for impact point to fire towards
 		const bool traceHit = world->LineTraceSingleByChannel(hitResult, castPoint, end,
