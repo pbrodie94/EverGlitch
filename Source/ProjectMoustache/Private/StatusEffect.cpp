@@ -68,7 +68,7 @@ void UBurnStatus::UpdateStatus(float worldTime)
 	if (worldTime > timeNextDamage)
 	{
 		const FStatusEffect effect(Burn);
-		IDamageable::Execute_TakeIncomingDamage(effectedActor, effectAmount, damageCauser, eventInstigator, FDamageData(effect));
+		IDamageable::Execute_TakeIncomingDamage(effectedActor, effectAmount, nullptr, eventInstigator, FDamageData(effect));
 
 		timeNextDamage = worldTime + damageInterval;
 	}
