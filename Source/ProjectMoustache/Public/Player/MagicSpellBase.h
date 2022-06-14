@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "UObject/Object.h"
-#include "Animation/AnimMontage.h"
 #include "MagicSpellBase.generated.h"
 
 /**
