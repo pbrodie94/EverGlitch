@@ -119,6 +119,14 @@ void UMagicComponent::CastMagicProjectile()
 	APawn* ownerPawn = Cast<APawn>(GetOwner());
 	currentSpell->CastSpell(ownerPawn);
 
+	if (currentSpell == destructionSpell)
+	{
+		OnDestructionMagicCasted.Broadcast();
+	} else
+	{
+		OnSupportMagicCasted.Broadcast();
+	}
+
 	isCasting = false;
 }
 
