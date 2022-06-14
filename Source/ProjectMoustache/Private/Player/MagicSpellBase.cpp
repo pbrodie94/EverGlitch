@@ -67,8 +67,12 @@ void UMagicSpellBase::CastSpell(APawn* userActor)
 		const FVector cameraPosition = IPlayerCharacter::Execute_GetCameraLocation(userActor);
 		const FVector cameraForward = IPlayerCharacter::Execute_GetCameraForwardVector(userActor);
 
+		// Get position to cast to that is inline with the camera forward vector but inline with player
+		const FVector dirFirePoint = spawnPosition - cameraPosition;
+		const FVector castPoint = dirFirePoint.ProjectOnTo(cameraForward * 10000) + cameraPosition;
+
 		// Line trace to get point in space the projectile will fire towards
-		const FVector end = (cameraForward * 10000) + cameraPosition;
+		const FVector end = (castPoint * 10000) + castPoint;
 		FHitResult hitResult;
 		TArray<AActor*> ignoreActors;
 		ignoreActors.Add(userActor);
@@ -76,7 +80,7 @@ void UMagicSpellBase::CastSpell(APawn* userActor)
 		spawnPosition = IPlayerCharacter::Execute_GetWeapon(userActor)->GetFirePoint()->GetComponentLocation();
 
 		// Check for impact point to fire towards
-		const bool traceHit = world->LineTraceSingleByChannel(hitResult, cameraPosition, end,
+		const bool traceHit = world->LineTraceSingleByChannel(hitResult, castPoint, end,
 			ECC_Visibility);
 		if (traceHit)
 		{
