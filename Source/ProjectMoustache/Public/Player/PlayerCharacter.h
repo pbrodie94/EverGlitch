@@ -149,6 +149,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	bool GetIsCombatStance() const;
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	float GetDamageMultiplier() const;
 	
 	/**
 	 * Subscribes actors as a new player observer

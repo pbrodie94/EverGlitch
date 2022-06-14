@@ -5,6 +5,7 @@
 
 #include "Damageable.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Kismet/KismetSystemLibrary.h"
 #include "Player/PlayerCharacter.h"
 
 
@@ -62,10 +63,17 @@ void AWeaponBase::Fire()
 	// Get Direction to Fire
 	const FVector cameraPosition = IPlayerCharacter::Execute_GetCameraLocation(GetOwner());
 	const FVector cameraForward = IPlayerCharacter::Execute_GetCameraForwardVector(GetOwner());
+
+	// Get position to cast to that is inline with the camera forward vector but inline with player
+	const FVector dirFirePoint = firePoint->GetComponentLocation() - cameraPosition;
+	const FVector castPoint = dirFirePoint.ProjectOnTo(cameraForward * 10000) + cameraPosition;
 	
-	const FVector end = cameraPosition + (cameraForward * 10000);
+	const FVector end = castPoint + (cameraForward * 10000);
 	FHitResult hitResult;
-	const bool traceHit = world->LineTraceSingleByChannel(hitResult, cameraPosition, end, ECC_Visibility);
+	TArray<AActor*> ignore;
+	const bool traceHit = UKismetSystemLibrary::LineTraceSingle(world, castPoint, end,
+		UEngineTypes::ConvertToTraceType(ECC_Visibility), false, ignore,
+		EDrawDebugTrace::None,hitResult, true);
 	FVector fireDirection = cameraForward;
 	if (traceHit)
 	{
@@ -90,7 +98,8 @@ void AWeaponBase::Fire()
 
 	if (proj != nullptr)
 	{
-		proj->SetDamage(damage);
+		const float modifiedDamage = damage * IPlayerCharacter::Execute_GetDamageMultiplier(GetOwner());
+		proj->SetDamage(modifiedDamage);
 	}
 	
 	// Set the next time can fire

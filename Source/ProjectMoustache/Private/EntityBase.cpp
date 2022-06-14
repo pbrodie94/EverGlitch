@@ -280,7 +280,7 @@ void AEntityBase::AddStatusEffect_Implementation(FStatusEffect statusEffect)
 	}
 	
 	status->Init(this, statusEffect.effectAmount, statusEffect.duration, statusEffect.dotInterval, GetWorld()->GetTimeSeconds());
-	newStatusEffects.Add(status);
+	newStatusEffects.AddUnique(status);
 }
 
 float AEntityBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
@@ -344,7 +344,7 @@ void AEntityBase::RemoveStatus_Implementation(EStatusEffectType statusEffect)
 		if (status->GetEffectType() == statusEffect)
 		{
 			status->SetExpired();
-			removedStatusEffects.Add(status);
+			removedStatusEffects.AddUnique(status);
 		}
 	}
 }
@@ -373,8 +373,10 @@ void AEntityBase::RemoveAllStatusEffects()
 	for (UStatusEffectBase* statusEffect : statusEffects)
 	{
 		statusEffect->SetExpired();
-		removedStatusEffects.Add(statusEffect);
+		removedStatusEffects.AddUnique(statusEffect);
 	}
+
+	newStatusEffects.Empty();
 }
 
 /**
@@ -386,7 +388,7 @@ TArray<UStatusEffectBase*> AEntityBase::GetAllStatusEffects_Implementation()
 
 	for (UStatusEffectBase* status : statusEffects)
 	{
-		effects.Add(status);
+		effects.AddUnique(status);
 	}
 
 	return effects;

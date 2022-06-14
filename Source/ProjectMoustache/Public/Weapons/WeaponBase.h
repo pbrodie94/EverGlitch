@@ -69,4 +69,6 @@ public:
 
 	FORCEINLINE USceneComponent* GetFirePoint() const { return firePoint; }
 
+	FORCEINLINE bool GetIsFiring() const { return isFiring; }
+
 };
