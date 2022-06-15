@@ -177,14 +177,18 @@ void UInventoryComponentBase::UseQuickSlot1()
 	AItemBase* item = GetWorld()->SpawnActor<AItemBase>(slot1.item.itemClass);
 	if (item != nullptr)
 	{
-		item->Use(GetOwner());
-		--slot1.quantity;
-		item->Destroy();
-
-		if (OnQuickslotsUpdated.IsBound())
+		if (item->Use(GetOwner()))
 		{
-			OnQuickslotsUpdated.Broadcast();
+			item->Use(GetOwner());
+			--slot1.quantity;
+
+			if (OnQuickslotsUpdated.IsBound())
+			{
+				OnQuickslotsUpdated.Broadcast();
+			}
 		}
+		
+		item->Destroy();
 	}
 }
 
@@ -205,14 +209,18 @@ void UInventoryComponentBase::UseQuickSlot2()
 	AItemBase* item = GetWorld()->SpawnActor<AItemBase>(slot2.item.itemClass);
 	if (item != nullptr)
 	{
-		item->Use(GetOwner());
-		--slot2.quantity;
-		item->Destroy();
-
-		if (OnQuickslotsUpdated.IsBound())
+		if (item->Use(GetOwner()))
 		{
-			OnQuickslotsUpdated.Broadcast();
+			item->Use(GetOwner());
+			--slot2.quantity;
+
+			if (OnQuickslotsUpdated.IsBound())
+			{
+				OnQuickslotsUpdated.Broadcast();
+			}
 		}
+		
+		item->Destroy();
 	}
 }
 

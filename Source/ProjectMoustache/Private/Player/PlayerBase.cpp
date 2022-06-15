@@ -1113,6 +1113,7 @@ void APlayerBase::Die_Implementation()
 	EndMeleeAttackDamage();
 	FireUp();
 	EndCombatStance();
+	DropTKObject();
 
 	if (isAiming)
 	{
@@ -1200,7 +1201,7 @@ void APlayerBase::ApplyDamageChange_Implementation(float percentage, float durat
 */
 void APlayerBase::ApplySpeedChange_Implementation(float percentage, float duration)
 {
-	float changePercentage = (FMath::Clamp(percentage, -99.0f, 100.0f) / 100) + 1;
+	const float changePercentage = (FMath::Clamp(percentage, -99.0f, 100.0f) / 100) + 1;
 	GetCharacterMovement()->MaxWalkSpeed = runSpeed * changePercentage;
 
 	//Handle duration
