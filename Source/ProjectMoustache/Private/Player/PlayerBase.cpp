@@ -870,7 +870,7 @@ void APlayerBase::UseAbility1()
 	BeginEndCombatStanceTimer();
 
 	// Cast Spell
-	magicComponent->CastSupportSpell();
+	magicComponent->CastDestructionSpell();
 }
 
 /**
@@ -900,7 +900,7 @@ void APlayerBase::UseAbility2()
 	BeginEndCombatStanceTimer();
 
 	// Cast Spell
-	magicComponent->CastDestructionSpell();
+	magicComponent->CastSupportSpell();
 }
 
 void APlayerBase::BeginCombatStance()
