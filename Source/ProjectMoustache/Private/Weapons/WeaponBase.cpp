@@ -77,10 +77,6 @@ void AWeaponBase::Fire()
 	FVector fireDirection = cameraForward;
 	if (traceHit)
 	{
-		// Get angle
-		FVector dirToImpact = hitResult.ImpactPoint - firePoint->GetComponentLocation();
-		dirToImpact.Normalize();
-
 		fireDirection = hitResult.ImpactPoint - firePoint->GetComponentLocation();
 		fireDirection.Normalize();
 	}

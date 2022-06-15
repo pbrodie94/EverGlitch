@@ -7,6 +7,8 @@
 #include "Components/ActorComponent.h"
 #include "MagicComponent.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnMagicCasted);
+
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class PROJECTMOUSTACHE_API UMagicComponent : public UActorComponent
 {
@@ -41,6 +43,12 @@ protected:
 	virtual void BeginPlay() override;
 
 public:
+
+	UPROPERTY(BlueprintAssignable)
+	FOnMagicCasted OnDestructionMagicCasted;
+
+	UPROPERTY(BlueprintAssignable)
+	FOnMagicCasted OnSupportMagicCasted;
 	
 	void CastDestructionSpell();
 	void CastSupportSpell();
