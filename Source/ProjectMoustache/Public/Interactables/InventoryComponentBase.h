@@ -183,7 +183,7 @@ protected:
 	void UseQuickSlot3();
 	void UpdateQuickSlots();
 	
-public:	
+public:
 
 	UPROPERTY(BlueprintAssignable)
 	FOnQuickslotsUpdated OnQuickslotsUpdated;
