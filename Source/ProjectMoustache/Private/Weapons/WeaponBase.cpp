@@ -76,7 +76,7 @@ void AWeaponBase::Fire()
 		EDrawDebugTrace::None,hitResult, true);
 	FVector fireDirection = cameraForward;
 	if (traceHit)
-	{
+	{		
 		fireDirection = hitResult.ImpactPoint - firePoint->GetComponentLocation();
 		fireDirection.Normalize();
 	}
