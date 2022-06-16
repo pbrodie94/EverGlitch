@@ -387,6 +387,7 @@ void APlayerBase::Dash()
 	}
 
 	FireUp();
+	DropTKObject();
 
 	abilityEnergy -= dashEnergyCost;
 
@@ -828,7 +829,8 @@ void APlayerBase::PushTKObject()
 	(tkObject->GetComponentByClass(UShapeComponent::StaticClass()));
 	if (collider != nullptr)
 	{
-		collider->AddForce(followCamera->GetForwardVector() * tkPushForce);
+		const float pushForce = tkPushForce * collider->GetMass();
+		collider->AddForce(followCamera->GetForwardVector() * pushForce);
 	}
 
 	abilityEnergy -= tkEnergyCost;
@@ -981,21 +983,33 @@ float APlayerBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEven
 		return 0;
 	}
 
-	if (DamageCauser != nullptr)
-	{
-		StopAnimMontage();
-		if (magicComponent != nullptr)
-		{
-			magicComponent->CancelCasting();
-		}
-
-		FireUp();
-	}
-
 	const float damage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 	
 	if (damage > 0)
 	{
+		if (DamageCauser != nullptr)
+		{
+			StopAnimMontage();
+			if (magicComponent != nullptr)
+			{
+				magicComponent->CancelCasting();
+			}
+
+			FireUp();
+
+			if (hurtAnims != nullptr)
+			{
+				const FVector damageDir = DamageCauser->GetActorLocation() - GetActorLocation();
+				if (FVector::DotProduct(GetMesh()->GetForwardVector(), damageDir) < 0)
+				{
+					PlayAnimMontage(hurtAnims, 1, "Front");
+				} else
+				{
+					PlayAnimMontage(hurtAnims, 1, "Back");
+				}
+			}
+		}
+		
 		GetWorld()->GetFirstPlayerController()->PlayerCameraManager->StartCameraShake(cameraShake, 1);
 	}
 
@@ -1015,24 +1029,38 @@ float APlayerBase::TakeIncomingDamage_Implementation(float damageAmount, AActor*
 	{
 		return 0;
 	}
-
-	if (damageCauser != nullptr)
-	{
-		StopAnimMontage();
-		if (magicComponent != nullptr)
-		{
-			magicComponent->CancelCasting();
-		}
-
-		FireUp();
-	}
 	
 	const float damage = Super::TakeIncomingDamage_Implementation(damageAmount, damageCauser,
 		eventInstigator, damageData);
 
 	if (damage > 0)
 	{
+		if (damageCauser != nullptr)
+		{
+			StopAnimMontage();
+			if (magicComponent != nullptr)
+			{
+				magicComponent->CancelCasting();
+			}
+
+			FireUp();
+
+			if (hurtAnims != nullptr)
+			{
+				const FVector damageDir = damageCauser->GetActorLocation() - GetActorLocation();
+				if (FVector::DotProduct(GetMesh()->GetForwardVector(), damageDir) < 0)
+				{
+					PlayAnimMontage(hurtAnims, 1, "Front");
+				} else
+				{
+					PlayAnimMontage(hurtAnims, 1, "Back");
+				}
+			}
+		}
+		
 		GetWorld()->GetFirstPlayerController()->PlayerCameraManager->StartCameraShake(cameraShake, 1);
+
+		
 	}
 
 	return damage;

@@ -342,6 +342,9 @@ protected:
 	UPROPERTY(BlueprintReadWrite)
 	bool godMode;
 
+	UPROPERTY(EditDefaultsOnly)
+	UAnimMontage* hurtAnims;
+
 	//Interactable reference container, gets set and allows player to call the interact function
 	UPROPERTY(BlueprintReadWrite)
 	TScriptInterface<IInteractable> currentInteractableObject;
